@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
+
+  <!-- EXIF + Map libs -->
+  <script src="https://cdn.jsdelivr.net/npm/piexifjs@1.0.6/piexif.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .upload-area {
+      border: 3px dashed #dc3545;
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .upload-area:hover {
+      background: #f8d7da;
+      border-color: #c82333;
+    }
+
+    .upload-area.dragover {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+
+    #preview {
+      max-width: 100%;
+      max-height: 260px;
+      border-radius: 8px;
+      margin: 16px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: none;
+    }
+
+    #map {
+      height: 260px;
+      border-radius: 8px;
+      margin: 16px 0;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-box {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 5px solid #dc3545;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-box.valid {
+      border-left-color: #28a745;
+    }
+
+    .info-box.invalid {
+      border-left-color: #dc3545;
+    }
+
+    .gps-link {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 8px;
+      transition: 0.2s;
+    }
+
+    .gps-link:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .issue-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+
+    .issue-row select,
+    .issue-row input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 2px solid #dc3545;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    button {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    button:hover:not(:disabled) {
+      background: #c82333;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button.loading {
+      background: #6c757d !important;
+      cursor: wait !important;
+    }
+
+    .gba-handle {
+      font-weight: bold;
+      color: #dc3545;
+    }
+
+    #status {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .header-text {
+      text-align: center;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .map-message {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 13px;
+      color: #856404;
+    }
+
+    .tweet-url-box {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tweet-url-box input {
+      flex: 1;
+      min-width: 200px;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 13px;
+    }
+
+    .tweet-url-box button {
+      width: auto;
+      margin-top: 0;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
+    <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
+
+    <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
+      <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
+      <input type="file" id="imageInput" accept="image/*" style="display:none" />
+    </div>
+
+    <img id="preview" />
+    <div id="map"></div>
+
+    <div id="locationInfo" style="display:none">
+      <div class="info-box" id="infoBox">
+        <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
+        <div id="mapRestrictionMsg" class="map-message" style="display:none">
+          ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
+        </div>
+        <div class="issue-row">
+          <select id="issueType">
+            <option value="Pothole">Pothole</option>
+            <option value="Drainage">Drainage issue</option>
+            <option value="Streetlight">Streetlight</option>
+            <option value="Garbage">Garbage</option>
+            <option value="Road">Road repair</option>
+            <option value="Other">Other</option>
+          </select>
+          <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
+        </div>
+        <div><strong>🐦 Posted from:</strong>
+          <span class="gba-handle">@zenc_civic</span>
+        </div>
+        <small>If the marker is wrong, click anywhere on the map to move it <strong>(within GBA area
+            only)</strong>.</small>
+      </div>
+
+      <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const GBA_OFFICE = "@GBA_office";
+    const GBA_CHIEF = "@GBAChiefComm";
+    const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
+    const MAP_KML_URL = "/map.txt";
+
+    let currentImageDataUrl = null;
+    let currentGPS = null;
+    let map, marker;
+    let corpPolygons = null;
+    let mapInitialized = false;
+    let currentImageFile = null;
+
+    const imageInput = document.getElementById("imageInput");
+    const dropZone = document.getElementById("dropZone");
+
+    imageInput.addEventListener("change", handleImage);
+    dropZone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropZone.classList.add("dragover");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("dragover");
+      if (e.dataTransfer.files.length) {
+        imageInput.files = e.dataTransfer.files;
+        handleImage({ target: { files: e.dataTransfer.files } });
+      }
+    });
+
+    function handleImage(evt) {
+      currentImageDataUrl = null;
+      currentGPS = null;
+      currentImageFile = null;
+      if (marker && map) {
+        map.removeLayer(marker);
+        marker = null;
+      }
+      document.getElementById("locationInfo").style.display = "none";
+      document.getElementById("mapRestrictionMsg").style.display = "none";
+      document.getElementById("gpsCoords").innerHTML = "";
+      document.getElementById("tweetBtn").disabled = true;
+      showStatus("", "info");
+
+      const file = evt.target.files[0];
+      if (!file) return;
+
+      currentImageFile = file;
+
+      if (!file.type || !file.type.startsWith("image/")) {
+        showStatus("Please upload a photo file.", "error");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        currentImageDataUrl = e.target.result;
+        const img = document.getElementById("preview");
+        img.src = currentImageDataUrl;
+        img.style.display = "block";
+        extractGPSFromExif(currentImageDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function extractGPSFromExif(dataUrl) {
+      try {
+        const exif = piexif.load(dataUrl);
+        const gps = exif.GPS || {};
+        const latArr = gps[piexif.GPSIFD.GPSLatitude];
+        const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
+        const lonArr = gps[piexif.GPSIFD.GPSLongitude];
+        const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+
+        if (latArr && lonArr && latRef && lonRef) {
+          const latDec = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
+          const lonDec = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
+          currentGPS = { lat: latDec, lon: lonDec };
+          showLocation();
+          return;
+        }
+      } catch (err) { }
+      useBrowserLocation();
+    }
+
+    function isValidNumber(x) {
+      return typeof x === "number" && !Number.isNaN(x) && Number.isFinite(x);
+    }
+
+    function useBrowserLocation() {
+      if (!navigator.geolocation) {
+        initMapFallback();
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          currentGPS = {
+            lat: Number(pos.coords.latitude),
+            lon: Number(pos.coords.longitude)
+          };
+          showLocation();
+        },
+        () => {
+          initMapFallback();
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    }
+
+    async function validateLocation() {
+      if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) {
+        return false;
+      }
+      try {
+        const polys = await loadCorpPolygons();
+        const lon = currentGPS.lon;
+        const lat = currentGPS.lat;
+        return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring));
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function updateGpsDisplay() {
+      const gpsCoordsEl = document.getElementById("gpsCoords");
+      const mapLink = document.createElement('a');
+      mapLink.href = `https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
+      mapLink.className = 'gps-link';
+      mapLink.target = '_blank';
+      mapLink.textContent = '🗺️ Open Map Location';
+      mapLink.title = 'View exact location on OpenStreetMap';
+      gpsCoordsEl.innerHTML = '';
+      gpsCoordsEl.appendChild(mapLink);
+    }
+
+    async function handleMapClick(e) {
+      const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
+      const isValid = await validateLocationForCoords(testGPS);
+
+      if (!isValid) {
+        showStatus("❌ Map clicks outside Greater Bengaluru Authority jurisdiction are not allowed.", "error");
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([testGPS.lat, testGPS.lon], {
+          icon: L.divIcon({
+            className: 'invalid-marker',
+            html: '🚫',
+            iconSize: [20, 20]
+          })
+        }).addTo(map);
+        setTimeout(() => {
+          if (marker) map.removeLayer(marker);
+          marker = null;
+        }, 2000);
+
+        const tweetBtn = document.getElementById("tweetBtn");
+        const infoBox = document.getElementById("infoBox");
+        tweetBtn.disabled = true;
+        infoBox.classList.remove("valid");
+        infoBox.classList.add("invalid");
+        return;
+      }
+
+      currentGPS = testGPS;
+      placeMarker();
+      updateGpsDisplay();
+
+      const infoBox = document.getElementById("infoBox");
+      const tweetBtn = document.getElementById("tweetBtn");
+      infoBox.classList.remove("invalid");
+      infoBox.classList.add("valid");
+      tweetBtn.disabled = false;
+      showStatus("✅ Location verified within GBA jurisdiction.", "success");
+    }
+
+    async function validateLocationForCoords(testGPS) {
+      if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) {
+        return false;
+      }
+      try {
+        const polys = await loadCorpPolygons();
+        const lon = testGPS.lon;
+        const lat = testGPS.lat;
+        return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring));
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function showLocation() {
+      if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return;
+
+      validateLocation().then(isValid => {
+        document.getElementById("locationInfo").style.display = "block";
+        document.getElementById("mapRestrictionMsg").style.display = "block";
+        updateGpsDisplay();
+
+        const infoBox = document.getElementById("infoBox");
+        const tweetBtn = document.getElementById("tweetBtn");
+
+        if (!isValid) {
+          infoBox.classList.remove("valid");
+          infoBox.classList.add("invalid");
+          tweetBtn.disabled = true;
+          showStatus("❌ Reporting is only available for locations within Greater Bengaluru Authority jurisdiction.", "error");
+          return;
+        }
+
+        infoBox.classList.remove("invalid");
+        infoBox.classList.add("valid");
+        tweetBtn.disabled = false;
+        showStatus("✅ Location verified within GBA jurisdiction.", "success");
+
+        const mapDiv = document.getElementById("map");
+        mapDiv.style.display = "block";
+        if (!mapInitialized) {
+          initMap();
+          mapInitialized = true;
+        }
+        map.setView([currentGPS.lat, currentGPS.lon], 16);
+        placeMarker();
+      });
+    }
+
+    function initMap() {
+      map = L.map("map");
+      map.on("click", handleMapClick);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+    }
+
+    function initMapFallback() {
+      const mapDiv = document.getElementById("map");
+      mapDiv.style.display = "block";
+      if (!mapInitialized) {
+        initMap();
+        mapInitialized = true;
+        map.setView([12.9716, 77.5946], 12);
+      }
+      document.getElementById("locationInfo").style.display = "block";
+      document.getElementById("mapRestrictionMsg").style.display = "block";
+      showStatus("Click on the map to set the exact location <strong>within GBA area only</strong>.", "info");
+    }
+
+    function placeMarker() {
+      if (!map || !currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return;
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([currentGPS.lat, currentGPS.lon]).addTo(map)
+        .bindPopup("Issue location ✅").openPopup();
+    }
+
+    async function loadCorpPolygons() {
+      if (corpPolygons) return corpPolygons;
+      try {
+        const res = await fetch(MAP_KML_URL);
+        const kmlText = await res.text();
+
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(kmlText, "application/xml");
+        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+
+        corpPolygons = placemarks.map(pm => {
+          const simpleData = pm.getElementsByTagName("SimpleData");
+          let corpName = "";
+          for (const sd of simpleData) {
+            if (sd.getAttribute("name") === "NewCorp") {
+              corpName = sd.textContent.trim();
+            }
+          }
+          const coordsNode = pm.getElementsByTagName("coordinates")[0];
+          if (!coordsNode) return null;
+          const coordsText = coordsNode.textContent.trim();
+          const ring = coordsText
+            .split(/\s+/)
+            .map(pair => pair.split(",").map(Number))
+            .map(([lon, lat]) => [lon, lat]);
+          return { corp: corpName, ring };
+        }).filter(Boolean);
+
+        return corpPolygons;
+      } catch (e) {
+        throw e;
+      }
+    }
+
+    function pointInRing(lon, lat, ring) {
+      let inside = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0], yi = ring[i][1];
+        const xj = ring[j][0], yj = ring[j][1];
+        const intersect = ((yi > lat) !== (yj > lat)) &&
+          (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function corpHandleForName(name) {
+      switch (name) {
+        case "Central": return "@BCCCofficial";
+        case "East": return "@EASTCITYCORP";
+        case "West": return "@BWCCofficial";
+        case "North": return "@BNCCofficial";
+        case "South": return "@comm_blr_south";
+        default: return "";
+      }
+    }
+
+    async function shareToGBA() {
+      if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) {
+        showStatus("❌ No valid location selected.", "error");
+        return;
+      }
+      if (!currentImageFile) {
+        showStatus("❌ Please upload an image first.", "error");
+        return;
+      }
+
+      const isValid = await validateLocation();
+      if (!isValid) {
+        showStatus("❌ Reporting is only available for locations within Greater Bengaluru Authority jurisdiction.", "error");
+        return;
+      }
+
+      const tweetBtn = document.getElementById("tweetBtn");
+      tweetBtn.disabled = true;
+      tweetBtn.classList.add("loading");
+      tweetBtn.textContent = "⏳ Posting via @zenc_civic...";
+      showStatus("📤 Uploading issue to @zenc_civic...", "info");
+
+      try {
+        const issueType = document.getElementById("issueType").value;
+        const desc = document.getElementById("issueDesc").value.trim();
+
+        let corpHandle = "";
+        let corpName = "";
+        try {
+          const polys = await loadCorpPolygons();
+          const lon = currentGPS.lon;
+          const lat = currentGPS.lat;
+          for (const p of polys) {
+            if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
+              corpName = p.corp;
+              corpHandle = corpHandleForName(corpName);
+              break;
+            }
+          }
+        } catch (e) { }
+
+        const formData = new FormData();
+        formData.append("image", currentImageFile);
+        formData.append("lat", currentGPS.lat.toFixed(6));
+        formData.append("lon", currentGPS.lon.toFixed(6));
+        formData.append("issueType", issueType);
+        formData.append("description", desc);
+        formData.append("corpHandle", corpHandle);
+        formData.append("corpName", corpName);
+
+        const response = await fetch(API_GATEWAY_URL, {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          const statusEl = document.getElementById("status");
+          const url = data.tweetUrl || "";
+          statusEl.style.display = "block";
+          statusEl.style.background = "#d4edda";
+          statusEl.style.borderLeft = "4px solid #28a745";
+          statusEl.innerHTML = `
+            ✅ Tweet posted successfully from @zenc_civic!
+            ${url ? `
+            <div class="tweet-url-box">
+              <input id="tweetUrl" value="${url}" readonly>
+              <button type="button" onclick="copyTweetUrl()">Copy tweet link</button>
+            </div>` : ""}
+          `;
+          document.getElementById("issueType").value = "Pothole";
+          document.getElementById("issueDesc").value = "";
+        } else {
+          showStatus(`❌ Failed to post: ${data.message || response.status}`, "error");
+        }
+      } catch (error) {
+        showStatus(`❌ Network error: ${error.message}`, "error");
+      } finally {
+        tweetBtn.disabled = false;
+        tweetBtn.classList.remove("loading");
+        tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+      }
+    }
+
+    function copyTweetUrl() {
+      const input = document.getElementById("tweetUrl");
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById("status");
+      if (msg) {
+        el.innerHTML = msg;
+        el.style.display = "block";
+        el.style.background =
+          type === "error" ? "#f8d7da" :
+            type === "success" ? "#d4edda" : "#e2e3e5";
+        el.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" :
+          type === "success" ? "#28a745" : "#6c757d"}`;
+      } else {
+        el.style.display = "none";
+      }
+    }
+  </script>
+</body>
+
+</html>
