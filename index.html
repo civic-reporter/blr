@@ -195,13 +195,48 @@
 
   <script>
     const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
-    const MAP_KML_URL = "map.txt";
+    const MAP_KML_URL  = "map.txt";
+    const CONST_KML_URL = "blr_const.txt";
 
     let currentImageFile = null;
     let currentGPS = null;
     let map, marker;
     let corpPolygons = null;
+    let constPolygons = null;
     let mapInitialized = false;
+
+    // Constituency → MLA handle (from MLA_Twitter)
+    const MLA_HANDLES = {
+      "Yeshwanthpur": "STSomashekarMLA",
+      "Yelahanka": "SRVishwanathBJP",
+      "Vijayanagara": "MLAHRGaviyappa",
+      "Shivajinagar": "ArshadRizwan",
+      "Shantinagar": "mlanaharis",
+      "Sarvagnanagar": "thekjgeorge",
+      "Rajarajeshwarinagar": "MunirathnaMLA",
+      "Rajajinagar": "nimmasuresh",
+      "Pulakeshinagar": "",
+      "Padmanabhanagar": "RAshokaBJP",
+      "Malleshwaram": "drashwathcn",
+      "Mahalakshmi Layout": "GopalaiahK",
+      "Mahadevapura": "MALimbavali",
+      "Krishnarajapuram": "BABasavaraja",
+      "Jayanagar": "CKRBJP",
+      "Hoskote": "SBG4Hosakote",
+      "Hebbal": "byrathi_suresh",
+      "Govindaraja Nagar": "Priyakrishna_K",
+      "Gandhinagar": "dineshgrao",
+      "Dasarahalli": "munirajusbjp",
+      "Chickpet": "BGUdayBJP",
+      "Chamrajpet": "BZZameerAhmedK",
+      "C. V. Raman Nagar": "SRaghuMLA",
+      "Byatarayanapura": "krishnabgowda",
+      "Bommanahalli": "msrbommanahalli",
+      "Basavanagudi": "Ravi_LA",
+      "Vijayanagar": "mkrishnappa_MLA",
+      "BTM Layout": "RLR_BTM",
+      "Anekal (SC)": "MLAShivanna"
+    };
 
     const imageInput = document.getElementById("imageInput");
     const dropZone = document.getElementById("dropZone");
@@ -239,20 +274,20 @@
     function extractGPSFromExif(dataUrl) {
       try {
         const exif = piexif.load(dataUrl);
-        const gps = exif.GPS || {};
+        const gps  = exif.GPS || {};
         const latArr = gps[piexif.GPSIFD.GPSLatitude];
         const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
-        if (latArr && lonArr && latRef && lonRef){
+        if (latArr && lonArr && latRef && lonRef) {
           const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
           const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
           currentGPS = { lat, lon };
           showLocation();
-          return;              // IMPORTANT: do NOT call browser GPS after this
+          return;  // don't override with browser GPS
         }
-      } catch(e){ console.warn("EXIF GPS parse failed:", e); }
-      useBrowserLocation();    // Only used when EXIF has no GPS
+      } catch(e) { console.warn("EXIF GPS parse failed:", e); }
+      useBrowserLocation(); // only when EXIF has no GPS
     }
 
     function isValidNumber(x){ return typeof x==="number" && Number.isFinite(x); }
@@ -370,6 +405,48 @@
       return corpPolygons;
     }
 
+    async function loadConstituencyPolygons(){
+      if (constPolygons) return constPolygons;
+      const res = await fetch(CONST_KML_URL);
+      if(!res.ok) throw new Error("blr_const.txt not found");
+      const kmlText = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(kmlText,"application/xml");
+      const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+      constPolygons = placemarks.map(pm => {
+        const simpleData = pm.getElementsByTagName("SimpleData");
+        let acName = "";
+        for (const sd of simpleData) {
+          if (sd.getAttribute("name") === "AC_NAME") {
+            acName = sd.textContent.trim();
+          }
+        }
+        const coordsNode = pm.getElementsByTagName("coordinates")[0];
+        if (!coordsNode) return null;
+        const ring = coordsNode.textContent.trim()
+          .split(/\s+/)
+          .map(pair => pair.split(",").map(Number))
+          .map(([lon, lat]) => [lon, lat]);
+        return { acName, ring };
+      }).filter(Boolean);
+      return constPolygons;
+    }
+
+    async function findConstituencyForCurrentGPS() {
+      if (!currentGPS) return { acName: "", mlaHandle: "" };
+      const polys = await loadConstituencyPolygons();
+      const lon = currentGPS.lon;
+      const lat = currentGPS.lat;
+      for (const p of polys) {
+        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
+          const handleUser = MLA_HANDLES[p.acName] || "";
+          const handle = handleUser ? "@" + handleUser : "";
+          return { acName: p.acName, mlaHandle: handle };
+        }
+      }
+      return { acName: "", mlaHandle: "" };
+    }
+
     function pointInRing(lon, lat, ring){
       let inside=false;
       for(let i=0,j=ring.length-1;i<ring.length;j=i++){
@@ -413,7 +490,8 @@
       const issueType = document.getElementById("issueType").value;
       const desc      = document.getElementById("issueDesc").value.trim();
 
-      // Corp fields optional; Lambda already handles empty
+      const { acName, mlaHandle } = await findConstituencyForCurrentGPS();
+
       const formData = new FormData();
       formData.append("image",       currentImageFile);
       formData.append("lat",         currentGPS.lat.toFixed(6));
@@ -422,6 +500,8 @@
       formData.append("description", desc);
       formData.append("corpHandle",  "");
       formData.append("corpName",    "");
+      formData.append("constituency", acName);
+      formData.append("mlaHandle",    mlaHandle);
 
       const btn = document.getElementById("tweetBtn");
       btn.disabled = true; 
@@ -439,6 +519,9 @@
         if (res.ok && data.success) {
           const url = data.tweetUrl || data.tweet_url || "";
           let html = "✅ Tweet posted successfully from @zenc_civic!";
+          if (acName) {
+            html += `<div class="map-message" style="margin-top:6px;">Constituency: ${acName}${mlaHandle ? " – tagged " + mlaHandle : ""}</div>`;
+          }
           if (url) {
             html += `<div class="map-message" style="margin-top:8px;">
                        <a href="${url}" target="_blank">${url}</a>
@@ -472,7 +555,6 @@
       }
     }
 
-    // IMPORTANT: only init map; do NOT call useBrowserLocation here
     document.addEventListener("DOMContentLoaded", ()=>{
       initMap();
     });
