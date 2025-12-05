@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -7,7 +8,9 @@
   <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
 
   <!-- EXIF + Map libs -->
+
   <script src="js/piexif.min.js"></script>
+
   <link rel="stylesheet" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet.js"></script>
 
@@ -79,10 +82,6 @@
       border-left-color: #28a745;
     }
 
-    .info-box.invalid {
-      border-left-color: #dc3545;
-    }
-
     .gps-link {
       display: inline-block;
       background: #007bff;
@@ -142,11 +141,6 @@
       transform: none;
     }
 
-    button.loading {
-      background: #6c757d !important;
-      cursor: wait !important;
-    }
-
     .gba-handle {
       font-weight: bold;
       color: #dc3545;
@@ -183,37 +177,13 @@
       color: #856404;
     }
 
-    .tweet-url-box {
-      margin-top: 8px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .tweet-url-box input {
-      flex: 1;
-      min-width: 200px;
-      padding: 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 13px;
-    }
-
-    .tweet-url-box button {
-      width: auto;
-      margin-top: 0;
-      padding: 6px 12px;
-      font-size: 13px;
-    }
-
     @media(max-width:480px){
       #map {
-        height: 50vh; /* taller map on small screens */
+        height: 50vh;
       }
     }
-
   </style>
+
 </head>
 
 <body>
@@ -221,286 +191,239 @@
     <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
     <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
 
-    <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
-      <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
-      <input type="file" id="imageInput" accept="image/*" style="display:none" />
+```
+<div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
+  <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
+  <input type="file" id="imageInput" accept="image/*" style="display:none" />
+</div>
+
+<img id="preview" />
+<div id="map"></div>
+
+<div id="locationInfo" style="display:none">
+  <div class="info-box" id="infoBox">
+    <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
+    <div id="mapRestrictionMsg" class="map-message" style="display:none">
+      ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
     </div>
-
-    <img id="preview" />
-    <div id="map"></div>
-
-    <div id="locationInfo" style="display:none">
-      <div class="info-box" id="infoBox">
-        <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
-        <div id="mapRestrictionMsg" class="map-message" style="display:none">
-          ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
-        </div>
-        <div class="issue-row">
-          <select id="issueType">
-            <option value="Pothole">Pothole</option>
-            <option value="Drainage">Drainage issue</option>
-            <option value="Streetlight">Streetlight</option>
-            <option value="Garbage">Garbage</option>
-            <option value="Road">Road repair</option>
-            <option value="Other">Other</option>
-          </select>
-          <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
-        </div>
-        <div><strong>🐦 Posted from:</strong>
-          <span class="gba-handle">@zenc_civic</span>
-        </div>
-        <small>If the marker is wrong, click anywhere on the map to move it <strong>(within GBA area only)</strong>.</small>
-      </div>
-
-      <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
+    <div class="issue-row">
+      <select id="issueType">
+        <option value="Pothole">Pothole</option>
+        <option value="Drainage">Drainage issue</option>
+        <option value="Streetlight">Streetlight</option>
+        <option value="Garbage">Garbage</option>
+        <option value="Road">Road repair</option>
+        <option value="Other">Other</option>
+      </select>
+      <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
     </div>
-
-    <div id="status"></div>
+    <div><strong>🐦 Posted from:</strong>
+      <span class="gba-handle">@zenc_civic</span>
+    </div>
+    <small>If the marker is wrong, click anywhere on the map to move it <strong>(within GBA area only)</strong>.</small>
   </div>
 
-<script>
-  const GBA_OFFICE = "@GBA_office";
-  const GBA_CHIEF = "@GBAChiefComm";
-  const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
-  const MAP_KML_URL = "map.txt"; // use relative path
+  <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
+</div>
 
-  let currentImageDataUrl = null;
-  let currentGPS = null;
-  let map, marker;
-  let corpPolygons = null;
-  let mapInitialized = false;
-  let currentImageFile = null;
+<div id="status"></div>
+```
 
-  const imageInput = document.getElementById("imageInput");
-  const dropZone = document.getElementById("dropZone");
+  </div>
 
-  // Image upload events
-  imageInput.addEventListener("change", handleImage);
-  dropZone.addEventListener("dragover", e => {
-    e.preventDefault();
-    dropZone.classList.add("dragover");
-  });
-  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-  dropZone.addEventListener("drop", e => {
-    e.preventDefault();
-    dropZone.classList.remove("dragover");
-    if (e.dataTransfer.files.length) {
-      imageInput.files = e.dataTransfer.files;
-      handleImage({ target: { files: e.dataTransfer.files } });
-    }
-  });
+  <script>
+    const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
+    const MAP_KML_URL = "map.txt";
 
-  function handleImage(evt) {
-    currentImageDataUrl = null;
-    currentGPS = null;
-    currentImageFile = null;
-    if (marker && map) map.removeLayer(marker);
-    marker = null;
-    document.getElementById("locationInfo").style.display = "none";
-    document.getElementById("mapRestrictionMsg").style.display = "none";
-    document.getElementById("gpsCoords").innerHTML = "";
-    document.getElementById("tweetBtn").disabled = true;
-    showStatus("", "info");
+    let currentImageFile = null;
+    let currentGPS = null;
+    let map, marker;
+    let corpPolygons = null;
+    let mapInitialized = false;
 
-    const file = evt.target.files[0];
-    if (!file) return;
-    currentImageFile = file;
-    if (!file.type || !file.type.startsWith("image/")) {
-      showStatus("Please upload a photo file.", "error");
-      return;
-    }
+    const imageInput = document.getElementById("imageInput");
+    const dropZone = document.getElementById("dropZone");
 
-    const reader = new FileReader();
-    reader.onload = e => {
-      currentImageDataUrl = e.target.result;
-      const img = document.getElementById("preview");
-      img.src = currentImageDataUrl;
-      img.style.display = "block";
-      extractGPSFromExif(currentImageDataUrl);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function extractGPSFromExif(dataUrl) {
-    try {
-      const exif = piexif.load(dataUrl);
-      const gps = exif.GPS || {};
-      const latArr = gps[piexif.GPSIFD.GPSLatitude];
-      const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
-      const lonArr = gps[piexif.GPSIFD.GPSLongitude];
-      const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
-
-      if (latArr && lonArr && latRef && lonRef) {
-        const latDec = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
-        const lonDec = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
-        currentGPS = { lat: latDec, lon: lonDec };
-        showLocation();
-        return;
+    imageInput.addEventListener("change", handleImage);
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("dragover");
+      if(e.dataTransfer.files.length){
+        imageInput.files = e.dataTransfer.files;
+        handleImage({ target: { files: e.dataTransfer.files } });
       }
-    } catch (err) {}
-    useBrowserLocation();
-  }
+    });
 
-  function isValidNumber(x) {
-    return typeof x === "number" && !Number.isNaN(x) && Number.isFinite(x);
-  }
-
-  function useBrowserLocation() {
-    if (!navigator.geolocation) {
-      initMapFallback();
-      return;
+    function handleImage(evt) {
+      const file = evt.target.files[0];
+      if (!file || !file.type.startsWith("image/")) return;
+      currentImageFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById("preview").src = e.target.result;
+        document.getElementById("preview").style.display = "block";
+        extractGPSFromExif(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-    navigator.geolocation.getCurrentPosition(
-      pos => {
+
+    function extractGPSFromExif(dataUrl) {
+      try {
+        const exif = piexif.load(dataUrl);
+        const gps = exif.GPS || {};
+        const latArr = gps[piexif.GPSIFD.GPSLatitude];
+        const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
+        const lonArr = gps[piexif.GPSIFD.GPSLongitude];
+        const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+        if (latArr && lonArr && latRef && lonRef){
+          currentGPS = { lat: piexif.GPSHelper.dmsRationalToDeg(latArr, latRef), lon: piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef)};
+          showLocation();
+          return;
+        }
+      } catch(e){ console.warn(e);}
+      useBrowserLocation();
+    }
+
+    function isValidNumber(x){ return typeof x==="number" && Number.isFinite(x); }
+
+    function useBrowserLocation(){
+      if(!navigator.geolocation){ initMapFallback(); return; }
+      navigator.geolocation.getCurrentPosition(pos=>{
         currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
         showLocation();
-      },
-      () => { initMapFallback(); },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-    );
-  }
-
-  async function validateLocation() {
-    if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return false;
-    try {
-      const polys = await loadCorpPolygons();
-      return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(currentGPS.lon, currentGPS.lat, p.ring));
-    } catch (e) { return false; }
-  }
-
-  function updateGpsDisplay() {
-    const gpsCoordsEl = document.getElementById("gpsCoords");
-    gpsCoordsEl.innerHTML = '';
-    const mapLink = document.createElement('a');
-    mapLink.href = `https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
-    mapLink.className = 'gps-link';
-    mapLink.target = '_blank';
-    mapLink.textContent = '🗺️ Open Map Location';
-    gpsCoordsEl.appendChild(mapLink);
-  }
-
-  async function handleMapClick(e) {
-    const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
-    const isValid = await validateLocationForCoords(testGPS);
-    if (!isValid) {
-      showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
-      if (marker) map.removeLayer(marker);
-      marker = L.marker([testGPS.lat, testGPS.lon], { icon: L.divIcon({ className: 'invalid-marker', html: '🚫', iconSize: [20, 20] })}).addTo(map);
-      setTimeout(() => { if(marker) map.removeLayer(marker); marker = null; }, 2000);
-      document.getElementById("tweetBtn").disabled = true;
-      return;
+      }, ()=>{ initMapFallback(); }, { enableHighAccuracy:true, timeout:8000, maximumAge:0 });
     }
-    currentGPS = testGPS;
-    placeMarker();
-    updateGpsDisplay();
-    document.getElementById("tweetBtn").disabled = false;
-  }
 
-  async function validateLocationForCoords(testGPS) {
-    if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
-    try {
-      const polys = await loadCorpPolygons();
-      return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(testGPS.lon, testGPS.lat, p.ring));
-    } catch (e) { return false; }
-  }
+    async function validateLocationForCoords(testGPS){
+      if(!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
+      try {
+        const polys = await loadCorpPolygons();
+        return polys.some(p => p.ring && p.ring.length>=3 && pointInRing(testGPS.lon,testGPS.lat,p.ring));
+      } catch(e){ return false; }
+    }
 
-  function showLocation() {
-    document.getElementById("locationInfo").style.display = "block";
-    document.getElementById("mapRestrictionMsg").style.display = "block";
+    async function handleMapClick(e){
+      const testGPS = { lat:e.latlng.lat, lon:e.latlng.lng };
+      const valid = await validateLocationForCoords(testGPS);
+      if(!valid){
+        showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
+        return;
+      }
+      currentGPS = testGPS;
+      placeMarker();
+      updateGpsDisplay();
+      document.getElementById("tweetBtn").disabled = false;
+    }
 
-    if (!mapInitialized) {
-      initMap();
+    function showLocation(){
+      document.getElementById("locationInfo").style.display = "block";
+      document.getElementById("map").style.display = "block";
+      if(!mapInitialized) initMap();
+      if(currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)){
+        map.setView([currentGPS.lat, currentGPS.lon],16);
+        placeMarker();
+        updateGpsDisplay();
+        document.getElementById("tweetBtn").disabled = false;
+      }
+    }
+
+    function initMap(){
+      map = L.map("map").setView([12.9716,77.5946],12);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{ attribution:"© OpenStreetMap contributors" }).addTo(map);
+      map.on("click", handleMapClick);
+      setTimeout(()=>map.invalidateSize(),200);
       mapInitialized = true;
     }
 
-    if (currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)) {
-      map.setView([currentGPS.lat, currentGPS.lon], 16);
-      placeMarker();
-      updateGpsDisplay();
+    function initMapFallback(){ showStatus("Click on the map to set the exact location within GBA area.", "info"); showLocation(); }
+
+    function placeMarker(){
+      if(marker) map.removeLayer(marker);
+      if(currentGPS && map){
+        marker = L.marker([currentGPS.lat,currentGPS.lon]).addTo(map).bindPopup("Issue location ✅").openPopup();
+      }
     }
-  }
 
-  function initMap() {
-    const mapDiv = document.getElementById("map");
-    mapDiv.style.display = "block";
-
-    map = L.map("map").setView([12.9716, 77.5946], 12);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap contributors"
-    }).addTo(map);
-
-    map.on("click", handleMapClick);
-
-    // Fix Leaflet rendering issues on mobile
-    setTimeout(() => map.invalidateSize(), 200);
-  }
-
-  function initMapFallback() {
-    showStatus("Click on the map to set the exact location within GBA area only.", "info");
-    showLocation();
-  }
-
-  function placeMarker() {
-    if (!map || !currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return;
-    if (marker) map.removeLayer(marker);
-    marker = L.marker([currentGPS.lat, currentGPS.lon]).addTo(map).bindPopup("Issue location ✅").openPopup();
-  }
-
-  async function loadCorpPolygons() {
-    if (corpPolygons) return corpPolygons;
-    try {
-      const res = await fetch(MAP_KML_URL);
-      if (!res.ok) throw new Error("map.txt missing");
-      const kmlText = await res.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(kmlText, "application/xml");
-      const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
-      corpPolygons = placemarks.map(pm => {
-        const simpleData = pm.getElementsByTagName("SimpleData");
-        let corpName = "";
-        for (const sd of simpleData) if (sd.getAttribute("name") === "NewCorp") corpName = sd.textContent.trim();
-        const coordsNode = pm.getElementsByTagName("coordinates")[0];
-        if (!coordsNode) return null;
-        const ring = coordsNode.textContent.trim().split(/\s+/).map(pair => pair.split(",").map(Number)).map(([lon, lat]) => [lon, lat]);
-        return { corp: corpName, ring };
-      }).filter(Boolean);
-      return corpPolygons;
-    } catch (e) {
-      console.warn("Skipping KML overlay:", e);
-      return [];
+    async function loadCorpPolygons(){
+      if(corpPolygons) return corpPolygons;
+      try{
+        const res = await fetch(MAP_KML_URL);
+        if(!res.ok) throw new Error("map.txt missing");
+        const kmlText = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(kmlText,"application/xml");
+        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+        corpPolygons = placemarks.map(pm=>{
+          const coordsNode = pm.getElementsByTagName("coordinates")[0];
+          if(!coordsNode) return null;
+          const ring = coordsNode.textContent.trim().split(/\s+/).map(pair=>pair.split(",").map(Number)).map(([lon,lat])=>[lon,lat]);
+          return { ring };
+        }).filter(Boolean);
+        return corpPolygons;
+      }catch(e){ console.warn("Skipping KML overlay:", e); return []; }
     }
-  }
 
-  function pointInRing(lon, lat, ring) {
-    let inside = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const xi = ring[i][0], yi = ring[i][1];
-      const xj = ring[j][0], yj = ring[j][1];
-      const intersect = ((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
+    function pointInRing(lon, lat, ring){
+      let inside=false;
+      for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+        const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
+        const intersect=((yi>lat)!==(yj>lat)) && (lon<(xj-xi)*(lat-yi)/(yj-yi)+xi);
+        if(intersect) inside=!inside;
+      }
+      return inside;
     }
-    return inside;
-  }
 
-  // Status box helper
-  function showStatus(msg, type) {
-    const el = document.getElementById("status");
-    if (!msg) { el.style.display = "none"; return; }
-    el.style.display = "block";
-    el.innerHTML = msg;
-    el.style.background =
-      type === "error" ? "#f8d7da" :
-      type === "success" ? "#d4edda" : "#e2e3e5";
-    el.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" : type === "success" ? "#28a745" : "#6c757d"}`;
-  }
+    function updateGpsDisplay(){
+      const el = document.getElementById("gpsCoords");
+      el.innerHTML="";
+      const a = document.createElement("a");
+      a.href=`https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
+      a.target="_blank";
+      a.className="gps-link";
+      a.textContent="🗺️ Open Map Location";
+      el.appendChild(a);
+    }
 
-  // Initialize map when DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-    useBrowserLocation();
-  });
-</script>
+    function showStatus(msg,type){
+      const el = document.getElementById("status");
+      if(!msg){ el.style.display="none"; return; }
+      el.style.display="block";
+      el.innerHTML = msg;
+      el.style.background = type==="error" ? "#f8d7da" : type==="success" ? "#d4edda" : "#e2e3e5";
+      el.style.borderLeft = `4px solid ${type==="error" ? "#dc3545" : type==="success" ? "#28a745" : "#6c757d"}`;
+    }
+
+    async function shareToGBA(){
+      if(!currentGPS || !currentImageFile){ alert("Upload image and select location first."); return; }
+      const formData = new FormData();
+      formData.append("image", currentImageFile);
+      formData.append("lat", currentGPS.lat.toFixed(6));
+      formData.append("lon", currentGPS.lon.toFixed(6));
+      formData.append("type", document.getElementById("issueType").value);
+      formData.append("desc", document.getElementById("issueDesc").value);
+
+      const btn = document.getElementById("tweetBtn");
+      btn.disabled = true; btn.classList.add("loading");
+
+      try{
+        const res = await fetch(API_GATEWAY_URL,{ method:"POST", body:formData });
+        const result = await res.json();
+        showStatus("✅ Issue submitted successfully!", "success");
+      }catch(e){
+        showStatus("❌ Submission failed: "+e.message,"error");
+      }finally{
+        btn.disabled=false; btn.classList.remove("loading");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+      initMap();
+      useBrowserLocation();
+    });
+
+  </script>
 
 </body>
-
 </html>
