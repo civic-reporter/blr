@@ -3,192 +3,205 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GBA Reporter</title>
-
-  <!-- Local Leaflet CSS -->
+  <title>Bengaluru Civic Reporter</title>
   <link rel="stylesheet" href="leaflet/leaflet.css" />
-
+  <script src="leaflet/leaflet.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0e1a3a, #18315a);
+      color: white;
+      min-height: 100vh;
     }
-
-    #container {
-      max-width: 900px;
+    .container {
+      max-width: 700px;
       margin: auto;
-      padding: 16px;
+      padding: 20px;
     }
-
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
     #map {
       width: 100%;
-      height: 360px;
-      margin-top: 12px;
-      border-radius: 8px;
-      overflow: hidden;
+      height: 350px;
+      border-radius: 10px;
+      margin-top: 15px;
     }
-
-    #tweetResponseBox {
-      display: none;
-      margin-top: 16px;
-      background: #ffffff;
+    .hidden { display: none; }
+    .tweet-box {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
       border-radius: 8px;
+      border: none;
+      resize: none;
+    }
+    .btn {
+      background: #1da1f2;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn[disabled] { background: #555; cursor: not-allowed; }
+    .status-box {
+      margin-top: 15px;
       padding: 12px;
-      border: 1px solid #ccc;
-    }
-
-    #copyTweetLinkBtn {
-      margin-top: 8px;
-      padding: 8px 14px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      word-break: break-all;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <h2>GBA Civic Reporter</h2>
+  <div class="container">
+    <h1>Civic Reporter</h1>
+    <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
 
-    <input type="file" id="photoInput" accept="image/*" /><br /><br />
+    <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
+      Click or Drop an Image Here
+    </div>
+    <input type="file" id="imageInput" accept="image/*" class="hidden" />
 
-    <div id="map"></div>
+    <div id="map" class="hidden"></div>
 
-    <button id="tweetBtn" style="margin-top: 14px; padding: 10px 18px; font-size: 16px;" disabled>
-      Tweet to GBA
-    </button>
-
-    <div id="tweetResponseBox">
-      <p><strong>Tweet Posted:</strong></p>
-      <input id="tweetURL" type="text" readonly style="width: 100%; padding: 8px;" />
-      <button id="copyTweetLinkBtn">Copy Link</button>
+    <div class="tweet-box hidden" id="tweetContainer">
+      <textarea id="tweetText">@GBAofficial Reporting an issue observed at this location.</textarea>
+      <button id="tweetBtn" class="btn" disabled onclick="shareToGBA()">Tweet to GBA</button>
+      <div id="statusLink" class="status-box hidden"></div>
     </div>
   </div>
 
-  <!-- Local JS Libraries -->
-  <script src="js/piexif.min.js"></script>
-  <script src="leaflet/leaflet.js"></script>
-
   <script>
-    let map, marker, gbaPolygon = null, currentGPS = null;
+    let map, marker, polygon;
+    let gbaBoundary = [];
+    let currentLatLng = null;
+    let mapInitialized = false;
 
-    window.onload = function () {
-      initMap();
-      loadGBAPolygon();
+    document.getElementById('imageInput').addEventListener('change', handleImage);
 
-      document.getElementById("photoInput").addEventListener("change", handlePhotoUpload);
-      document.getElementById("tweetBtn").addEventListener("click", shareToGBA);
-      document.getElementById("copyTweetLinkBtn").addEventListener("click", copyTweetLink);
-    };
+    async function initMap() {
+      if (mapInitialized) return;
+      mapInitialized = true;
 
-    function initMap() {
-      map = L.map("map").setView([12.97, 77.59], 12);
+      map = L.map('map').setView([12.97, 77.59], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "© OpenStreetMap contributors",
-      }).addTo(map);
+      polygon = await loadLocalPolygon();
+      polygon.addTo(map);
 
-      map.on("click", onMapClick);
-    }
-
-    async function loadGBAPolygon() {
-      const res = await fetch("map.txt");
-      const text = await res.text();
-
-      const coords = text.trim().split("
-").map((line) => {
-        const parts = line.split(",");
-        return [parseFloat(parts[1]), parseFloat(parts[0])];
+      map.on('click', function (e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
       });
-
-      gbaPolygon = L.polygon(coords, { color: "blue", weight: 2 }).addTo(map);
-      map.fitBounds(gbaPolygon.getBounds());
     }
 
-    function handlePhotoUpload(event) {
-      const file = event.target.files[0];
+    async function loadLocalPolygon() {
+      const txt = await fetch('map.txt').then(r => r.text());
+      const points = txt.trim().split(/\n/).map(l => {
+        const [lat, lng] = l.split(',').map(Number);
+        return [lat, lng];
+      });
+      gbaBoundary = points;
+      return L.polygon(points, { color: 'yellow' });
+    }
+
+    function setMarker(lat, lng) {
+      currentLatLng = { lat, lng };
+      if (marker) marker.remove();
+      marker = L.marker([lat, lng]).addTo(map);
+
+      if (insideGBABoundary(lat, lng)) {
+        document.getElementById('tweetBtn').disabled = false;
+      } else {
+        document.getElementById('tweetBtn').disabled = true;
+      }
+    }
+
+    function insideGBABoundary(lat, lng) {
+      let x = lng, y = lat;
+      let inside = false;
+      for (let i = 0, j = gbaBoundary.length - 1; i < gbaBoundary.length; j = i++) {
+        let xi = gbaBoundary[i][1], yi = gbaBoundary[i][0];
+        let xj = gbaBoundary[j][1], yj = gbaBoundary[j][0];
+        let intersect = ((yi > y) !== (yj > y)) &&
+          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function handleImage(evt) {
+      const file = evt.target.files[0];
       if (!file) return;
+      initMap();
 
       const reader = new FileReader();
-      reader.onload = function () {
+      reader.onload = function (e) {
         try {
-          const exif = piexif.load(reader.result);
+          const exif = piexif.load(e.target.result);
           const gps = exif.GPS;
-
-          if (gps && gps[piexif.GPSIFD.GPSLatitude] && gps[piexif.GPSIFD.GPSLongitude]) {
-            currentGPS = convertGPSToDecimal(gps);
-            placeMarker(currentGPS.lat, currentGPS.lon);
+          if (gps && gps.GPSLatitude && gps.GPSLongitude) {
+            const lat = convertDMSToDD(gps.GPSLatitude, gps.GPSLatitudeRef);
+            const lng = convertDMSToDD(gps.GPSLongitude, gps.GPSLongitudeRef);
+            map.removeLayer(marker);
+            map.setView([lat, lng], 17);
+            setMarker(lat, lng);
           }
-        } catch (e) {
-          console.log("No EXIF GPS found");
-        }
+        } catch (err) { console.log('No EXIF found'); }
       };
       reader.readAsDataURL(file);
+
+      document.getElementById('map').classList.remove('hidden');
+      document.getElementById('tweetContainer').classList.remove('hidden');
     }
 
-    function convertGPSToDecimal(gps) {
-      function dmsToDD(d, m, s, ref) {
-        let dd = d + m / 60 + s / 3600;
-        if (ref === "S" || ref === "W") dd = dd * -1;
-        return dd;
-      }
-
-      const lat = gps[piexif.GPSIFD.GPSLatitude];
-      const lon = gps[piexif.GPSIFD.GPSLongitude];
-
-      const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
-      const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
-
-      return {
-        lat: dmsToDD(lat[0][0] / lat[0][1], lat[1][0] / lat[1][1], lat[2][0] / lat[2][1], latRef),
-        lon: dmsToDD(lon[0][0] / lon[0][1], lon[1][0] / lon[1][1], lon[2][0] / lon[2][1], lonRef),
-      };
-    }
-
-    function onMapClick(e) {
-      const { lat, lng } = e.latlng;
-      if (isInsideGBA([lat, lng])) {
-        placeMarker(lat, lng);
-      } else {
-        alert("Location must be inside GBA area");
-      }
-    }
-
-    function isInsideGBA(point) {
-      if (!gbaPolygon) return false;
-      return leafletPip.pointInLayer(point, gbaPolygon).length > 0;
-    }
-
-    function placeMarker(lat, lon) {
-      if (marker) map.removeLayer(marker);
-      marker = L.marker([lat, lon]).addTo(map);
-      currentGPS = { lat, lon };
-      document.getElementById("tweetBtn").disabled = false;
+    function convertDMSToDD(DMS, ref) {
+      let d = DMS[0][0] / DMS[0][1];
+      let m = DMS[1][0] / DMS[1][1];
+      let s = DMS[2][0] / DMS[2][1];
+      let dd = d + m / 60 + s / 3600;
+      return ref === 'S' || ref === 'W' ? dd * -1 : dd;
     }
 
     function shareToGBA() {
-      const url =
-        "https://twitter.com/intent/tweet?text=" +
-        encodeURIComponent(`Issue at ${currentGPS.lat}, ${currentGPS.lon}`);
+      const text = encodeURIComponent(document.getElementById('tweetText').value);
+      const url = `https://twitter.com/intent/tweet?text=${text}`;
+      window.open(url, '_blank');
 
-      const w = window.open(url, "_blank");
-
-      document.getElementById("tweetURL").value = url;
-      document.getElementById("tweetResponseBox").style.display = "block";
+      // Simulated callback
+      setTimeout(() => {
+        const fakeStatus = "https://twitter.com/user/status/123456789";
+        const box = document.getElementById('statusLink');
+        box.textContent = fakeStatus;
+        box.classList.remove('hidden');
+      }, 1200);
     }
 
-    function copyTweetLink() {
-      const input = document.getElementById("tweetURL");
-      input.select();
-
-      try {
-        document.execCommand("copy");
-        alert("Copied!");
-      } catch (e) {
-        navigator.clipboard.writeText(input.value);
-        alert("Copied!");
-      }
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      // No initMap here to avoid double initialization
+    });
   </script>
+
+  <script src="piexif.min.js"></script>
 </body>
 </html>
