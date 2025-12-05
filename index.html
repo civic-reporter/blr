@@ -23,7 +23,7 @@
       background: #f8f9fa;
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
     }
     .upload-area {
@@ -33,7 +33,7 @@
       text-align: center;
       cursor: pointer;
       transition: 0.3s;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.9);
     }
     .upload-area:hover {
       background: #f8d7da;
@@ -48,14 +48,14 @@
       max-height: 260px;
       border-radius: 8px;
       margin: 16px 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       display: none;
     }
     #map {
       height: 260px;
       border-radius: 8px;
       margin: 16px 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .info-box {
       background: #fff;
@@ -63,13 +63,13 @@
       border-radius: 8px;
       border-left: 5px solid #dc3545;
       margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .info-box.valid { border-left-color: #28a745; }
     .gps-link {
       display: inline-block;
       background: #007bff;
-      color: white;
+      color: #fff;
       padding: 6px 12px;
       border-radius: 6px;
       text-decoration: none;
@@ -130,7 +130,7 @@
       border-radius: 8px;
       font-size: 14px;
       display: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     h2 { color: #333; text-align: center; margin-bottom: 8px; }
     .header-text { text-align: center; color: #666; margin-bottom: 24px; }
@@ -205,7 +205,7 @@
     let constPolygons = null;
     let mapInitialized = false;
 
-    // Constituency → MLA handle (from MLA_Twitter)
+    // Constituency → MLA handle (usernames without @ are turned into @handle)
     const MLA_HANDLES = {
       "Yeshwanthpur": "STSomashekarMLA",
       "Yelahanka": "SRVishwanathBJP",
@@ -231,7 +231,7 @@
       "Chamrajpet": "BZZameerAhmedK",
       "C. V. Raman Nagar": "SRaghuMLA",
       "Byatarayanapura": "krishnabgowda",
-      "Bommanahalli": "msrbommanahalli",
+      "Bommanahalli": "msrbommanalli",
       "Basavanagudi": "Ravi_LA",
       "Vijayanagar": "mkrishnappa_MLA",
       "BTM Layout": "RLR_BTM",
@@ -240,6 +240,8 @@
 
     const imageInput = document.getElementById("imageInput");
     const dropZone = document.getElementById("dropZone");
+    const tweetBtn = document.getElementById("tweetBtn");
+    const infoBox  = document.getElementById("infoBox");
 
     imageInput.addEventListener("change", handleImage);
     dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
@@ -284,7 +286,7 @@
           const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
           currentGPS = { lat, lon };
           showLocation();
-          return;  // don't override with browser GPS
+          return;  // do not override with browser GPS
         }
       } catch(e) { console.warn("EXIF GPS parse failed:", e); }
       useBrowserLocation(); // only when EXIF has no GPS
@@ -311,15 +313,22 @@
     async function handleMapClick(e){
       const testGPS = { lat:e.latlng.lat, lon:e.latlng.lng };
       const valid = await validateLocationForCoords(testGPS);
-      if(!valid){
+
+      if (!valid) {
+        currentGPS = null;
+        if (marker) { map.removeLayer(marker); marker = null; }
+        tweetBtn.disabled = true;
+        infoBox.classList.remove("valid");
         showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
         return;
       }
+
       currentGPS = testGPS;
       placeMarker();
       updateGpsDisplay();
-      document.getElementById("tweetBtn").disabled = false;
-      document.getElementById("infoBox").classList.add("valid");
+      tweetBtn.disabled = false;
+      infoBox.classList.add("valid");
+      showStatus("✅ Location verified within GBA jurisdiction.", "success");
     }
 
     function showLocation(){
@@ -331,8 +340,8 @@
         map.setView([currentGPS.lat, currentGPS.lon],16);
         placeMarker();
         updateGpsDisplay();
-        document.getElementById("tweetBtn").disabled = false;
-        document.getElementById("infoBox").classList.add("valid");
+        tweetBtn.disabled = false;
+        infoBox.classList.add("valid");
       }
       setTimeout(() => { if (map) map.invalidateSize(); }, 250);
     }
@@ -374,11 +383,16 @@
           if (!valid){
             showStatus("❌ Marker dragged outside GBA jurisdiction! Revert.", "error");
             e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
+            currentGPS = null;
+            tweetBtn.disabled = true;
+            infoBox.classList.remove("valid");
             setTimeout(()=>map.invalidateSize(),100);
             return;
           }
           currentGPS = testGPS;
           updateGpsDisplay();
+          tweetBtn.disabled = false;
+          infoBox.classList.add("valid");
           showStatus("✅ Location updated via drag.", "success");
           setTimeout(()=>map.invalidateSize(),100);
         });
@@ -479,7 +493,7 @@
 
     async function shareToGBA(){
       if(!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) {
-        showStatus("❌ No valid location selected.", "error");
+        showStatus("❌ No valid location selected inside GBA.", "error");
         return;
       }
       if(!currentImageFile){
@@ -503,10 +517,9 @@
       formData.append("constituency", acName);
       formData.append("mlaHandle",    mlaHandle);
 
-      const btn = document.getElementById("tweetBtn");
-      btn.disabled = true; 
-      btn.textContent = "Posting...";
-      btn.classList.add("loading");
+      tweetBtn.disabled = true; 
+      tweetBtn.textContent = "Posting...";
+      tweetBtn.classList.add("loading");
       showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
       try{
@@ -549,9 +562,9 @@
         showStatus("❌ Submission failed: " + e.message,"error");
         console.error("Post error:", e);
       }finally{
-        btn.disabled=false; 
-        btn.classList.remove("loading");
-        btn.textContent = "🚨 Post Issue via @zenc_civic";
+        tweetBtn.disabled=false; 
+        tweetBtn.classList.remove("loading");
+        tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
       }
     }
 
