@@ -258,10 +258,249 @@
     <div id="status"></div>
   </div>
 
-  <!-- Full script -->
-  <script>
-    // Paste the full script I provided earlier here
-  </script>
+<script>
+  const GBA_OFFICE = "@GBA_office";
+  const GBA_CHIEF = "@GBAChiefComm";
+  const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
+  const MAP_KML_URL = "map.txt"; // use relative path
+
+  let currentImageDataUrl = null;
+  let currentGPS = null;
+  let map, marker;
+  let corpPolygons = null;
+  let mapInitialized = false;
+  let currentImageFile = null;
+
+  const imageInput = document.getElementById("imageInput");
+  const dropZone = document.getElementById("dropZone");
+
+  // Image upload events
+  imageInput.addEventListener("change", handleImage);
+  dropZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    if (e.dataTransfer.files.length) {
+      imageInput.files = e.dataTransfer.files;
+      handleImage({ target: { files: e.dataTransfer.files } });
+    }
+  });
+
+  function handleImage(evt) {
+    currentImageDataUrl = null;
+    currentGPS = null;
+    currentImageFile = null;
+    if (marker && map) map.removeLayer(marker);
+    marker = null;
+    document.getElementById("locationInfo").style.display = "none";
+    document.getElementById("mapRestrictionMsg").style.display = "none";
+    document.getElementById("gpsCoords").innerHTML = "";
+    document.getElementById("tweetBtn").disabled = true;
+    showStatus("", "info");
+
+    const file = evt.target.files[0];
+    if (!file) return;
+    currentImageFile = file;
+    if (!file.type || !file.type.startsWith("image/")) {
+      showStatus("Please upload a photo file.", "error");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      currentImageDataUrl = e.target.result;
+      const img = document.getElementById("preview");
+      img.src = currentImageDataUrl;
+      img.style.display = "block";
+      extractGPSFromExif(currentImageDataUrl);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function extractGPSFromExif(dataUrl) {
+    try {
+      const exif = piexif.load(dataUrl);
+      const gps = exif.GPS || {};
+      const latArr = gps[piexif.GPSIFD.GPSLatitude];
+      const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
+      const lonArr = gps[piexif.GPSIFD.GPSLongitude];
+      const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+
+      if (latArr && lonArr && latRef && lonRef) {
+        const latDec = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
+        const lonDec = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
+        currentGPS = { lat: latDec, lon: lonDec };
+        showLocation();
+        return;
+      }
+    } catch (err) {}
+    useBrowserLocation();
+  }
+
+  function isValidNumber(x) {
+    return typeof x === "number" && !Number.isNaN(x) && Number.isFinite(x);
+  }
+
+  function useBrowserLocation() {
+    if (!navigator.geolocation) {
+      initMapFallback();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
+        showLocation();
+      },
+      () => { initMapFallback(); },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    );
+  }
+
+  async function validateLocation() {
+    if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return false;
+    try {
+      const polys = await loadCorpPolygons();
+      return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(currentGPS.lon, currentGPS.lat, p.ring));
+    } catch (e) { return false; }
+  }
+
+  function updateGpsDisplay() {
+    const gpsCoordsEl = document.getElementById("gpsCoords");
+    gpsCoordsEl.innerHTML = '';
+    const mapLink = document.createElement('a');
+    mapLink.href = `https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
+    mapLink.className = 'gps-link';
+    mapLink.target = '_blank';
+    mapLink.textContent = '🗺️ Open Map Location';
+    gpsCoordsEl.appendChild(mapLink);
+  }
+
+  async function handleMapClick(e) {
+    const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
+    const isValid = await validateLocationForCoords(testGPS);
+    if (!isValid) {
+      showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([testGPS.lat, testGPS.lon], { icon: L.divIcon({ className: 'invalid-marker', html: '🚫', iconSize: [20, 20] })}).addTo(map);
+      setTimeout(() => { if(marker) map.removeLayer(marker); marker = null; }, 2000);
+      document.getElementById("tweetBtn").disabled = true;
+      return;
+    }
+    currentGPS = testGPS;
+    placeMarker();
+    updateGpsDisplay();
+    document.getElementById("tweetBtn").disabled = false;
+  }
+
+  async function validateLocationForCoords(testGPS) {
+    if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
+    try {
+      const polys = await loadCorpPolygons();
+      return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(testGPS.lon, testGPS.lat, p.ring));
+    } catch (e) { return false; }
+  }
+
+  function showLocation() {
+    document.getElementById("locationInfo").style.display = "block";
+    document.getElementById("mapRestrictionMsg").style.display = "block";
+
+    if (!mapInitialized) {
+      initMap();
+      mapInitialized = true;
+    }
+
+    if (currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)) {
+      map.setView([currentGPS.lat, currentGPS.lon], 16);
+      placeMarker();
+      updateGpsDisplay();
+    }
+  }
+
+  function initMap() {
+    const mapDiv = document.getElementById("map");
+    mapDiv.style.display = "block";
+
+    map = L.map("map").setView([12.9716, 77.5946], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors"
+    }).addTo(map);
+
+    map.on("click", handleMapClick);
+
+    // Fix Leaflet rendering issues on mobile
+    setTimeout(() => map.invalidateSize(), 200);
+  }
+
+  function initMapFallback() {
+    showStatus("Click on the map to set the exact location within GBA area only.", "info");
+    showLocation();
+  }
+
+  function placeMarker() {
+    if (!map || !currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([currentGPS.lat, currentGPS.lon]).addTo(map).bindPopup("Issue location ✅").openPopup();
+  }
+
+  async function loadCorpPolygons() {
+    if (corpPolygons) return corpPolygons;
+    try {
+      const res = await fetch(MAP_KML_URL);
+      if (!res.ok) throw new Error("map.txt missing");
+      const kmlText = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(kmlText, "application/xml");
+      const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+      corpPolygons = placemarks.map(pm => {
+        const simpleData = pm.getElementsByTagName("SimpleData");
+        let corpName = "";
+        for (const sd of simpleData) if (sd.getAttribute("name") === "NewCorp") corpName = sd.textContent.trim();
+        const coordsNode = pm.getElementsByTagName("coordinates")[0];
+        if (!coordsNode) return null;
+        const ring = coordsNode.textContent.trim().split(/\s+/).map(pair => pair.split(",").map(Number)).map(([lon, lat]) => [lon, lat]);
+        return { corp: corpName, ring };
+      }).filter(Boolean);
+      return corpPolygons;
+    } catch (e) {
+      console.warn("Skipping KML overlay:", e);
+      return [];
+    }
+  }
+
+  function pointInRing(lon, lat, ring) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const xi = ring[i][0], yi = ring[i][1];
+      const xj = ring[j][0], yj = ring[j][1];
+      const intersect = ((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  // Status box helper
+  function showStatus(msg, type) {
+    const el = document.getElementById("status");
+    if (!msg) { el.style.display = "none"; return; }
+    el.style.display = "block";
+    el.innerHTML = msg;
+    el.style.background =
+      type === "error" ? "#f8d7da" :
+      type === "success" ? "#d4edda" : "#e2e3e5";
+    el.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" : type === "success" ? "#28a745" : "#6c757d"}`;
+  }
+
+  // Initialize map when DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    initMap();
+    useBrowserLocation();
+  });
+</script>
+
 </body>
 
 </html>
