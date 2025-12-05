@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GBA Civic Chat – OpenAI</title>
+  <script src="js/piexif.min.js"></script>
+  <!-- ALL STYLES SAME AS BEFORE -->
+</head>
+<body>
+  <!-- SAME HTML STRUCTURE -->
+
+  <script>
+    const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
+    const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; // ← GitHub Actions replaces this
+    
+    // OpenAI LLM function (replace sendToLLM above)
+    async function sendToLLM(userText) {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          max_tokens: 150,
+          messages: [{
+            role: "system",
+            content: "GBA Civic Bot: Guide civic issue reporting. Ask for photo → GPS → issue type (pothole/drainage/streetlight/garbage/road) → description → confirm @zenc_civic tweet. Concise (<80 words)."
+          }, { role: "user", content: userText }]
+        })
+      });
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+    
+    // REST OF CODE IDENTICAL...
+  </script>
+</body>
+</html>
