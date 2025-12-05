@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,7 +60,9 @@
       display: none;
     }
 
+    /* ensure map fills container and has height */
     #map {
+      width: 100%;
       height: 260px;
       border-radius: 8px;
       margin: 16px 0;
@@ -78,9 +79,8 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .info-box.valid {
-      border-left-color: #28a745;
-    }
+    .info-box.valid { border-left-color: #28a745; }
+    .info-box.invalid { border-left-color: #dc3545; }
 
     .gps-link {
       display: inline-block;
@@ -95,10 +95,7 @@
       transition: 0.2s;
     }
 
-    .gps-link:hover {
-      background: #0056b3;
-      transform: scale(1.05);
-    }
+    .gps-link:hover { background: #0056b3; transform: scale(1.05); }
 
     .issue-row {
       display: flex;
@@ -107,8 +104,7 @@
       margin: 10px 0;
     }
 
-    .issue-row select,
-    .issue-row input {
+    .issue-row select, .issue-row input {
       padding: 8px;
       border-radius: 6px;
       border: 2px solid #dc3545;
@@ -130,21 +126,11 @@
       margin-top: 12px;
     }
 
-    button:hover:not(:disabled) {
-      background: #c82333;
-      transform: translateY(-1px);
-    }
+    button:hover:not(:disabled) { background: #c82333; transform: translateY(-1px); }
+    button:disabled { background: #6c757d; cursor: not-allowed; transform: none; }
+    button.loading { background: #6c757d !important; cursor: wait !important; }
 
-    button:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .gba-handle {
-      font-weight: bold;
-      color: #dc3545;
-    }
+    .gba-handle { font-weight: bold; color: #dc3545; }
 
     #status {
       margin-top: 10px;
@@ -153,19 +139,11 @@
       font-size: 14px;
       display: none;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      word-break: break-word;
     }
 
-    h2 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .header-text {
-      text-align: center;
-      color: #666;
-      margin-bottom: 24px;
-    }
+    h2 { color: #333; text-align: center; margin-bottom: 8px; }
+    .header-text { text-align: center; color: #666; margin-bottom: 24px; }
 
     .map-message {
       background: #fff3cd;
@@ -177,11 +155,11 @@
       color: #856404;
     }
 
-    @media(max-width:480px){
-      #map {
-        height: 50vh;
-      }
-    }
+    .tweet-url-box { margin-top: 8px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+    .tweet-url-box input { flex:1; min-width:200px; padding:6px; border-radius:4px; border:1px solid #ccc; font-size:13px; }
+    .tweet-url-box button { width:auto; padding:6px 12px; font-size:13px; }
+
+    @media(max-width:480px){ #map { height: 50vh; } }
   </style>
 
 </head>
@@ -206,6 +184,7 @@
     <div id="mapRestrictionMsg" class="map-message" style="display:none">
       ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
     </div>
+
     <div class="issue-row">
       <select id="issueType">
         <option value="Pothole">Pothole</option>
@@ -217,9 +196,8 @@
       </select>
       <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
     </div>
-    <div><strong>🐦 Posted from:</strong>
-      <span class="gba-handle">@zenc_civic</span>
-    </div>
+
+    <div><strong>🐦 Posted from:</strong> <span class="gba-handle">@zenc_civic</span></div>
     <small>If the marker is wrong, click anywhere on the map to move it <strong>(within GBA area only)</strong>.</small>
   </div>
 
@@ -232,7 +210,7 @@
   </div>
 
   <script>
-    const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
+    const API_GATEWAY_URL = "https://6q4b9p67u7.execute-api.ap-south-1.amazonaws.com/zenc";
     const MAP_KML_URL = "map.txt";
 
     let currentImageFile = null;
@@ -243,6 +221,9 @@
 
     const imageInput = document.getElementById("imageInput");
     const dropZone = document.getElementById("dropZone");
+    const preview = document.getElementById("preview");
+    const tweetBtn = document.getElementById("tweetBtn");
+    const locationInfo = document.getElementById("locationInfo");
 
     imageInput.addEventListener("change", handleImage);
     dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
@@ -250,7 +231,7 @@
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
       dropZone.classList.remove("dragover");
-      if(e.dataTransfer.files.length){
+      if (e.dataTransfer.files.length) {
         imageInput.files = e.dataTransfer.files;
         handleImage({ target: { files: e.dataTransfer.files } });
       }
@@ -262,8 +243,8 @@
       currentImageFile = file;
       const reader = new FileReader();
       reader.onload = e => {
-        document.getElementById("preview").src = e.target.result;
-        document.getElementById("preview").style.display = "block";
+        preview.src = e.target.result;
+        preview.style.display = "block";
         extractGPSFromExif(e.target.result);
       };
       reader.readAsDataURL(file);
@@ -277,152 +258,262 @@
         const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
-        if (latArr && lonArr && latRef && lonRef){
-          currentGPS = { lat: piexif.GPSHelper.dmsRationalToDeg(latArr, latRef), lon: piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef)};
+
+        if (latArr && lonArr && latRef && lonRef) {
+          currentGPS = {
+            lat: piexif.GPSHelper.dmsRationalToDeg(latArr, latRef),
+            lon: piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef)
+          };
           showLocation();
           return;
         }
-      } catch(e){ console.warn(e);}
+      } catch (err) { console.warn(err); }
       useBrowserLocation();
     }
 
-    function isValidNumber(x){ return typeof x==="number" && Number.isFinite(x); }
-
-    function useBrowserLocation(){
-      if(!navigator.geolocation){ initMapFallback(); return; }
-      navigator.geolocation.getCurrentPosition(pos=>{
-        currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
-        showLocation();
-      }, ()=>{ initMapFallback(); }, { enableHighAccuracy:true, timeout:8000, maximumAge:0 });
+    function isValidNumber(x) {
+      return typeof x === "number" && Number.isFinite(x);
     }
 
-    async function validateLocationForCoords(testGPS){
-      if(!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
+    function useBrowserLocation() {
+      if (!navigator.geolocation) { initMapFallback(); return; }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
+          showLocation();
+        },
+        () => { initMapFallback(); },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    }
+
+    async function validateLocation() {
+      if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return false;
       try {
         const polys = await loadCorpPolygons();
-        return polys.some(p => p.ring && p.ring.length>=3 && pointInRing(testGPS.lon,testGPS.lat,p.ring));
-      } catch(e){ return false; }
+        const lon = currentGPS.lon, lat = currentGPS.lat;
+        return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring));
+      } catch (e) { return false; }
     }
 
-    async function handleMapClick(e){
-      const testGPS = { lat:e.latlng.lat, lon:e.latlng.lng };
-      const valid = await validateLocationForCoords(testGPS);
-      if(!valid){
+    async function validateLocationForCoords(testGPS) {
+      if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
+      try {
+        const polys = await loadCorpPolygons();
+        const lon = testGPS.lon, lat = testGPS.lat;
+        return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring));
+      } catch (e) { return false; }
+    }
+
+    async function handleMapClick(e) {
+      const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
+      const isValid = await validateLocationForCoords(testGPS);
+      if (!isValid) {
         showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
+        // show small invalid marker feedback
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([testGPS.lat, testGPS.lon], {
+          icon: L.divIcon({ className: 'invalid-marker', html: '🚫', iconSize: [20,20] })
+        }).addTo(map);
+        setTimeout(()=>{ if(marker) map.removeLayer(marker); marker=null; }, 1400);
         return;
       }
+
       currentGPS = testGPS;
       placeMarker();
       updateGpsDisplay();
-      document.getElementById("tweetBtn").disabled = false;
+
+      const infoBox = document.getElementById("infoBox");
+      infoBox.classList.remove("invalid");
+      infoBox.classList.add("valid");
+      tweetBtn.disabled = false;
+      showStatus("✅ Location verified within GBA jurisdiction.", "success");
     }
 
-    function showLocation(){
-      document.getElementById("locationInfo").style.display = "block";
-      document.getElementById("map").style.display = "block";
-      if(!mapInitialized) initMap();
-      if(currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)){
-        map.setView([currentGPS.lat, currentGPS.lon],16);
+    function showLocation() {
+      // show controls/UI
+      locationInfo.style.display = "block";
+      document.getElementById('map').style.display = "block";
+
+      // initialize map only after it is visible
+      if (!mapInitialized) initMap();
+
+      if (currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)) {
+        // set view then invalidate size after it's visible so tiles draw correctly
+        map.setView([currentGPS.lat, currentGPS.lon], 16);
+        // small delay ensures CSS applied in browser before invalidateSize
+        setTimeout(() => map.invalidateSize(), 200);
         placeMarker();
         updateGpsDisplay();
-        document.getElementById("tweetBtn").disabled = false;
+
+        // only enable button if inside GBA boundary
+        validateLocation().then(isValid => {
+          const infoBox = document.getElementById("infoBox");
+          if (isValid) {
+            infoBox.classList.remove("invalid"); infoBox.classList.add("valid");
+            tweetBtn.disabled = false;
+            showStatus("✅ Location verified within GBA jurisdiction.", "success");
+          } else {
+            infoBox.classList.remove("valid"); infoBox.classList.add("invalid");
+            tweetBtn.disabled = true;
+            showStatus("❌ Reporting only available for locations within GBA jurisdiction.", "error");
+          }
+        });
       }
     }
 
-    function initMap(){
-      map = L.map("map").setView([12.9716,77.5946],12);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{ attribution:"© OpenStreetMap contributors" }).addTo(map);
+    function initMap() {
+      // create map when container is visible to avoid 0x0 tile issue
+      map = L.map("map");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+
       map.on("click", handleMapClick);
-      setTimeout(()=>map.invalidateSize(),200);
       mapInitialized = true;
+
+      // try to preload polygons (non-blocking)
+      loadCorpPolygons().then(polys => {
+        // optional: draw polygon outlines (if you want visual)
+        try {
+          polys.forEach(p => {
+            if (p.ring && p.ring.length) {
+              L.polygon(p.ring.map(pt => [pt[1], pt[0]]), { color: '#f4d03f', weight: 1, fill: false }).addTo(map);
+            }
+          });
+        } catch (e) { /* ignore drawing errors */ }
+      }).catch(()=>{/* ignore */});
     }
 
-    function initMapFallback(){ showStatus("Click on the map to set the exact location within GBA area.", "info"); showLocation(); }
-
-    function placeMarker(){
-      if(marker) map.removeLayer(marker);
-      if(currentGPS && map){
-        marker = L.marker([currentGPS.lat,currentGPS.lon]).addTo(map).bindPopup("Issue location ✅").openPopup();
-      }
+    function initMapFallback() {
+      showStatus("Click on the map to set the exact location within GBA area only.", "info");
+      showLocation();
     }
 
-    async function loadCorpPolygons(){
-      if(corpPolygons) return corpPolygons;
-      try{
+    function placeMarker() {
+      if (!map || !currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) return;
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([currentGPS.lat, currentGPS.lon]).addTo(map).bindPopup("Issue location ✅").openPopup();
+    }
+
+    async function loadCorpPolygons() {
+      if (corpPolygons) return corpPolygons;
+      try {
         const res = await fetch(MAP_KML_URL);
-        if(!res.ok) throw new Error("map.txt missing");
+        if (!res.ok) throw new Error("map.txt missing");
         const kmlText = await res.text();
         const parser = new DOMParser();
-        const xml = parser.parseFromString(kmlText,"application/xml");
+        const xml = parser.parseFromString(kmlText, "application/xml");
+        // Expect KML <coordinates> lon,lat ... (space separated)
         const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
-        corpPolygons = placemarks.map(pm=>{
+        corpPolygons = placemarks.map(pm => {
           const coordsNode = pm.getElementsByTagName("coordinates")[0];
-          if(!coordsNode) return null;
-          const ring = coordsNode.textContent.trim().split(/\s+/).map(pair=>pair.split(",").map(Number)).map(([lon,lat])=>[lon,lat]);
+          if (!coordsNode) return null;
+          const coordsText = coordsNode.textContent.trim();
+          const ring = coordsText
+            .split(/\s+/)
+            .map(pair => pair.split(",").map(Number))
+            .map(([lon, lat]) => [lon, lat]);
           return { ring };
         }).filter(Boolean);
         return corpPolygons;
-      }catch(e){ console.warn("Skipping KML overlay:", e); return []; }
+      } catch (e) {
+        console.warn("Skipping KML overlay:", e);
+        return [];
+      }
     }
 
     function pointInRing(lon, lat, ring){
-      let inside=false;
-      for(let i=0,j=ring.length-1;i<ring.length;j=i++){
-        const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
-        const intersect=((yi>lat)!==(yj>lat)) && (lon<(xj-xi)*(lat-yi)/(yj-yi)+xi);
-        if(intersect) inside=!inside;
+      // standard winding raycast
+      let inside = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0], yi = ring[i][1];
+        const xj = ring[j][0], yj = ring[j][1];
+        const intersect = ((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
       }
       return inside;
     }
 
     function updateGpsDisplay(){
       const el = document.getElementById("gpsCoords");
-      el.innerHTML="";
+      el.innerHTML = '';
+      if (!currentGPS) return;
       const a = document.createElement("a");
-      a.href=`https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
-      a.target="_blank";
-      a.className="gps-link";
-      a.textContent="🗺️ Open Map Location";
+      a.href = `https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
+      a.target = "_blank";
+      a.className = "gps-link";
+      a.textContent = "🗺️ Open Map Location";
       el.appendChild(a);
     }
 
     function showStatus(msg,type){
       const el = document.getElementById("status");
-      if(!msg){ el.style.display="none"; return; }
-      el.style.display="block";
+      if(!msg){ el.style.display = "none"; return; }
+      el.style.display = "block";
       el.innerHTML = msg;
-      el.style.background = type==="error" ? "#f8d7da" : type==="success" ? "#d4edda" : "#e2e3e5";
-      el.style.borderLeft = `4px solid ${type==="error" ? "#dc3545" : type==="success" ? "#28a745" : "#6c757d"}`;
+      el.style.background = type === "error" ? "#f8d7da" : type === "success" ? "#d4edda" : "#e2e3e5";
+      el.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" : type === "success" ? "#28a745" : "#6c757d"}`;
     }
 
     async function shareToGBA(){
-      if(!currentGPS || !currentImageFile){ alert("Upload image and select location first."); return; }
-      const formData = new FormData();
-      formData.append("image", currentImageFile);
-      formData.append("lat", currentGPS.lat.toFixed(6));
-      formData.append("lon", currentGPS.lon.toFixed(6));
-      formData.append("type", document.getElementById("issueType").value);
-      formData.append("desc", document.getElementById("issueDesc").value);
+      if (!currentGPS || !currentImageFile) { showStatus("Upload image and select a valid location first.", "error"); return; }
 
-      const btn = document.getElementById("tweetBtn");
-      btn.disabled = true; btn.classList.add("loading");
+      // ensure inside boundary
+      const ok = await validateLocation();
+      if (!ok) { showStatus("Selected location is outside GBA boundary.", "error"); return; }
 
-      try{
-        const res = await fetch(API_GATEWAY_URL,{ method:"POST", body:formData });
-        const result = await res.json();
-        showStatus("✅ Issue submitted successfully!", "success");
-      }catch(e){
-        showStatus("❌ Submission failed: "+e.message,"error");
-      }finally{
-        btn.disabled=false; btn.classList.remove("loading");
+      const issueType = document.getElementById("issueType").value;
+      const desc = document.getElementById("issueDesc").value.trim();
+
+      const btn = tweetBtn;
+      btn.disabled = true; btn.classList.add("loading"); btn.textContent = "⏳ Posting via @zenc_civic..."; showStatus("📤 Uploading issue...", "info");
+
+      try {
+        const formData = new FormData();
+        formData.append("image", currentImageFile);
+        formData.append("lat", currentGPS.lat.toFixed(6));
+        formData.append("lon", currentGPS.lon.toFixed(6));
+        formData.append("issueType", issueType);
+        formData.append("description", desc);
+
+        const res = await fetch(API_GATEWAY_URL, { method: "POST", body: formData });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // display tweet link and copy button
+          const url = data.tweetUrl || "";
+          const statusEl = document.getElementById("status");
+          statusEl.style.display = "block";
+          statusEl.style.background = "#d4edda";
+          statusEl.style.borderLeft = "4px solid #28a745";
+          statusEl.innerHTML = `✅ Tweet posted successfully from @zenc_civic! ${url ? `<div class=\"tweet-url-box\"><input id=\"tweetUrl\" value=\"${url}\" readonly><button type=\"button\" onclick=\"copyTweetUrl()\">Copy tweet link</button></div>` : ""}`;
+          document.getElementById("issueType").value = "Pothole";
+          document.getElementById("issueDesc").value = "";
+        } else {
+          showStatus(`❌ Failed to post: ${data.message || res.status}`, "error");
+        }
+      } catch (err) {
+        showStatus(`❌ Network error: ${err.message}`, "error");
+      } finally {
+        btn.disabled = false; btn.classList.remove("loading"); btn.textContent = "🚨 Post Issue via @zenc_civic";
       }
     }
 
-    document.addEventListener("DOMContentLoaded", ()=>{
-      initMap();
+    function copyTweetUrl(){
+      const input = document.getElementById("tweetUrl");
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      showStatus("✅ Tweet link copied to clipboard.", "success");
+      setTimeout(()=>showStatus("", ""), 2500);
+    }
+
+    // On page ready: only try to get browser location (don't init leaflet in a hidden container)
+    document.addEventListener("DOMContentLoaded", () => {
       useBrowserLocation();
     });
-
   </script>
 
 </body>
