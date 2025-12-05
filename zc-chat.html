@@ -16,7 +16,7 @@
         #map { 
             height: 300px; width: 100%; margin-bottom: 20px; 
             border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: #f8f9fa; /* Fallback background */
+            background: #f8f9fa;
         }
         .chat-container, .report-section { 
             background: white; padding: 20px; border-radius: 12px; 
@@ -58,6 +58,7 @@
         .photo-btn:hover { background: #218838; }
         .constituency-info { background: #f0f8ff; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 14px; }
         .status { color: #666; font-size: 12px; margin-top: 5px; }
+        .error-box { background: #ffebee; border: 1px solid #f44336; color: #c62828; padding: 15px; border-radius: 8px; margin: 10px 0; }
         @media (max-width: 600px) {
             body { padding: 10px; }
             .chat-messages { height: 300px; }
@@ -68,7 +69,8 @@
 <body>
     <h1>🗺️ Civic Issue Reporter + AI Chat</h1>
     
-    <div id="map" class="status">Loading map...</div>
+    <div id="statusBox" class="error-box" style="display:none;"></div>
+    <div id="map" style="background: #f0f0f0; display:flex; align-items:center; justify-content:center; color:#666;">Loading map...</div>
     <div class="coords-display" id="coordsDisplay">Initializing...</div>
 
     <div class="report-section">
@@ -102,62 +104,63 @@
 
     <div class="chat-container">
         <h3>💬 AI Chat Assistant</h3>
-        <div id="chatMessages" class="chat-messages"></div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message bot">Initializing chat... Type a message to test!</div>
+        </div>
         <div class="chat-input">
             <input type="text" id="chatInput" placeholder="Ask about issues, locations, MLAs... (Enter to send)">
             <button id="sendBtn" onclick="sendChat()">Send</button>
         </div>
     </div>
 
-    <!-- Scripts with error handling & fallbacks -->
-    <script>
-        console.log('Loading scripts...');
-        
-        // Check if leaflet files exist
-        function checkLeafletFiles() {
-            const link = document.querySelector('link[href="leaflet/leaflet.css"]');
-            const leafletLoaded = typeof L !== 'undefined';
-            const mapDiv = document.getElementById('map');
-            
-            if (!leafletLoaded) {
-                mapDiv.innerHTML = '❌ <strong>leaflet.js not found</strong><br>Check: leaflet/leaflet.js exists?<br><a href="https://leafletjs.com/download.html" target="_blank">Download here</a>';
-                mapDiv.style.color = '#d32f2f';
-                return false;
-            }
-            return true;
-        }
+    <!-- LOCAL DEPENDENCIES with strict error checking -->
+    <script src="leaflet/leaflet.js" 
+            onerror="showError('❌ leaflet/leaflet.js missing! Download from https://leafletjs.com/download.html', true)"
+            onload="console.log('✅ leaflet.js loaded')">
     </script>
     
-    <script src="leaflet/leaflet.js" onerror="console.error('Leaflet failed to load'); document.getElementById('map').innerHTML='❌ Leaflet.js failed to load';"></script>
-    <script src="js/piexif.min.js" onerror="console.warn('piexif.min.js failed to load (GPS extraction disabled)')"></script>
-    
+    <script src="js/piexif.min.js" 
+            onerror="console.warn('⚠️ piexif.min.js missing - GPS extraction disabled')"
+            onload="console.log('✅ piexif.min.js loaded')">
+    </script>
+
     <script>
-        // Wait for Leaflet to load
-        if (typeof L === 'undefined') {
-            setTimeout(() => {
-                if (typeof L === 'undefined') {
-                    document.getElementById('map').innerHTML = `
-                        ❌ Map failed to load<br>
-                        <small>1. Check leaflet/leaflet.js exists<br>
-                        2. Check leaflet/leaflet.css exists<br>
-                        3. Open browser console (F12) for errors</small>
-                    `;
-                    document.getElementById('map').style.color = '#d32f2f';
-                    document.getElementById('map').style.padding = '20px';
-                    document.getElementById('map').style.textAlign = 'center';
+        // === ERROR HANDLING ===
+        function showError(message, critical = false) {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.innerHTML = message;
+            statusBox.style.display = 'block';
+            if (critical) {
+                document.body.style.opacity = '0.7';
+            }
+            console.error(message);
+        }
+
+        // Wait for Leaflet (critical dependency)
+        function waitForLeaflet(callback, maxWait = 5000) {
+            let waited = 0;
+            const check = () => {
+                if (typeof L !== 'undefined') {
+                    callback();
+                } else if (waited < maxWait) {
+                    waited += 100;
+                    setTimeout(check, 100);
+                } else {
+                    showError('❌ Leaflet failed to load after 5s. Check leaflet/leaflet.js file.', true);
                 }
-            }, 1000);
+            };
+            check();
         }
 
         // === MAP SETUP ===
-        let map, marker, currentLat, currentLon;
+        let map, marker, currentLat = 12.9716, currentLon = 77.5946;
         let constituencyData = {};
-        let piexifAvailable = typeof piexif !== 'undefined';
+        let piexifAvailable = false;
 
         async function loadConstituencyData() {
             try {
                 const response = await fetch('blr_const.txt');
-                if (!response.ok) throw new Error('File not found');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const kmlText = await response.text();
                 const parser = new DOMParser();
                 const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
@@ -169,175 +172,148 @@
                         if (acName) constituencyData[acName] = true;
                     }
                 });
-                console.log(`Loaded ${Object.keys(constituencyData).length} constituencies`);
+                console.log(`✅ Loaded ${Object.keys(constituencyData).length} constituencies`);
             } catch (e) {
-                console.warn('Could not load blr_const.txt:', e);
+                console.warn('⚠️ blr_const.txt not found:', e.message);
             }
         }
 
         function initMap(lat = 12.9716, lon = 77.5946) {
             try {
                 map = L.map('map').setView([lat, lon], 12);
-                
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
-
                 marker = L.marker([lat, lon]).addTo(map);
                 currentLat = lat;
                 currentLon = lon;
                 updateCoordsDisplay();
                 checkConstituency();
-                document.getElementById('map').classList.remove('status');
+                document.getElementById('map').style.background = '';
                 console.log('✅ Map initialized');
             } catch (e) {
-                console.error('Map init failed:', e);
-                document.getElementById('map').innerHTML = '❌ Map initialization failed';
+                showError('❌ Map init failed: ' + e.message);
             }
         }
 
         function updateMapLocation(lat, lon) {
             if (!map || !marker) return;
-            try {
-                const pos = [lat, lon];
-                map.setView(pos, 15);
-                marker.setLatLng(pos);
-                currentLat = lat;
-                currentLon = lon;
-                updateCoordsDisplay();
-                checkConstituency();
-            } catch (e) {
-                console.error('Map update failed:', e);
-            }
+            map.setView([lat, lon], 15);
+            marker.setLatLng([lat, lon]);
+            currentLat = lat;
+            currentLon = lon;
+            updateCoordsDisplay();
+            checkConstituency();
         }
 
         function updateCoordsDisplay() {
             document.getElementById('coordsDisplay').textContent = 
-                `📍 Current: ${currentLat?.toFixed(6) || 'N/A'}, ${currentLon?.toFixed(6) || 'N/A'}`;
+                `📍 Lat: ${currentLat.toFixed(6)}, Lon: ${currentLon.toFixed(6)}`;
         }
 
         function checkConstituency() {
-            const constituencyInfo = document.getElementById('constituencyInfo');
+            const info = document.getElementById('constituencyInfo');
             if (currentLat && currentLon && Object.keys(constituencyData).length) {
                 const mockConst = currentLon > 77.6 ? 'Yelahanka' : 'Mahadevapura';
                 if (constituencyData[mockConst]) {
-                    constituencyInfo.textContent = `📍 Detected: ${mockConst} Constituency`;
-                    constituencyInfo.style.display = 'block';
+                    info.textContent = `📍 Detected: ${mockConst}`;
+                    info.style.display = 'block';
                 }
             }
         }
 
-        // Initialize everything
-        async function initializeApp() {
-            document.getElementById('coordsDisplay').textContent = 'Loading constituency data...';
-            await loadConstituencyData();
+        // === MAIN INIT ===
+        waitForLeaflet(() => {
+            piexifAvailable = typeof piexif !== 'undefined';
+            console.log('piexif available:', piexifAvailable);
             
-            document.getElementById('coordsDisplay').textContent = 'Getting your location...';
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        document.getElementById('coordsDisplay').textContent = 'Map ready!';
-                        updateMapLocation(pos.coords.latitude, pos.coords.longitude);
-                    },
-                    (error) => {
-                        console.warn('Geolocation failed:', error);
-                        document.getElementById('coordsDisplay').textContent = 'Using default location (Bangalore)';
-                        initMap();
-                    }
-                );
-            } else {
-                document.getElementById('coordsDisplay').textContent = 'Using default location (Bangalore)';
-                initMap();
-            }
-        }
-
-        // Start app when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
+            loadConstituencyData().then(() => {
+                document.getElementById('coordsDisplay').textContent = 'Getting location...';
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => updateMapLocation(pos.coords.latitude, pos.coords.longitude),
+                        () => initMap()
+                    );
+                } else {
+                    initMap();
+                }
+            });
+        });
 
         // === PHOTO HANDLING ===
         document.getElementById('photoInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
-            const photoStatus = document.getElementById('photoStatus');
+            const status = document.getElementById('photoStatus');
             if (file) {
-                photoStatus.textContent = 'Processing photo...';
+                status.textContent = 'Loading photo...';
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    const img = document.getElementById('photoPreview');
-                    img.src = ev.target.result;
-                    img.style.display = 'block';
-                    photoStatus.textContent = 'Photo loaded ✓';
+                    document.getElementById('photoPreview').src = ev.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                    status.textContent = 'Photo ready ✓';
                     
-                    // Try GPS extraction if piexif available
                     if (piexifAvailable) {
                         try {
                             const exifObj = piexif.load(ev.target.result);
-                            if (exifObj['GPS'] && exifObj['GPS'][2] && exifObj['GPS'][4] && exifObj['GPS'][6] && exifObj['GPS'][8]) {
-                                const lat = piexif.GPSHelper.gpsToDecimalDegrees(exifObj['GPS'][2], exifObj['GPS'][4]);
-                                const lon = piexif.GPSHelper.gpsToDecimalDegrees(exifObj['GPS'][6], exifObj['GPS'][8]);
-                                if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+                            if (exifObj.GPS && exifObj.GPS[2] && exifObj.GPS[4] && exifObj.GPS[6] && exifObj.GPS[8]) {
+                                const lat = piexif.GPSHelper.gpsToDecimalDegrees(exifObj.GPS[2], exifObj.GPS[4]);
+                                const lon = piexif.GPSHelper.gpsToDecimalDegrees(exifObj.GPS[6], exifObj.GPS[8]);
+                                if (!isNaN(lat) && !isNaN(lon)) {
                                     updateMapLocation(lat, lon);
-                                    photoStatus.textContent = `Photo GPS loaded: ${lat.toFixed(6)}, ${lon.toFixed(6)} ✓`;
-                                    return;
+                                    status.textContent = `GPS loaded: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
                                 }
                             }
-                        } catch (exifError) {
-                            console.log('No GPS in photo');
+                        } catch(e) {
+                            status.textContent = 'Photo ready (no GPS)';
                         }
                     }
-                    photoStatus.textContent = 'Photo loaded (no GPS data)';
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Rest of the code (report, chat) remains the same...
+        // === REPORT ===
         async function submitReport(event) {
-            // [Previous submitReport code - unchanged]
             const photoFile = document.getElementById('photoInput').files[0];
-            if (!photoFile) return alert('Please 📷 capture a photo first!');
-            if (!currentLat || !currentLon) return alert('Please wait for location to load!');
-            
+            if (!photoFile) return alert('📷 Take photo first!');
+            if (!currentLat || !currentLon) return alert('⏳ Wait for location!');
+
             const formData = new FormData();
             formData.append('image', photoFile);
             formData.append('lat', currentLat);
             formData.append('lon', currentLon);
             formData.append('issueType', document.getElementById('issueType').value);
-            formData.append('description', document.getElementById('description').value || 'Issue reported via chat');
+            formData.append('description', document.getElementById('description').value || 'Issue via chat');
             formData.append('corpHandle', 'blr_corp');
             formData.append('corpName', 'Bengaluru City Corporation');
             formData.append('constituency', Object.keys(constituencyData)[0] || 'auto');
             formData.append('mlaHandle', 'auto');
 
             const btn = event.target;
+            const originalText = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Sending...';
-            
+
             try {
                 const response = await fetch('/zenc', { method: 'POST', body: formData });
                 if (response.ok) {
-                    alert('✅ Issue reported successfully!');
+                    alert('✅ Reported!');
                     document.getElementById('photoInput').value = '';
                     document.getElementById('photoPreview').style.display = 'none';
                     document.getElementById('description').value = '';
-                    document.getElementById('constituencyInfo').style.display = 'none';
-                    document.getElementById('photoStatus').textContent = '';
                 } else {
                     alert('❌ Report failed');
                 }
-            } catch (error) {
-                alert('❌ Network error: ' + error.message);
+            } catch(e) {
+                alert('❌ Network error: ' + e.message);
             } finally {
                 btn.disabled = false;
-                btn.textContent = '🚨 Submit Report';
+                btn.textContent = originalText;
             }
         }
 
-        // Chat functions (unchanged from previous)
+        // === CHAT - ROBUST ===
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -345,16 +321,27 @@
         async function sendChat() {
             const message = chatInput.value.trim();
             if (!message) return;
+
             addMessage('user', message);
             chatInput.value = '';
             sendBtn.disabled = true;
-            sendBtn.textContent = 'Sending...';
+            sendBtn.textContent = 'AI...';
+
+            const typingMsg = addMessage('bot', '🤔 AI thinking...');
+
             try {
                 const response = await fetch(`/chat?prompt=${encodeURIComponent(message)}`);
+                typingMsg.remove();
+                
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+                
                 const data = await response.json();
-                addMessage('bot', data.response || data.answer || 'No response');
-            } catch (error) {
-                addMessage('bot', '❌ Chat service unavailable');
+                const reply = data.response || data.answer || data.message || JSON.stringify(data);
+                addMessage('bot', reply);
+            } catch(e) {
+                typingMsg.remove();
+                addMessage('bot', `❌ Chat failed: ${e.message}`);
+                console.error('Chat error:', e);
             } finally {
                 sendBtn.disabled = false;
                 sendBtn.textContent = 'Send';
@@ -365,16 +352,25 @@
         function addMessage(sender, text) {
             const div = document.createElement('div');
             div.className = `message ${sender}`;
-            div.innerHTML = `<strong>${sender === 'user' ? 'You' : 'AI'}:</strong> ${text}`;
+            div.innerHTML = `<strong>${sender === 'user' ? 'You' : 'AI'}:</strong> ${text.replace(/\n/g, '<br>')}`;
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            return div;
         }
 
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChat();
+            }
+        });
+
         chatInput.addEventListener('input', (e) => {
             const match = e.target.value.match(/(\d+\.?\d*)\s*[,;]\s*(\d+\.?\d*)/);
             if (match) updateMapLocation(parseFloat(match[1]), parseFloat(match[2]));
         });
+
+        console.log('✅ Local dependencies ready - check F12 console');
     </script>
 </body>
 </html>
