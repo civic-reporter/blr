@@ -194,7 +194,6 @@
   </div>
 
   <script>
-    // SAME API as working S3 version
     const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
     const MAP_KML_URL = "map.txt";
 
@@ -236,6 +235,7 @@
       reader.readAsDataURL(file);
     }
 
+    // EXIF first; only if EXIF missing → fallback to browser GPS
     function extractGPSFromExif(dataUrl) {
       try {
         const exif = piexif.load(dataUrl);
@@ -249,10 +249,10 @@
           const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
           currentGPS = { lat, lon };
           showLocation();
-          return;
+          return;              // IMPORTANT: do NOT call browser GPS after this
         }
       } catch(e){ console.warn("EXIF GPS parse failed:", e); }
-      useBrowserLocation();
+      useBrowserLocation();    // Only used when EXIF has no GPS
     }
 
     function isValidNumber(x){ return typeof x==="number" && Number.isFinite(x); }
@@ -278,7 +278,6 @@
       const valid = await validateLocationForCoords(testGPS);
       if(!valid){
         showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
-        document.getElementById("tweetBtn").disabled = false; // allow manual override like S3 code if you prefer
         return;
       }
       currentGPS = testGPS;
@@ -414,7 +413,7 @@
       const issueType = document.getElementById("issueType").value;
       const desc      = document.getElementById("issueDesc").value.trim();
 
-      // For now send empty corp fields (Lambda already handles this as in S3 version)
+      // Corp fields optional; Lambda already handles empty
       const formData = new FormData();
       formData.append("image",       currentImageFile);
       formData.append("lat",         currentGPS.lat.toFixed(6));
@@ -473,9 +472,9 @@
       }
     }
 
+    // IMPORTANT: only init map; do NOT call useBrowserLocation here
     document.addEventListener("DOMContentLoaded", ()=>{
       initMap();
-      useBrowserLocation();
     });
   </script>
 </body>
