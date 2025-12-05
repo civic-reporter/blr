@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
 
-  <!-- EXIF + Map libs -->
+  <!-- Local EXIF + Leaflet -->
   <script src="js/piexif.min.js"></script>
   <link rel="stylesheet" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet.js"></script>
@@ -19,7 +19,6 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
     }
-
     .container {
       background: #f8f9fa;
       border-radius: 12px;
@@ -27,7 +26,6 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
     }
-
     .upload-area {
       border: 3px dashed #dc3545;
       border-radius: 12px;
@@ -37,17 +35,14 @@
       transition: 0.3s;
       background: rgba(255, 255, 255, 0.9);
     }
-
     .upload-area:hover {
       background: #f8d7da;
       border-color: #c82333;
     }
-
     .upload-area.dragover {
       border-color: #28a745;
       background: #d4edda;
     }
-
     #preview {
       max-width: 100%;
       max-height: 260px;
@@ -56,14 +51,12 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       display: none;
     }
-
     #map {
       height: 260px;
       border-radius: 8px;
       margin: 16px 0;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-
     .info-box {
       background: #fff;
       padding: 16px;
@@ -72,11 +65,7 @@
       margin-top: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .info-box.valid {
-      border-left-color: #28a745;
-    }
-
+    .info-box.valid { border-left-color: #28a745; }
     .gps-link {
       display: inline-block;
       background: #007bff;
@@ -89,19 +78,13 @@
       margin-left: 8px;
       transition: 0.2s;
     }
-
-    .gps-link:hover {
-      background: #0056b3;
-      transform: scale(1.05);
-    }
-
+    .gps-link:hover { background: #0056b3; transform: scale(1.05); }
     .issue-row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin: 10px 0;
     }
-
     .issue-row select,
     .issue-row input {
       padding: 8px;
@@ -110,7 +93,6 @@
       flex: 1;
       min-width: 150px;
     }
-
     button {
       background: #dc3545;
       color: #fff;
@@ -124,18 +106,15 @@
       width: 100%;
       margin-top: 12px;
     }
-
     button:hover:not(:disabled) {
       background: #c82333;
       transform: translateY(-1px);
     }
-
     button:disabled {
       background: #6c757d;
       cursor: not-allowed;
       transform: none;
     }
-
     .copy-btn {
       background: #28a745 !important;
       width: auto !important;
@@ -143,16 +122,8 @@
       margin-top: 8px !important;
       font-size: 14px !important;
     }
-
-    .copy-btn:hover {
-      background: #218838 !important;
-    }
-
-    .gba-handle {
-      font-weight: bold;
-      color: #dc3545;
-    }
-
+    .copy-btn:hover { background: #218838 !important; }
+    .gba-handle { font-weight: bold; color: #dc3545; }
     #status {
       margin-top: 10px;
       padding: 12px;
@@ -161,19 +132,8 @@
       display: none;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
-    h2 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .header-text {
-      text-align: center;
-      color: #666;
-      margin-bottom: 24px;
-    }
-
+    h2 { color: #333; text-align: center; margin-bottom: 8px; }
+    .header-text { text-align: center; color: #666; margin-bottom: 24px; }
     .map-message {
       background: #fff3cd;
       border: 1px solid #ffeaa7;
@@ -183,24 +143,10 @@
       font-size: 13px;
       color: #856404;
     }
-
-    .loading {
-      position: relative;
-    }
-
-    .loading::after {
-      content: " ⏳";
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-
+    .loading::after { content: " ⏳"; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
     @media(max-width:480px){
-      #map {
-        height: 50vh;
-      }
+      #map { height: 50vh; }
     }
   </style>
 </head>
@@ -294,10 +240,9 @@
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
         if (latArr && lonArr && latRef && lonRef){
-          currentGPS = { 
-            lat: piexif.GPSHelper.dmsRationalToDeg(latArr, latRef), 
-            lon: piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef)
-          };
+          const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
+          const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
+          currentGPS = { lat, lon };
           showLocation();
           return;
         }
@@ -340,10 +285,7 @@
     function showLocation(){
       document.getElementById("locationInfo").style.display = "block";
       document.getElementById("map").style.display = "block";
-      
-      // Always init map first
       initMap();
-      
       if(currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)){
         map.setView([currentGPS.lat, currentGPS.lon],16);
         placeMarker();
@@ -351,11 +293,7 @@
         document.getElementById("tweetBtn").disabled = false;
         document.getElementById("infoBox").classList.add("valid");
       }
-      
-      // Critical: Fix map size after showing (hidden div issue)
-      setTimeout(() => {
-        if (map) map.invalidateSize();
-      }, 250);
+      setTimeout(() => { if (map) map.invalidateSize(); }, 250);
     }
 
     function initMap(){
@@ -384,20 +322,17 @@
         .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
         .openPopup();
         
-        // Handle marker drag with validation
         marker.on('dragend', async function(e) {
           const newPos = e.target.getLatLng();
-          currentGPS = { lat: newPos.lat, lon: newPos.lng };
-          
-          const valid = await validateLocationForCoords(currentGPS);
+          const testGPS = { lat: newPos.lat, lon: newPos.lng };
+          const valid = await validateLocationForCoords(testGPS);
           if (!valid) {
             showStatus("❌ Marker dragged outside GBA jurisdiction! Revert.", "error");
-            // Revert to last valid position
             e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
             setTimeout(() => map.invalidateSize(), 100);
             return;
           }
-          
+          currentGPS = testGPS;
           updateGpsDisplay();
           showStatus("✅ Location updated via drag.", "success");
           setTimeout(() => map.invalidateSize(), 100);
@@ -417,7 +352,10 @@
         corpPolygons = placemarks.map(pm=>{
           const coordsNode = pm.getElementsByTagName("coordinates")[0];
           if(!coordsNode) return null;
-          const ring = coordsNode.textContent.trim().split(/\s+/).map(pair=>pair.split(",").map(Number)).map(([lon,lat])=>[lon,lat]);
+          const ring = coordsNode.textContent.trim()
+            .split(/\s+/)
+            .map(pair=>pair.split(",").map(Number))
+            .map(([lon,lat])=>[lon,lat]);
           return { ring };
         }).filter(Boolean);
         return corpPolygons;
@@ -448,18 +386,13 @@
       el.appendChild(a);
     }
 
-    function showStatus(msg, type){
+    function showStatus(msg,type){
       const el = document.getElementById("status");
       if(!msg){ el.style.display="none"; return; }
-      el.innerHTML = msg;
       el.style.display="block";
+      el.innerHTML = msg;
       el.style.background = type==="error" ? "#f8d7da" : type==="success" ? "#d4edda" : "#e2e3e5";
       el.style.borderLeft = `4px solid ${type==="error" ? "#dc3545" : type==="success" ? "#28a745" : "#6c757d"}`;
-      
-      // Auto-hide success messages after 5s
-      if(type === "success") {
-        setTimeout(() => showStatus(null), 5000);
-      }
     }
 
     async function shareToGBA(){
@@ -467,7 +400,6 @@
         alert("Upload image and select location first."); 
         return; 
       }
-      
       const formData = new FormData();
       formData.append("image", currentImageFile);
       formData.append("lat", currentGPS.lat.toFixed(6));
@@ -481,21 +413,14 @@
       btn.classList.add("loading");
 
       try{
-        const res = await fetch(API_GATEWAY_URL, { 
-          method:"POST", 
-          body:formData 
-        });
-        
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-        
-        const result = await res.json();
-        
+        const res = await fetch(API_GATEWAY_URL,{ method:"POST", body:formData });
+        const raw = await res.text();
+        let result;
+        try { result = JSON.parse(raw); }
+        catch(e){ throw new Error("Bad JSON from API: " + raw.slice(0,200)); }
+
         if (result.success && result.tweet_url) {
           showStatus(`✅ Issue posted! <a href="${result.tweet_url}" target="_blank">${result.tweet_url}</a>`, "success");
-          
-          // Add copy button
           const copyBtn = document.createElement("button");
           copyBtn.textContent = "📋 Copy Tweet URL";
           copyBtn.className = "copy-btn";
@@ -506,22 +431,19 @@
             });
           };
           document.getElementById("status").appendChild(copyBtn);
-          
         } else {
-          showStatus(`❌ ${result.message || "Submission failed"}`, "error");
+          showStatus(`❌ ${result.message || result.error || "Submission failed"}`, "error");
         }
-        
       }catch(e){
-        showStatus(`❌ Network error: ${e.message}`, "error");
+        showStatus("❌ Submission failed: " + e.message,"error");
         console.error("Post error:", e);
       }finally{
-        btn.disabled = false; 
+        btn.disabled=false; 
         btn.classList.remove("loading");
         btn.textContent = "🚨 Post Issue via @zenc_civic";
       }
     }
 
-    // Initialize on load
     document.addEventListener("DOMContentLoaded", ()=>{
       initMap();
       useBrowserLocation();
