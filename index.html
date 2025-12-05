@@ -194,7 +194,8 @@
   </div>
 
   <script>
-    const API_GATEWAY_URL = "https://6q4b9p67u7.execute-api.ap-south-1.amazonaws.com/zenc-gba";
+    // SAME API as working S3 version
+    const API_GATEWAY_URL = "https://6q4b9p67u7.execute-api.ap-south-1.amazonaws.com//zenc-gba";
     const MAP_KML_URL = "map.txt";
 
     let currentImageFile = null;
@@ -220,8 +221,12 @@
 
     function handleImage(evt) {
       const file = evt.target.files[0];
-      if (!file || !file.type.startsWith("image/")) return;
+      if (!file || !file.type.startsWith("image/")) {
+        showStatus("❌ Please upload a photo file.", "error");
+        return;
+      }
       currentImageFile = file;
+
       const reader = new FileReader();
       reader.onload = e => {
         document.getElementById("preview").src = e.target.result;
@@ -273,6 +278,7 @@
       const valid = await validateLocationForCoords(testGPS);
       if(!valid){
         showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
+        document.getElementById("tweetBtn").disabled = false; // allow manual override like S3 code if you prefer
         return;
       }
       currentGPS = testGPS;
@@ -284,6 +290,7 @@
 
     function showLocation(){
       document.getElementById("locationInfo").style.display = "block";
+      document.getElementById("mapRestrictionMsg").style.display = "block";
       document.getElementById("map").style.display = "block";
       initMap();
       if(currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)){
@@ -307,62 +314,61 @@
     }
 
     function initMapFallback(){ 
-      showStatus("👆 Click on the map to set the exact location within GBA area.", "info"); 
-      showLocation(); 
+      document.getElementById("map").style.display = "block";
+      initMap();
+      map.setView([12.9716, 77.5946], 12);
+      document.getElementById("locationInfo").style.display = "block";
+      document.getElementById("mapRestrictionMsg").style.display = "block";
+      showStatus("Click on the map to set the exact location within GBA area.", "info");
     }
 
     function placeMarker(){
       if(marker) map.removeLayer(marker);
       if(currentGPS && map){
-        marker = L.marker([currentGPS.lat, currentGPS.lon], { 
+        marker = L.marker([currentGPS.lat, currentGPS.lon], {
           draggable: true,
           title: "Drag to adjust location"
         })
         .addTo(map)
         .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
         .openPopup();
-        
-        marker.on('dragend', async function(e) {
+
+        marker.on("dragend", async e => {
           const newPos = e.target.getLatLng();
-          const testGPS = { lat: newPos.lat, lon: newPos.lng };
+          const testGPS = { lat:newPos.lat, lon:newPos.lng };
           const valid = await validateLocationForCoords(testGPS);
-          if (!valid) {
+          if (!valid){
             showStatus("❌ Marker dragged outside GBA jurisdiction! Revert.", "error");
             e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
-            setTimeout(() => map.invalidateSize(), 100);
+            setTimeout(()=>map.invalidateSize(),100);
             return;
           }
           currentGPS = testGPS;
           updateGpsDisplay();
           showStatus("✅ Location updated via drag.", "success");
-          setTimeout(() => map.invalidateSize(), 100);
+          setTimeout(()=>map.invalidateSize(),100);
         });
       }
     }
 
     async function loadCorpPolygons(){
       if(corpPolygons) return corpPolygons;
-      try{
-        const res = await fetch(MAP_KML_URL);
-        if(!res.ok) throw new Error("map.txt not found");
-        const kmlText = await res.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(kmlText,"application/xml");
-        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
-        corpPolygons = placemarks.map(pm=>{
-          const coordsNode = pm.getElementsByTagName("coordinates")[0];
-          if(!coordsNode) return null;
-          const ring = coordsNode.textContent.trim()
-            .split(/\s+/)
-            .map(pair=>pair.split(",").map(Number))
-            .map(([lon,lat])=>[lon,lat]);
-          return { ring };
-        }).filter(Boolean);
-        return corpPolygons;
-      }catch(e){ 
-        console.warn("KML load failed:", e); 
-        return []; 
-      }
+      const res = await fetch(MAP_KML_URL);
+      if(!res.ok) throw new Error("map.txt not found");
+      const kmlText = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(kmlText,"application/xml");
+      const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+      corpPolygons = placemarks.map(pm=>{
+        const coordsNode = pm.getElementsByTagName("coordinates")[0];
+        if(!coordsNode) return null;
+        const ring = coordsNode.textContent.trim()
+          .split(/\s+/)
+          .map(pair=>pair.split(",").map(Number))
+          .map(([lon,lat])=>[lon,lat]);
+        return { ring };
+      }).filter(Boolean);
+      return corpPolygons;
     }
 
     function pointInRing(lon, lat, ring){
@@ -396,43 +402,66 @@
     }
 
     async function shareToGBA(){
-      if(!currentGPS || !currentImageFile){ 
-        alert("Upload image and select location first."); 
-        return; 
+      if(!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) {
+        showStatus("❌ No valid location selected.", "error");
+        return;
       }
+      if(!currentImageFile){
+        showStatus("❌ Please upload an image first.", "error");
+        return;
+      }
+
+      const issueType = document.getElementById("issueType").value;
+      const desc      = document.getElementById("issueDesc").value.trim();
+
+      // For now send empty corp fields (Lambda already handles this as in S3 version)
       const formData = new FormData();
-      formData.append("image", currentImageFile);
-      formData.append("lat", currentGPS.lat.toFixed(6));
-      formData.append("lon", currentGPS.lon.toFixed(6));
-      formData.append("type", document.getElementById("issueType").value);
-      formData.append("desc", document.getElementById("issueDesc").value);
+      formData.append("image",       currentImageFile);
+      formData.append("lat",         currentGPS.lat.toFixed(6));
+      formData.append("lon",         currentGPS.lon.toFixed(6));
+      formData.append("issueType",   issueType);
+      formData.append("description", desc);
+      formData.append("corpHandle",  "");
+      formData.append("corpName",    "");
 
       const btn = document.getElementById("tweetBtn");
       btn.disabled = true; 
       btn.textContent = "Posting...";
       btn.classList.add("loading");
+      showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
       try{
-        const res = await fetch(API_GATEWAY_URL,{ method:"POST", body:formData });
-        const raw = await res.text();
-        let result;
-        try { result = JSON.parse(raw); }
+        const res  = await fetch(API_GATEWAY_URL,{ method:"POST", body:formData });
+        const raw  = await res.text();
+        let data;
+        try { data = JSON.parse(raw); }
         catch(e){ throw new Error("Bad JSON from API: " + raw.slice(0,200)); }
 
-        if (result.success && result.tweet_url) {
-          showStatus(`✅ Issue posted! <a href="${result.tweet_url}" target="_blank">${result.tweet_url}</a>`, "success");
-          const copyBtn = document.createElement("button");
-          copyBtn.textContent = "📋 Copy Tweet URL";
-          copyBtn.className = "copy-btn";
-          copyBtn.onclick = () => {
-            navigator.clipboard.writeText(result.tweet_url).then(() => {
-              copyBtn.textContent = "✅ Copied!";
-              setTimeout(() => copyBtn.textContent = "📋 Copy Tweet URL", 2000);
-            });
-          };
-          document.getElementById("status").appendChild(copyBtn);
+        if (res.ok && data.success) {
+          const url = data.tweetUrl || data.tweet_url || "";
+          let html = "✅ Tweet posted successfully from @zenc_civic!";
+          if (url) {
+            html += `<div class="map-message" style="margin-top:8px;">
+                       <a href="${url}" target="_blank">${url}</a>
+                     </div>`;
+          }
+          showStatus(html, "success");
+          if (url) {
+            const copyBtn = document.createElement("button");
+            copyBtn.textContent = "📋 Copy Tweet URL";
+            copyBtn.className = "copy-btn";
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(url).then(() => {
+                copyBtn.textContent = "✅ Copied!";
+                setTimeout(()=>copyBtn.textContent="📋 Copy Tweet URL",2000);
+              });
+            };
+            document.getElementById("status").appendChild(copyBtn);
+          }
+          document.getElementById("issueType").value = "Pothole";
+          document.getElementById("issueDesc").value = "";
         } else {
-          showStatus(`❌ ${result.message || result.error || "Submission failed"}`, "error");
+          showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");
         }
       }catch(e){
         showStatus("❌ Submission failed: " + e.message,"error");
