@@ -4,71 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Civic Issue Reporter + Chat</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 20px; max-width: 800px; margin: auto; }
-        #map { height: 300px; width: 100%; margin-bottom: 20px; border-radius: 8px; }
-        .chat-container { border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; }
-        .chat-messages { height: 400px; overflow-y: auto; border: 1px solid #e5e5e5; padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #fafafa; }
-        .message { margin-bottom: 12px; }
-        .user { text-align: right; color: #1a73e8; }
-        .bot { color: #333; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; padding: 20px; max-width: 800px; margin: auto; 
+            background: #f5f5f5; line-height: 1.5;
+        }
+        h1, h3 { color: #1a1a1a; margin-bottom: 10px; }
+        #map { 
+            height: 300px; width: 100%; margin-bottom: 20px; 
+            border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .chat-container, .report-section { 
+            background: white; padding: 20px; border-radius: 12px; 
+            margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chat-messages { 
+            height: 400px; overflow-y: auto; border: 1px solid #e5e5e5; 
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; 
+            background: #fafafa; font-size: 15px;
+        }
+        .message { margin-bottom: 12px; padding: 8px; border-radius: 8px; }
+        .user { background: #e3f2fd; margin-left: 20%; text-align: right; }
+        .bot { background: white; margin-right: 20%; border: 1px solid #eee; }
         .chat-input { display: flex; gap: 10px; align-items: end; }
-        input[type="text"], textarea { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { padding: 12px 20px; border: none; border-radius: 8px; background: #1a73e8; color: white; cursor: pointer; font-weight: 500; }
-        button:hover { background: #1557b0; }
+        input[type="text"], textarea, select { 
+            flex: 1; padding: 12px; border: 1px solid #ddd; 
+            border-radius: 8px; font-size: 16px; 
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        button { 
+            padding: 12px 20px; border: none; border-radius: 8px; 
+            background: #1a73e8; color: white; cursor: pointer; 
+            font-weight: 500; font-size: 16px; min-width: 80px;
+        }
+        button:hover:not(:disabled) { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
-        .report-section { background: #f0f8ff; padding: 20px; border-radius: 12px; margin: 20px 0; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        label { font-weight: 500; color: #333; }
-        select, input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
-        #photoPreview { max-width: 200px; max-height: 200px; border-radius: 8px; margin-top: 10px; }
-        .coords-display { background: #e8f4fd; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 14px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 500; color: #333; margin-bottom: 5px; }
+        #photoPreview { 
+            max-width: 200px; max-height: 200px; 
+            border-radius: 8px; margin-top: 10px; border: 1px solid #ddd;
+        }
+        .coords-display { 
+            background: #e8f4fd; padding: 12px; border-radius: 8px; 
+            font-family: monospace; font-size: 14px; margin-bottom: 20px;
+            text-align: center; font-weight: 500;
+        }
+        .photo-btn { background: #28a745; }
+        .photo-btn:hover { background: #218838; }
+        .constituency-info { background: #f0f8ff; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 14px; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .chat-messages { height: 300px; }
+            #map { height: 250px; }
+        }
     </style>
 </head>
 <body>
     <h1>🗺️ Civic Issue Reporter + AI Chat</h1>
     
     <div id="map"></div>
-    <div class="coords-display" id="coordsDisplay">Click 📷 to capture location or use chat to update</div>
+    <div class="coords-display" id="coordsDisplay">Loading location...</div>
 
     <div class="report-section">
-        <h3>📤 Report Issue</h3>
+        <h3>📤 Report Civic Issue</h3>
         <div class="form-group">
             <label>Issue Type</label>
             <select id="issueType">
-                <option value="pothole">Pothole</option>
-                <option value="garbage">Garbage</option>
-                <option value="water-logging">Water Logging</option>
-                <option value="street-light">Street Light</option>
-                <option value="drainage">Drainage</option>
+                <option value="pothole">🛣️ Pothole</option>
+                <option value="garbage">🗑️ Garbage</option>
+                <option value="water-logging">💧 Water Logging</option>
+                <option value="street-light">💡 Street Light</option>
+                <option value="drainage">🚰 Drainage</option>
             </select>
         </div>
         <div class="form-group">
             <label>Description</label>
-            <textarea id="description" rows="3" placeholder="Describe the issue..."></textarea>
+            <textarea id="description" placeholder="Describe the issue in detail..."></textarea>
         </div>
         <div class="form-group">
-            <label>Photo</label>
-            <input type="file" id="photoInput" accept="image/*" capture="environment">
+            <label>📷 Take Photo</label>
+            <button class="photo-btn" onclick="document.getElementById('photoInput').click()">
+                📷 Capture Photo
+            </button>
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
             <img id="photoPreview" style="display:none;">
         </div>
+        <div id="constituencyInfo" class="constituency-info" style="display:none;"></div>
         <button onclick="submitReport()">🚨 Submit Report</button>
     </div>
 
     <div class="chat-container">
-        <h3>💬 AI Chat (Titan)</h3>
+        <h3>💬 AI Chat Assistant</h3>
         <div id="chatMessages" class="chat-messages"></div>
         <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Ask about issues, locations, or anything...">
+            <input type="text" id="chatInput" placeholder="Ask about issues, locations, MLAs... (Enter to send)">
             <button id="sendBtn" onclick="sendChat()">Send</button>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Local files with correct paths -->
+    <script src="leaflet/leaflet.js"></script>
+    <script src="js/piexif.js"></script>
+    
     <script>
-        // === MAP SETUP (from index.html) ===
+        // === MAP & KML LOADING ===
         let map, marker, currentLat, currentLon;
+        let constituencyData = {};
+
+        async function loadConstituencyData() {
+            try {
+                const response = await fetch('blr_const.txt');
+                const kmlText = await response.text();
+                // Parse KML for constituency boundaries (simplified)
+                const parser = new DOMParser();
+                const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
+                const placemarks = kmlDoc.querySelectorAll('Placemark');
+                placemarks.forEach((placemark, index) => {
+                    const extendedData = placemark.querySelector('ExtendedData');
+                    if (extendedData) {
+                        const acName = extendedData.querySelector('SimpleData[name="ACNAME"]')?.textContent;
+                        if (acName) {
+                            constituencyData[acName] = index;
+                        }
+                    }
+                });
+            } catch (e) {
+                console.warn('Could not load constituency data:', e);
+            }
+        }
 
         function initMap(lat = 12.9716, lon = 77.5946) {
             map = L.map('map').setView([lat, lon], 12);
@@ -81,6 +148,7 @@
             currentLat = lat;
             currentLon = lon;
             updateCoordsDisplay();
+            checkConstituency();
         }
 
         function updateMapLocation(lat, lon) {
@@ -91,15 +159,27 @@
             currentLat = lat;
             currentLon = lon;
             updateCoordsDisplay();
+            checkConstituency();
         }
 
         function updateCoordsDisplay() {
             document.getElementById('coordsDisplay').textContent = 
-                `📍 Lat: ${currentLat?.toFixed(6)}, Lon: ${currentLon?.toFixed(6)}`;
+                `📍 Current: ${currentLat?.toFixed(6) || 'N/A'}, ${currentLon?.toFixed(6) || 'N/A'}`;
         }
 
-        // Initialize map with geolocation
-        window.addEventListener('load', () => {
+        async function checkConstituency() {
+            // Simplified constituency lookup - you'd enhance this with reverse geocoding
+            const constituencyInfo = document.getElementById('constituencyInfo');
+            if (currentLat && currentLon && Object.keys(constituencyData).length) {
+                // Mock lookup based on coords (replace with real reverse geocoding)
+                const mockConst = currentLon > 77.6 ? 'Yelahanka' : 'Mahadevapura';
+                constituencyInfo.textContent = `📍 Detected: ${mockConst} Constituency`;
+                constituencyInfo.style.display = 'block';
+            }
+        }
+
+        // Initialize
+        loadConstituencyData().then(() => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (pos) => updateMapLocation(pos.coords.latitude, pos.coords.longitude),
@@ -110,7 +190,7 @@
             }
         });
 
-        // === PHOTO CAPTURE ===
+        // === PHOTO HANDLING with piexif ===
         document.getElementById('photoInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -119,6 +199,20 @@
                     const img = document.getElementById('photoPreview');
                     img.src = ev.target.result;
                     img.style.display = 'block';
+                    
+                    // Extract EXIF GPS data if available
+                    try {
+                        const exifObj = piexif.load(ev.target.result);
+                        if (exifObj['GPS']) {
+                            const lat = piexif.GPSHelper.gpsToDecimalDegrees(exifObj['GPS'][2], exifObj['GPS'][4]);
+                            const lon = piexif.GPSHelper.gpsToDecimalDegrees(exifObj['GPS'][6], exifObj['GPS'][8]);
+                            if (lat && lon) {
+                                updateMapLocation(lat, lon);
+                            }
+                        }
+                    } catch (exifError) {
+                        console.log('No GPS EXIF data in photo');
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -126,44 +220,52 @@
 
         // === REPORT SUBMISSION ===
         async function submitReport() {
-            const formData = new FormData();
             const photoFile = document.getElementById('photoInput').files[0];
-            
             if (!photoFile) {
-                alert('Please take a photo first 📷');
+                alert('Please 📷 capture a photo first!');
+                return;
+            }
+            if (!currentLat || !currentLon) {
+                alert('Please wait for location to load!');
                 return;
             }
 
+            const formData = new FormData();
             formData.append('image', photoFile);
             formData.append('lat', currentLat);
             formData.append('lon', currentLon);
             formData.append('issueType', document.getElementById('issueType').value);
             formData.append('description', document.getElementById('description').value || 'Issue reported via chat');
-            formData.append('corpHandle', 'default'); // Add your defaults
-            formData.append('corpName', 'Bengaluru');
-            formData.append('constituency', 'auto-detected');
-            formData.append('mlaHandle', 'auto-detected');
+            formData.append('corpHandle', 'blr_corp');
+            formData.append('corpName', 'Bengaluru City Corporation');
+            formData.append('constituency', Object.keys(constituencyData)[0] || 'auto');
+            formData.append('mlaHandle', 'auto');
 
             try {
-                const response = await fetch('/zenc', {
-                    method: 'POST',
-                    body: formData
-                });
+                const btn = event.target;
+                btn.disabled = true;
+                btn.textContent = 'Sending...';
+                
+                const response = await fetch('/zenc', { method: 'POST', body: formData });
                 if (response.ok) {
                     alert('✅ Issue reported successfully!');
-                    // Reset form
                     document.getElementById('photoInput').value = '';
                     document.getElementById('photoPreview').style.display = 'none';
                     document.getElementById('description').value = '';
+                    document.getElementById('constituencyInfo').style.display = 'none';
                 } else {
-                    alert('❌ Failed to submit report');
+                    alert('❌ Report failed. Check console.');
                 }
             } catch (error) {
                 alert('❌ Network error: ' + error.message);
+            } finally {
+                const btn = event.target;
+                btn.disabled = false;
+                btn.textContent = '🚨 Submit Report';
             }
         }
 
-        // === CHAT FUNCTIONALITY ===
+        // === CHAT ===
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -175,15 +277,18 @@
             addMessage('user', message);
             chatInput.value = '';
             sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
 
             try {
                 const response = await fetch(`/chat?prompt=${encodeURIComponent(message)}`);
                 const data = await response.json();
-                addMessage('bot', data.response || 'No response received');
+                addMessage('bot', data.response || data.answer || 'No response');
             } catch (error) {
-                addMessage('bot', 'Chat service unavailable');
+                addMessage('bot', '❌ Chat service unavailable');
+                console.error(error);
             } finally {
                 sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
                 chatInput.focus();
             }
         }
@@ -196,23 +301,16 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Enter key support
+        // Enter key + coord parsing
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendChat();
         });
 
-        // Photo button (add this button to UI if needed)
-        document.getElementById('photoInput').previousElementSibling?.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('photoInput').click();
-        });
-
-        // Update map when chat mentions coordinates (basic regex example)
         chatInput.addEventListener('input', (e) => {
             const text = e.target.value;
-            const coordMatch = text.match(/(\d+\.?\d*),\s*(\d+\.?\d*)/);
-            if (coordMatch) {
-                updateMapLocation(parseFloat(coordMatch[1]), parseFloat(coordMatch[2]));
+            const match = text.match(/(\d+\.?\d*)\s*[,;]\s*(\d+\.?\d*)/);
+            if (match) {
+                updateMapLocation(parseFloat(match[1]), parseFloat(match[2]));
             }
         });
     </script>
