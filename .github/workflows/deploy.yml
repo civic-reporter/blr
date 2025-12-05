@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Inject API Key
       run: |
-        sed -i 's/YOUR_OPENAI_API_KEY_HERE/${{ secrets.OPENAI_API_KEY }}/g' chat.html
+        sed -i 's/YOUR_OPENAI_API_KEY_HERE/${{ secrets.OPENAI_API_KEY }}/g' zc-chat.html
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
