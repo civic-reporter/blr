@@ -13,6 +13,9 @@ body {
     padding: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10px);
+
+    /* 🔥 FIX: allow Leaflet controls to appear */
+    overflow: visible !important;
 }
 
 .upload-area {
@@ -49,6 +52,18 @@ body {
     border-radius: 8px;
     margin: 16px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    /* 🔥 FIX: allow geocoder icon to float above */
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 🔥 FIX: make sure Leaflet search control is visible */
+.leaflet-control,
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 999999 !important;
+    position: relative !important;
 }
 
 .info-box {
