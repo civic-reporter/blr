@@ -16,6 +16,36 @@ window.GBA_MAP = {
             maxZoom: 20,
         }).addTo(this.map);
 
+        /* -----------------------------------------
+         * ADD LEAFLET SEARCH CONTROL (OPTION 1)
+         * ----------------------------------------- */
+        if (L.Control.Geocoder) {
+            const geocoder = L.Control.geocoder({
+                defaultMarkGeocode: false,
+                collapsed: true,     // shows a search icon
+                placeholder: "Search…" // optional
+            })
+                .on("markgeocode", (e) => {
+                    const result = e.geocode;
+
+                    // Zoom to bounding box
+                    if (result.bbox) {
+                        this.map.fitBounds(result.bbox);
+                    } else {
+                        this.map.setView(result.center, 17);
+                    }
+
+                    // Add marker at result
+                    L.marker(result.center)
+                        .addTo(this.map)
+                        .bindPopup(result.name)
+                        .openPopup();
+                })
+                .addTo(this.map);
+        } else {
+            console.warn("Leaflet Control Geocoder script not loaded.");
+        }
+
         return this.map;
     },
 
