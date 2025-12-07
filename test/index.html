@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
+
+  <!-- Local libs -->
+  <link rel="stylesheet" href="assets/css/leaflet.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <script src="assets/js/piexif.min.js"></script>
+  <script src="assets/js/leaflet.js"></script>
+</head>
+
+<body>
+  <!-- FULL original body markup (same as you pasted) -->
+  <div class="container">
+    <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
+    <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
+
+    <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
+      <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
+      <input type="file" id="imageInput" accept="image/*" style="display:none" />
+    </div>
+
+    <img id="preview" />
+    <div id="map"></div>
+
+    <div id="locationInfo" style="display:none">
+      <div class="info-box" id="infoBox">
+        <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
+        <div id="mapRestrictionMsg" class="map-message" style="display:none">
+          ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
+        </div>
+        <div class="issue-row">
+          <select id="issueType">
+            <option value="Pothole">Pothole</option>
+            <option value="Drainage">Drainage issue</option>
+            <option value="Streetlight">Streetlight</option>
+            <option value="Garbage">Garbage</option>
+            <option value="Road">Road repair</option>
+            <option value="Other">Other</option>
+          </select>
+          <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
+        </div>
+        <div><strong>🐦 Posted from:</strong>
+          <span class="gba-handle">@zenc_civic</span>
+        </div>
+        <small>🔧 Drag marker or click map to adjust location <strong>(within GBA area only)</strong>.</small>
+      </div>
+
+      <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <!-- Load your app (original script moved out) -->
+  <script src="assets/web/app.js"></script>
+</body>
+
+</html>
