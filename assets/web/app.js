@@ -110,11 +110,15 @@ function extractGPSFromExif(dataUrl) {
 
             // ✅ GBA CHECK ON UPLOAD
             if (!isInGBA(lat, lon)) {
-                showStatus(`❌ Photo GPS (${lat.toFixed(4)}, ${lon.toFixed(4)}) OUTSIDE GBA. Click map for Bengaluru location.`, 'error');
+                showStatus(`❌ Photo GPS (${lat.toFixed(4)}, ${lon.toFixed(4)}) OUTSIDE GBA. Drag map marker or click inside GBA.`, 'error');
                 tweetBtn.disabled = true;
-                currentGPS = null;
+
+                // ✅ SHOW MAP FOR CORRECTION (don't null GPS)
+                currentGPS = { lat, lon };  // Keep for map center
+                showLocation();  // Map opens → user can drag/click
                 return;
             }
+
 
             currentGPS = { lat, lon };
             showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
@@ -231,23 +235,21 @@ function placeMarker() {
         marker.on("dragend", async e => {
             const newPos = e.target.getLatLng();
             const testGPS = { lat: newPos.lat, lon: newPos.lng };
-            const valid = await validateLocationForCoords(testGPS);
-            if (!valid) {
-                showStatus("❌ Marker dragged outside GBA jurisdiction! Revert.", "error");
+
+            // ✅ VALIDATE NEW POSITION
+            if (isInGBA(testGPS.lat, testGPS.lon)) {
+                currentGPS = testGPS;
+                updateGpsDisplay();
+                tweetBtn.disabled = false;
+                showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, 'success');
+            } else {
+                // REVERT but keep map open
                 e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
-                currentGPS = null;
+                showStatus(`❌ Still outside GBA. Drag inside boundary.`, 'error');
                 tweetBtn.disabled = true;
-                if (infoBox) infoBox.classList.remove("valid");
-                setTimeout(() => map.invalidateSize(), 100);
-                return;
             }
-            currentGPS = testGPS;
-            updateGpsDisplay();
-            tweetBtn.disabled = false;
-            if (infoBox) infoBox.classList.add("valid");
-            showStatus("✅ Location updated via drag.", "success");
-            setTimeout(() => map.invalidateSize(), 100);
         });
+
     }
 }
 
