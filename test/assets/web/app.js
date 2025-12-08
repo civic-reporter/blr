@@ -1,5 +1,6 @@
 // app.js — original app script (migrated from inline)
 
+
 // Configuration
 const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
 const MAP_KML_URL = "assets/data/map.kml";           // adjust path if needed (e.g. assets/data/map.txt)
@@ -64,7 +65,9 @@ if (dropZone) {
     });
 }
 
-function handleImage(evt) {
+// Remove import line - use window.extractGPSFromLambda()
+
+async function handleImage(evt) {
     const file = evt.target.files[0];
     if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
@@ -73,16 +76,25 @@ function handleImage(evt) {
     currentImageFile = file;
 
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async e => {
         const preview = document.getElementById("preview");
         if (preview) {
             preview.src = e.target.result;
             preview.style.display = "block";
         }
-        extractGPSFromExif(e.target.result);
+
+        // Use global function
+        const gps = await window.extractGPSFromLambda(file);
+        if (gps) {
+            currentGPS = gps;
+            showLocation();
+        } else {
+            useBrowserLocation();
+        }
     };
     reader.readAsDataURL(file);
 }
+
 
 // Prefer EXIF GPS; fallback to browser only if EXIF missing
 function extractGPSFromExif(dataUrl) {
