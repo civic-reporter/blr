@@ -19,13 +19,13 @@
 </head>
 
 <body>
-  <!-- FULL original body markup (same as you pasted) -->
+
   <div class="container">
     <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
     <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
 
     <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
-      <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
+      <p>📸 Click or drag a photo here</p>
       <input type="file" id="imageInput" accept="image/*" style="display:none" />
     </div>
 
@@ -44,12 +44,13 @@
             <option value="Drainage">Drainage issue</option>
             <option value="Streetlight">Streetlight</option>
             <option value="Garbage">Garbage</option>
+            <option value="Road">Storm Watrer Drains</option>
             <option value="Road">Road repair</option>
             <option value="Other">Other</option>
           </select>
-          <input id="issueDesc" placeholder="Extra details (optional)" maxlength="120" />
+          <input id="issueDesc" placeholder="Extra details (optional), please ref" maxlength="120" />
         </div>
-        <div><strong>🐦 Posted from:</strong>
+        <div><strong>𝕏 Tweet from:</strong>
           <span class="gba-handle">@zenc_civic</span>
         </div>
         <small>🔧 Drag marker or click map to adjust location <strong>(within GBA area only)</strong>.</small>
@@ -62,6 +63,7 @@
   </div>
 
   <!-- Load your app (original script moved out) -->
+  <script src="assets/web/gps.js"></script>
   <script src="assets/web/app.js"></script>
 
 </body>
