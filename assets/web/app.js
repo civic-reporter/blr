@@ -45,6 +45,17 @@ const MLA_HANDLES = {
     "Anekal (SC)": "MLAShivanna"
 };
 
+const GBA_BBOX = {
+    south: 12.82, north: 13.20,
+    west: 77.40, east: 77.85
+};
+
+function isInGBA(lat, lon) {
+    return GBA_BBOX.south <= lat && lat <= GBA_BBOX.north &&
+        GBA_BBOX.west <= lon && GBA_BBOX.east;
+}
+
+
 const imageInput = document.getElementById("imageInput");
 const dropZone = document.getElementById("dropZone");
 const tweetBtn = document.getElementById("tweetBtn");
@@ -84,7 +95,6 @@ function handleImage(evt) {
     reader.readAsDataURL(file);
 }
 
-// Prefer EXIF GPS; fallback to browser only if EXIF missing
 function extractGPSFromExif(dataUrl) {
     try {
         const exif = piexif.load(dataUrl);
@@ -93,18 +103,34 @@ function extractGPSFromExif(dataUrl) {
         const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+
         if (latArr && lonArr && latRef && lonRef) {
             const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
+
+            // ✅ GBA CHECK ON UPLOAD
+            if (!isInGBA(lat, lon)) {
+                showStatus(`❌ Photo GPS (${lat.toFixed(4)}, ${lon.toFixed(4)}) OUTSIDE GBA. Click map for Bengaluru location.`, 'error');
+                tweetBtn.disabled = true;
+                currentGPS = null;
+                return;
+            }
+
             currentGPS = { lat, lon };
+            showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+            tweetBtn.disabled = false;
             showLocation();
             return;
         }
     } catch (e) {
         console.warn("EXIF GPS parse failed:", e);
     }
-    useBrowserLocation();  // only when EXIF missing
+
+    showStatus('ℹ️ No GPS in photo. Click map or use device location.', 'info');
+    tweetBtn.disabled = true;
+    useBrowserLocation();
 }
+
 
 function isValidNumber(x) {
     return typeof x === "number" && Number.isFinite(x);
@@ -360,8 +386,9 @@ function showStatus(msg, type) {
 }
 
 async function shareToGBA() {
-    if (!currentGPS || !isValidNumber(currentGPS.lat) || !isValidNumber(currentGPS.lon)) {
-        showStatus("❌ No valid location selected inside GBA.", "error");
+    // ✅ FINAL GBA CHECK BEFORE TWEET
+    if (!currentGPS || !isValidNumber(currentGPS.lat) || !isInGBA(currentGPS.lat, currentGPS.lon)) {
+        showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
     }
     if (!currentImageFile) {
