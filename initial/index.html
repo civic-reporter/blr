@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
 
-  <!-- exifr (modern EXIF) + Leaflet -->
-  <script src="js/full.umd.min.js"></script>
+  <!-- Local EXIF + Leaflet -->
+  <script src="js/piexif.min.js"></script>
   <link rel="stylesheet" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet.js"></script>
 
@@ -158,7 +158,7 @@
 
     <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
       <p>📸 Click or drag a photo here (original camera image, not WhatsApp/compressed)</p>
-      <input type="file" id="imageInput" style="display:none" />
+      <input type="file" id="imageInput" accept="image/*" style="display:none" />
     </div>
 
     <img id="preview" />
@@ -255,7 +255,7 @@
       }
     });
 
-    async function handleImage(evt) {
+    function handleImage(evt) {
       const file = evt.target.files[0];
       if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
@@ -263,41 +263,35 @@
       }
       currentImageFile = file;
 
-      // Show preview immediately
       const reader = new FileReader();
       reader.onload = e => {
         document.getElementById("preview").src = e.target.result;
         document.getElementById("preview").style.display = "block";
+        extractGPSFromExif(e.target.result);
       };
       reader.readAsDataURL(file);
-      
-      // Extract GPS async (non-blocking)
-      await extractGPSFromExif(file);
     }
 
-    // Modern exifr + debug fallback (replaces piexif entirely)
-    async function extractGPSFromExif(file) {
-      console.log("🔍 Extracting GPS from:", file.name, file.type, file.size + " bytes");
-      
-      // Primary: exifr (mobile-friendly, handles iOS/Android quirks)
+    // Prefer EXIF GPS; fallback to browser only if EXIF missing
+    function extractGPSFromExif(dataUrl) {
       try {
-        const exif = await exifr.parse(file, { gps: true });
-        console.log("exifr GPS:", exif.latitude, exif.longitude, exif.dateTimeOriginal);
-        
-        if (exif.latitude && exif.longitude && 
-            Math.abs(exif.latitude) <= 90 && Math.abs(exif.longitude) <= 180) {
-          currentGPS = { lat: exif.latitude, lon: exif.longitude };
-          showStatus(`✅ GPS found in photo: ${currentGPS.lat.toFixed(6)}, ${currentGPS.lon.toFixed(6)}`, "success");
+        const exif = piexif.load(dataUrl);
+        const gps  = exif.GPS || {};
+        const latArr = gps[piexif.GPSIFD.GPSLatitude];
+        const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
+        const lonArr = gps[piexif.GPSIFD.GPSLongitude];
+        const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+        if (latArr && lonArr && latRef && lonRef) {
+          const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
+          const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
+          currentGPS = { lat, lon };
           showLocation();
           return;
         }
       } catch (e) {
-        console.warn("exifr failed:", e);
+        console.warn("EXIF GPS parse failed:", e);
       }
-      
-      // No GPS anywhere - clear feedback
-      showStatus("ℹ️ No GPS in photo. Using device location or map click.", "info");
-      useBrowserLocation();
+      useBrowserLocation();  // only when EXIF missing
     }
 
     function isValidNumber(x) {
@@ -305,13 +299,9 @@
     }
 
     function useBrowserLocation() {
-      if (!navigator.geolocation) { 
-        initMapFallback(); 
-        return; 
-      }
+      if (!navigator.geolocation) { initMapFallback(); return; }
       navigator.geolocation.getCurrentPosition(pos => {
         currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
-        showStatus(`✅ Device GPS: ${currentGPS.lat.toFixed(6)}, ${currentGPS.lon.toFixed(6)}`, "success");
         showLocation();
       }, () => {
         initMapFallback();
@@ -419,6 +409,7 @@
     }
 
     // --- Corporations from map.txt (NewCorp) ---
+
     function corpHandleForName(name) {
       switch (name) {
         case "Central": return "@BCCCofficial";
@@ -473,6 +464,7 @@
     }
 
     // --- Constituencies from blr_const.txt ---
+
     async function loadConstituencyPolygons() {
       if (constPolygons) return constPolygons;
       const res = await fetch(CONST_KML_URL);
