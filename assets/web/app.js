@@ -95,45 +95,50 @@ function handleImage(evt) {
     reader.readAsDataURL(file);
 }
 
+
 function extractGPSFromExif(dataUrl) {
+    console.log("🔍 Parsing EXIF from image...");
+
     try {
         const exif = piexif.load(dataUrl);
         const gps = exif.GPS || {};
+
+        console.log("📸 Full EXIF GPS object:", gps); // DEBUG
+
         const latArr = gps[piexif.GPSIFD.GPSLatitude];
         const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
 
+        console.log("📍 Raw GPS arrays:", { latArr, lonArr, latRef, lonRef }); // DEBUG
+
         if (latArr && lonArr && latRef && lonRef) {
             const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
 
-            // ✅ GBA CHECK ON UPLOAD
-            if (!isInGBA(lat, lon)) {
-                showStatus(`❌ Photo GPS (${lat.toFixed(4)}, ${lon.toFixed(4)}) OUTSIDE GBA. Drag map marker or click inside GBA.`, 'error');
-                tweetBtn.disabled = true;
-
-                // ✅ SHOW MAP FOR CORRECTION (don't null GPS)
-                currentGPS = { lat, lon };  // Keep for map center
-                showLocation();  // Map opens → user can drag/click
-                return;
-            }
-
+            console.log(`✅ GPS EXTRACTED: ${lat.toFixed(6)}, ${lon.toFixed(6)}`); // CONFIRM
 
             currentGPS = { lat, lon };
-            showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+
+            // ✅ SHOW GPS SUCCESS (was missing!)
+            showStatus(`✅ GPS loaded from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
             tweetBtn.disabled = false;
             showLocation();
             return;
+        } else {
+            console.log("❌ Missing GPS arrays - falling back");
         }
     } catch (e) {
-        console.warn("EXIF GPS parse failed:", e);
+        console.error("💥 EXIF parse error:", e);
     }
 
-    showStatus('ℹ️ No GPS in photo. Click map or use device location.', 'info');
+    // Fallback message
+    console.log("🔄 No EXIF GPS - trying browser location");
+    showStatus('ℹ️ No GPS in photo. Click map or allow device location.', 'info');
     tweetBtn.disabled = true;
     useBrowserLocation();
 }
+
 
 
 function isValidNumber(x) {
