@@ -95,7 +95,10 @@ function handleImage(evt) {
     reader.readAsDataURL(file);
 }
 
-function extractGPSFromExif(dataUrl) {
+async function extractGPSFromExif(dataUrl) {
+    console.log("🔍 EXIF parse start");
+
+    // 1. EXIF (your exact code)
     try {
         const exif = piexif.load(dataUrl);
         const gps = exif.GPS || {};
@@ -108,32 +111,44 @@ function extractGPSFromExif(dataUrl) {
             const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
 
-            // ✅ GBA CHECK ON UPLOAD
-            if (!isInGBA(lat, lon)) {
-                showStatus(`❌ Photo GPS (${lat.toFixed(4)}, ${lon.toFixed(4)}) OUTSIDE GBA. Drag map marker or click inside GBA.`, 'error');
-                tweetBtn.disabled = true;
-
-                // ✅ SHOW MAP FOR CORRECTION (don't null GPS)
-                currentGPS = { lat, lon };  // Keep for map center
-                showLocation();  // Map opens → user can drag/click
-                return;
-            }
-
-
             currentGPS = { lat, lon };
-            showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
-            tweetBtn.disabled = false;
+            showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+
+            if (!isInGBA(lat, lon)) {
+                showStatus(`⚠️ Outside GBA - drag marker`, 'warning');
+                tweetBtn.disabled = true;
+            } else {
+                tweetBtn.disabled = false;
+                showStatus(`✅ GBA GPS verified: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+            }
             showLocation();
             return;
         }
     } catch (e) {
-        console.warn("EXIF GPS parse failed:", e);
+        console.error("🚨 EXIF failed:", e);
     }
 
-    showStatus('ℹ️ No GPS in photo. Click map or use device location.', 'info');
+    // 2. LIVE GPS fallback (mobile camera fix)
+    try {
+        const liveGPS = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                reject, { enableHighAccuracy: true, timeout: 5000 }
+            );
+        });
+        if (isInGBA(liveGPS.lat, liveGPS.lon)) {
+            currentGPS = liveGPS;
+            showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, 'success');
+            showLocation();
+            return;
+        }
+    } catch (e) { }
+
+    // 3. Manual map
+    showStatus('ℹ️ Click map for location.', 'info');
     tweetBtn.disabled = true;
-    useBrowserLocation();
 }
+
 
 
 function isValidNumber(x) {
@@ -236,19 +251,21 @@ function placeMarker() {
             const newPos = e.target.getLatLng();
             const testGPS = { lat: newPos.lat, lon: newPos.lng };
 
-            // ✅ VALIDATE NEW POSITION
-            if (isInGBA(testGPS.lat, testGPS.lon)) {
+            // ✅ STRICT POLYGON VALIDATION (matches map click)
+            const valid = await validateLocationForCoords(testGPS);
+            if (valid) {
                 currentGPS = testGPS;
                 updateGpsDisplay();
                 tweetBtn.disabled = false;
                 showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, 'success');
             } else {
-                // REVERT but keep map open
+                // REVERT to valid position
                 e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
-                showStatus(`❌ Still outside GBA. Drag inside boundary.`, 'error');
+                showStatus(`❌ Outside GBA jurisdiction. Drag inside boundary.`, 'error');
                 tweetBtn.disabled = true;
             }
         });
+
 
     }
 }
