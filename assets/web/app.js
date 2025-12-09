@@ -367,7 +367,7 @@ function updateGpsDisplay() {
     if (!el || !currentGPS) return;
     el.innerHTML = `${currentGPS.lat.toFixed(6)}, ${currentGPS.lon.toFixed(6)}`;
     const a = document.createElement("a");
-    a.href = `https://www.openstreetmap.org/?mlat=${currentGPS.lat}&mlon=${currentGPS.lon}#map=18/${currentGPS.lat}/${currentGPS.lon}`;
+    a.href = `https://www.google.com/maps/@${currentGPS.lat},${currentGPS.lon},18z`;
     a.target = "_blank";
     a.className = "gps-link";
     a.textContent = "🗺️ Open Map";
