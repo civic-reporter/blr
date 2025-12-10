@@ -188,13 +188,19 @@ async function handleMapClick(e) {
         if (marker) { map.removeLayer(marker); marker = null; }
         if (tweetBtn) tweetBtn.disabled = true;  // 🔧 DEFENSIVE
         if (infoBox) infoBox.classList.remove("valid");
-        showStatus("❌ Outside GBA jurisdiction.", "error");
+        showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
         return;
     }
 
     currentGPS = testGPS;
     placeMarker();
     updateGpsDisplay();
+
+    // ✅ Ensure the whole location block (and button) is visible
+    const locInfo = document.getElementById("locationInfo");
+    if (locInfo) {
+        locInfo.style.display = "block";
+    }
 
     // 🔧 CRITICAL: Defensive enable + force UI update
     if (tweetBtn) {
@@ -203,12 +209,13 @@ async function handleMapClick(e) {
         tweetBtn.classList.remove('disabled', 'loading');
         console.log('✅ TWEET BUTTON ENABLED');
     } else {
-        console.error('❌ tweetBtn NOT FOUND - check HTML id="tweetBtn"');
+        console.error('❌ tweetBtn NOT FOUND - check HTML id=\"tweetBtn\"');
     }
 
     if (infoBox) infoBox.classList.add("valid");
     showStatus("✅ Location verified within GBA jurisdiction.", "success");
 }
+
 
 
 function showLocation() {
