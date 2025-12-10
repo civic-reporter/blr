@@ -270,13 +270,13 @@ function placeMarker() {
             if (valid) {
                 currentGPS = testGPS;
                 updateGpsDisplay();
-                tweetBtn.disabled = false;
+                if (tweetBtn) tweetBtn.disabled = false;
                 showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, 'success');
             } else {
                 // REVERT to valid position
                 e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
                 showStatus(`❌ Outside GBA jurisdiction. Drag inside boundary.`, 'error');
-                tweetBtn.disabled = true;
+                if (tweetBtn) tweetBtn.disabled = true;
             }
         });
 
