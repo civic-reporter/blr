@@ -4,12 +4,14 @@
 const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
 const MAP_KML_URL = "assets/data/map.kml";           // adjust path if needed (e.g. assets/data/map.txt)
 const CONST_KML_URL = "assets/data/blr_const.kml";    // adjust path if needed
+const WARD_KML_URL = "assets/data/wards.kml";
 
 let currentImageFile = null;
 let currentGPS = null;
 let map, marker;
 let corpPolygons = null;
 let constPolygons = null;
+let wardPolygons = null;
 let mapInitialized = false;
 
 // Constituency → MLA handle
@@ -329,6 +331,47 @@ async function loadCorpPolygons() {
     }).filter(Boolean);
     return corpPolygons;
 }
+async function loadWardPolygons() {
+    if (wardPolygons) return wardPolygons;
+
+    const res = await fetch(WARD_KML_URL);
+    if (!res.ok) throw new Error("ward KML not found");
+    const kmlText = await res.text();
+
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(kmlText, "application/xml");
+    const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+
+    wardPolygons = placemarks.map(pm => {
+        const simpleData = pm.getElementsByTagName("SimpleData");
+
+        let wardNo = "";
+        let wardName = "";
+
+        for (const sd of simpleData) {
+            const nameAttr = sd.getAttribute("name");
+            if (nameAttr === "ward_id") {
+                wardNo = sd.textContent.trim();
+            } else if (nameAttr === "ward_name") {
+                wardName = sd.textContent.trim();
+            }
+        }
+
+        const coordsNode = pm.getElementsByTagName("coordinates")[0];
+        if (!coordsNode) return null;
+
+        const ring = coordsNode.textContent.trim()
+            .split(/\s+/)
+            .map(pair => pair.split(",").map(Number))
+            .map(([lon, lat]) => [lon, lat]);
+
+        return { wardNo, wardName, ring };
+    }).filter(Boolean);
+
+    return wardPolygons;
+}
+
+
 
 async function findCorpForCurrentGPS() {
     if (!currentGPS) return { corpName: "", corpHandle: "" };
@@ -388,6 +431,22 @@ async function findConstituencyForCurrentGPS() {
     return { acName: "", mlaHandle: "" };
 }
 
+async function findWardForCurrentGPS() {
+    if (!currentGPS) return { wardNo: "", wardName: "" };
+
+    const polys = await loadWardPolygons();
+    const lon = currentGPS.lon;
+    const lat = currentGPS.lat;
+
+    for (const p of polys) {
+        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
+            return { wardNo: p.wardNo, wardName: p.wardName };
+        }
+    }
+    return { wardNo: "", wardName: "" };
+}
+
+
 function pointInRing(lon, lat, ring) {
     let inside = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -441,6 +500,7 @@ async function shareToGBA() {
 
     const { acName, mlaHandle } = await findConstituencyForCurrentGPS();
     const { corpName, corpHandle } = await findCorpForCurrentGPS();
+    const { wardNo, wardName } = await findWardForCurrentGPS();
 
     const formData = new FormData();
     formData.append("image", currentImageFile);
@@ -450,6 +510,8 @@ async function shareToGBA() {
     formData.append("description", desc);
     formData.append("corpHandle", corpHandle || "");
     formData.append("corpName", corpName || "");
+    formData.append("wardNo", wardNo || "");
+    formData.append("wardName", wardName || "");
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
 
