@@ -180,22 +180,36 @@ async function handleMapClick(e) {
     const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
     const valid = await validateLocationForCoords(testGPS);
 
+    // 🔧 DEBUG LOG (remove after fix)
+    console.log('🗺️ CLICK:', testGPS, 'VALID:', valid, 'TWEETBTN:', tweetBtn);
+
     if (!valid) {
         currentGPS = null;
         if (marker) { map.removeLayer(marker); marker = null; }
-        tweetBtn.disabled = true;
+        if (tweetBtn) tweetBtn.disabled = true;  // 🔧 DEFENSIVE
         if (infoBox) infoBox.classList.remove("valid");
-        showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
+        showStatus("❌ Outside GBA jurisdiction.", "error");
         return;
     }
 
     currentGPS = testGPS;
     placeMarker();
     updateGpsDisplay();
-    tweetBtn.disabled = false;
+
+    // 🔧 CRITICAL: Defensive enable + force UI update
+    if (tweetBtn) {
+        tweetBtn.disabled = false;
+        tweetBtn.style.opacity = '1';
+        tweetBtn.classList.remove('disabled', 'loading');
+        console.log('✅ TWEET BUTTON ENABLED');
+    } else {
+        console.error('❌ tweetBtn NOT FOUND - check HTML id="tweetBtn"');
+    }
+
     if (infoBox) infoBox.classList.add("valid");
     showStatus("✅ Location verified within GBA jurisdiction.", "success");
 }
+
 
 function showLocation() {
     const locInfo = document.getElementById("locationInfo");
