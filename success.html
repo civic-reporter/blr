@@ -31,34 +31,41 @@
     </div>
 
     <script>
-        // Read tweetUrl from query string and render link + copy button
-        const params = new URLSearchParams(window.location.search);
-        const url = params.get('tweetUrl');
-        const container = document.getElementById('tweetLinkContainer');
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Read tweetUrl from query string
+            const params = new URLSearchParams(window.location.search); // [web:138][web:144]
+            const url = params.get('tweetUrl');
+            const container = document.getElementById('tweetLinkContainer');
 
-        if (url && container) {
-            container.innerHTML = `
-        <div class="map-message" style="margin-top:8px;">
-          <a href="${url}" target="_blank">${url}</a>
-        </div>
-      `;
+            if (url && container) {
+                container.innerHTML = `
+          <div class="map-message" style="margin-top:8px;">
+            <a href="${url}" target="_blank">${url}</a>
+          </div>
+        `;
 
-            const copyBtn = document.createElement('button');
-            copyBtn.textContent = '📋 Copy Tweet URL';
-            copyBtn.className = 'copy-btn';
-            copyBtn.onclick = () => {
-                navigator.clipboard.writeText(url).then(() => {
-                    copyBtn.textContent = '✅ Copied!';
-                    setTimeout(() => (copyBtn.textContent = '📋 Copy Tweet URL'), 2000);
+                const copyBtn = document.createElement('button');
+                copyBtn.textContent = '📋 Copy Tweet URL';
+                copyBtn.className = 'copy-btn';
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(url).then(() => {
+                        copyBtn.textContent = '✅ Copied!';
+                        setTimeout(() => {
+                            copyBtn.textContent = '📋 Copy Tweet URL';
+                        }, 2000);
+                    });
+                };
+                container.appendChild(copyBtn);
+            }
+
+            // 2. Wire "Submit Another Issue" back to index.html
+            const submitAnotherBtn = document.getElementById('submitAnotherBtn');
+            if (submitAnotherBtn) {
+                submitAnotherBtn.addEventListener('click', () => {
+                    window.location.href = 'index.html';
                 });
-            };
-            container.appendChild(copyBtn);
-        }
-
-        // Back to main reporter
-        document.getElementById('submitAnotherBtn').onclick = () => {
-            window.location.href = 'index.html';
-        };
+            }
+        });
     </script>
 </body>
 
