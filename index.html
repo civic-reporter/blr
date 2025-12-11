@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 
-
   <script src="assets/js/piexif.min.js"></script>
   <script src="assets/js/leaflet.js"></script>
 
@@ -19,19 +18,43 @@
 </head>
 
 <body>
-
   <div class="container">
     <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
     <p class="header-text">Upload a photo that has GPS coordinates or select the correct location on the map.</p>
 
-    <div class="upload-area" id="dropZone" onclick="document.getElementById('imageInput').click()">
-      <p>📸 Click or drag a photo here</p>
-      <input type="file" id="imageInput" style="display:none" />
+    <!-- Image Upload Options (visible when no image loaded) -->
+    <div id="uploadOptions" class="upload-options">
+      <div class="button-group">
+        <!-- Camera button (mobile only) -->
+        <button id="cameraBtn" class="upload-btn camera-btn">
+          📱 <span>Camera</span>
+        </button>
+        <!-- File upload button -->
+        <button id="uploadBtn" class="upload-btn upload-btn">
+          📁 <span>Upload Photo</span>
+        </button>
+      </div>
+      <input type="file" id="imageInput" accept="image/*" style="display:none" />
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
     </div>
 
-    <img id="preview" />
+    <!-- Image Preview -->
+    <img id="preview" style="display:none;" />
+
+    <div id="imageConfirm" style="display:none;" class="image-confirm">
+      <p>Is this photo correct?</p>
+      <button id="changeImageBtn" class="upload-btn">🔁 Choose another photo</button>
+      <label class="confirm-check">
+        <input type="checkbox" id="confirmImageCheck" />
+        <span>I confirm this photo clearly shows the issue.</span>
+      </label>
+    </div>
+
+
+    <!-- Map -->
     <div id="map"></div>
 
+    <!-- Location Info & Form -->
     <div id="locationInfo" style="display:none">
       <div class="info-box" id="infoBox">
         <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
@@ -44,7 +67,7 @@
             <option value="Drainage">Drainage issue</option>
             <option value="Streetlight">Streetlight</option>
             <option value="Garbage">Garbage</option>
-            <option value="Road">Storm Watrer Drains</option>
+            <option value="Road">Storm Water Drains</option>
             <option value="Road">Road repair</option>
             <option value="Other">Other</option>
           </select>
@@ -59,12 +82,22 @@
       <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
     </div>
 
+    <!-- Status Messages -->
     <div id="status"></div>
+
+    <!-- Success Screen (Submit Another Issue) -->
+    <div id="successScreen" style="display:none; text-align:center; padding: 2rem;">
+      <div class="success-icon">✅</div>
+      <h3>Issue Posted Successfully!</h3>
+      <p>Your report has been tweeted to @zenc_civic</p>
+      <button id="submitAnotherBtn" onclick="resetApp()" class="success-btn">
+        📸 Submit Another Issue
+      </button>
+    </div>
   </div>
 
-  <!-- Load your app (original script moved out) -->
+  <!-- Load your app -->
   <script src="assets/web/app.js"></script>
-
 </body>
 
 </html>
