@@ -70,19 +70,27 @@ function isValidNumber(x) {
 
 function showStatus(msg, type) {
     if (!statusDiv) return;
+
     if (!msg) {
         statusDiv.style.display = "none";
+        statusDiv.innerHTML = "";
+        statusDiv.classList.remove("status-error", "status-success", "status-info");
         return;
     }
+
     statusDiv.style.display = "block";
     statusDiv.innerHTML = msg;
-    statusDiv.style.background = type === "error" ? "#f8d7da"
-        : type === "success" ? "#d4edda"
-            : "#e2e3e5";
-    statusDiv.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" :
-        type === "success" ? "#28a745" : "#6c757d"
-        }`;
+
+    statusDiv.classList.remove("status-error", "status-success", "status-info");
+    if (type === "error") {
+        statusDiv.classList.add("status-error");
+    } else if (type === "success") {
+        statusDiv.classList.add("status-success");
+    } else {
+        statusDiv.classList.add("status-info");
+    }
 }
+
 
 // --- UI flow helpers ---
 
@@ -498,6 +506,17 @@ async function shareToGBA() {
     const { corpName, corpHandle } = await findCorpForCurrentGPS();
     const { wardNo, wardName } = await findWardForCurrentGPS();
 
+    // Set UI state first so it can repaint
+    if (tweetBtn) {
+        tweetBtn.disabled = true;
+        tweetBtn.textContent = "Posting...";
+        tweetBtn.classList.add("loading");
+    }
+    showStatus("📤 Uploading issue to @zenc_civic...", "info");
+
+    // Yield to event loop to let the browser paint the new button state
+    await new Promise(requestAnimationFrame);
+
     const formData = new FormData();
     formData.append("image", currentImageFile);
     formData.append("lat", currentGPS.lat.toFixed(6));
@@ -510,13 +529,6 @@ async function shareToGBA() {
     formData.append("wardName", wardName || "");
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
-
-    if (tweetBtn) {
-        tweetBtn.disabled = true;
-        tweetBtn.textContent = "Posting...";
-        tweetBtn.classList.add("loading");
-    }
-    showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
     try {
         const res = await fetch(API_GATEWAY_URL, { method: "POST", body: formData });
@@ -573,6 +585,7 @@ async function shareToGBA() {
         }
     }
 }
+
 
 
 
