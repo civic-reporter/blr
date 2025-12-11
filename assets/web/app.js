@@ -530,32 +530,9 @@ async function shareToGBA() {
 
         if (res.ok && data.success) {
             const url = data.tweetUrl || data.tweet_url || "";
-            showSuccessScreen();
-
-            if (url) {
-                const container = document.getElementById("tweetLinkContainer") || statusDiv;
-                if (container) {
-                    container.innerHTML = `
-                      <div class="map-message" style="margin-top:8px;">
-                        <a href="${url}" target="_blank">${url}</a>
-                      </div>
-                    `;
-
-                    const copyBtn = document.createElement("button");
-                    copyBtn.textContent = "📋 Copy Tweet URL";
-                    copyBtn.className = "copy-btn";
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(url).then(() => {
-                            copyBtn.textContent = "✅ Copied!";
-                            setTimeout(() => {
-                                copyBtn.textContent = "📋 Copy Tweet URL";
-                            }, 2000);
-                        });
-                    };
-                    container.appendChild(copyBtn);
-                }
-            }
-
+            const qs = url ? `?tweetUrl=${encodeURIComponent(url)}` : "";
+            // Go to dedicated success page where the success button and link are rendered
+            window.location.href = `success.html${qs}`;
             return;
         } else {
             showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");
@@ -571,6 +548,7 @@ async function shareToGBA() {
         }
     }
 }
+
 
 // --- Wire up DOM ---
 
