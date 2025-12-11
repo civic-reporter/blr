@@ -1,9 +1,9 @@
-// app.js — original app script (migrated from inline)
+// app.js — GBA Civic Reporter (fixed structure)
 
 // Configuration
 const API_GATEWAY_URL = "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc";
-const MAP_KML_URL = "assets/data/map.kml";           // adjust path if needed (e.g. assets/data/map.txt)
-const CONST_KML_URL = "assets/data/blr_const.kml";    // adjust path if needed
+const MAP_KML_URL = "assets/data/map.kml";
+const CONST_KML_URL = "assets/data/blr_const.kml";
 const WARD_KML_URL = "assets/data/wards.kml";
 
 let currentImageFile = null;
@@ -52,55 +52,133 @@ const GBA_BBOX = {
     west: 77.40, east: 77.85
 };
 
+// Global UI references (set on DOMContentLoaded)
+let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
+let imageInput, cameraInput, tweetBtn, infoBox, dropZone;
+let imageConfirm, confirmImageCheck, changeImageBtn;
+
+// --- Basic helpers ---
+
 function isInGBA(lat, lon) {
     return GBA_BBOX.south <= lat && lat <= GBA_BBOX.north &&
-        GBA_BBOX.west <= lon && GBA_BBOX.east;
+        GBA_BBOX.west <= lon && lon <= GBA_BBOX.east;
 }
 
-
-const imageInput = document.getElementById("imageInput");
-const dropZone = document.getElementById("dropZone");
-const tweetBtn = document.getElementById("tweetBtn");
-const infoBox = document.getElementById("infoBox");
-
-if (imageInput) imageInput.addEventListener("change", handleImage);
-if (dropZone) {
-    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-    dropZone.addEventListener("drop", e => {
-        e.preventDefault();
-        dropZone.classList.remove("dragover");
-        if (e.dataTransfer.files.length) {
-            imageInput.files = e.dataTransfer.files;
-            handleImage({ target: { files: e.dataTransfer.files } });
-        }
-    });
+function isValidNumber(x) {
+    return typeof x === "number" && Number.isFinite(x);
 }
 
-function handleImage(evt) {
-    const file = evt.target.files[0];
+function showStatus(msg, type) {
+    if (!statusDiv) return;
+    if (!msg) {
+        statusDiv.style.display = "none";
+        return;
+    }
+    statusDiv.style.display = "block";
+    statusDiv.innerHTML = msg;
+    statusDiv.style.background = type === "error" ? "#f8d7da"
+        : type === "success" ? "#d4edda"
+            : "#e2e3e5";
+    statusDiv.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" :
+        type === "success" ? "#28a745" : "#6c757d"
+        }`;
+}
+
+// --- UI flow helpers ---
+
+function hideUploadOptions() {
+    if (uploadOptions) uploadOptions.style.display = "none";
+}
+
+function showUploadOptions() {
+    if (uploadOptions) uploadOptions.style.display = "flex";
+    if (previewImg) {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+    }
+    if (imageConfirm) imageConfirm.style.display = "none";
+    if (locationInfo) locationInfo.style.display = "none";
+    if (successScreen) successScreen.style.display = "none";
+    if (statusDiv) statusDiv.innerHTML = "";
+    if (tweetBtn) tweetBtn.disabled = true;
+    currentImageFile = null;
+    currentGPS = null;
+}
+
+function showSuccessScreen() {
+    if (locationInfo) locationInfo.style.display = "none";
+    if (successScreen) successScreen.style.display = "block";
+}
+
+function resetApp() {
+    // Reset state
+    currentImageFile = null;
+    currentGPS = null;
+    if (marker && map) {
+        map.removeLayer(marker);
+        marker = null;
+    }
+
+    // Reset form
+    const issueType = document.getElementById("issueType");
+    const issueDesc = document.getElementById("issueDesc");
+    if (issueType) issueType.value = "Pothole";
+    if (issueDesc) issueDesc.value = "";
+    if (confirmImageCheck) confirmImageCheck.checked = false;
+
+    // Reset map view
+    if (map) {
+        map.setView([12.9716, 77.5946], 13);
+    }
+
+    showStatus("", "");
+    showUploadOptions();
+}
+
+// Tweet button gating
+function updateTweetButtonState() {
+    const imageOk = !!currentImageFile;
+    const gpsOk = currentGPS &&
+        isValidNumber(currentGPS.lat) &&
+        isValidNumber(currentGPS.lon) &&
+        isInGBA(currentGPS.lat, currentGPS.lon);
+    const confirmed = confirmImageCheck && confirmImageCheck.checked;
+
+    if (tweetBtn) {
+        tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
+    }
+}
+
+// --- Image handling ---
+
+function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
+
     currentImageFile = file;
+    if (confirmImageCheck) confirmImageCheck.checked = false;
+    if (tweetBtn) tweetBtn.disabled = true;
 
     const reader = new FileReader();
-    reader.onload = e => {
-        const preview = document.getElementById("preview");
-        if (preview) {
-            preview.src = e.target.result;
-            preview.style.display = "block";
+    reader.onload = (e) => {
+        if (previewImg) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = "block";
         }
+        hideUploadOptions();
+        if (imageConfirm) imageConfirm.style.display = "block";
         extractGPSFromExif(e.target.result);
     };
     reader.readAsDataURL(file);
 }
 
+// --- EXIF + GPS ---
+
 async function extractGPSFromExif(dataUrl) {
     console.log("🔍 EXIF parse start");
 
-    // 1. EXIF (your exact code)
     try {
         const exif = piexif.load(dataUrl);
         const gps = exif.GPS || {};
@@ -114,58 +192,47 @@ async function extractGPSFromExif(dataUrl) {
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
 
             currentGPS = { lat, lon };
-            showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+            showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
             if (!isInGBA(lat, lon)) {
-                showStatus(`⚠️ Outside GBA - drag marker`, 'warning');
-                tweetBtn.disabled = true;
+                showStatus("⚠️ Outside GBA - drag marker", "warning");
+                if (tweetBtn) tweetBtn.disabled = true;
             } else {
-                tweetBtn.disabled = false;
-                showStatus(`✅ GBA GPS verified: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, 'success');
+                showStatus(`✅ GBA GPS verified: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
             }
             showLocation();
+            updateTweetButtonState();
             return;
         }
     } catch (e) {
         console.error("🚨 EXIF failed:", e);
     }
 
-    // 2. LIVE GPS fallback (mobile camera fix)
+    // Live GPS fallback
     try {
         const liveGPS = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(
                 pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-                reject, { enableHighAccuracy: true, timeout: 5000 }
+                reject,
+                { enableHighAccuracy: true, timeout: 5000 }
             );
         });
         if (isInGBA(liveGPS.lat, liveGPS.lon)) {
             currentGPS = liveGPS;
-            showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, 'success');
+            showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
             showLocation();
+            updateTweetButtonState();
             return;
         }
-    } catch (e) { }
+    } catch (e) {
+        // ignore
+    }
 
-    // 3. Manual map
-    showStatus('ℹ️ Click map for location.', 'info');
-    tweetBtn.disabled = true;
+    showStatus("ℹ️ Click map for location.", "info");
+    if (tweetBtn) tweetBtn.disabled = true;
 }
 
-
-
-function isValidNumber(x) {
-    return typeof x === "number" && Number.isFinite(x);
-}
-
-function useBrowserLocation() {
-    if (!navigator.geolocation) { initMapFallback(); return; }
-    navigator.geolocation.getCurrentPosition(pos => {
-        currentGPS = { lat: Number(pos.coords.latitude), lon: Number(pos.coords.longitude) };
-        showLocation();
-    }, () => {
-        initMapFallback();
-    }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
-}
+// --- Map / Leaflet ---
 
 async function validateLocationForCoords(testGPS) {
     if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
@@ -182,13 +249,10 @@ async function handleMapClick(e) {
     const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
     const valid = await validateLocationForCoords(testGPS);
 
-    // 🔧 DEBUG LOG (remove after fix)
-    console.log('🗺️ CLICK:', testGPS, 'VALID:', valid, 'TWEETBTN:', tweetBtn);
-
     if (!valid) {
         currentGPS = null;
-        if (marker) { map.removeLayer(marker); marker = null; }
-        if (tweetBtn) tweetBtn.disabled = true;  // 🔧 DEFENSIVE
+        if (marker && map) { map.removeLayer(marker); marker = null; }
+        if (tweetBtn) tweetBtn.disabled = true;
         if (infoBox) infoBox.classList.remove("valid");
         showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
         return;
@@ -198,40 +262,25 @@ async function handleMapClick(e) {
     placeMarker();
     updateGpsDisplay();
 
-    // ✅ Ensure the whole location block (and button) is visible
-    const locInfo = document.getElementById("locationInfo");
-    if (locInfo) {
-        locInfo.style.display = "block";
-    }
-
-    // 🔧 CRITICAL: Defensive enable + force UI update
-    if (tweetBtn) {
-        tweetBtn.disabled = false;
-        tweetBtn.style.opacity = '1';
-        tweetBtn.classList.remove('disabled', 'loading');
-        console.log('✅ TWEET BUTTON ENABLED');
-    } else {
-        console.error('❌ tweetBtn NOT FOUND - check HTML id=\"tweetBtn\"');
-    }
-
+    if (locationInfo) locationInfo.style.display = "block";
     if (infoBox) infoBox.classList.add("valid");
     showStatus("✅ Location verified within GBA jurisdiction.", "success");
+
+    updateTweetButtonState();
 }
 
-
-
 function showLocation() {
-    const locInfo = document.getElementById("locationInfo");
+    if (locationInfo) locationInfo.style.display = "block";
     const mapRestr = document.getElementById("mapRestrictionMsg");
-    if (locInfo) locInfo.style.display = "block";
     if (mapRestr) mapRestr.style.display = "block";
-    if (document.getElementById("map")) document.getElementById("map").style.display = "block";
+    const mapEl = document.getElementById("map");
+    if (mapEl) mapEl.style.display = "block";
+
     initMap();
     if (currentGPS && isValidNumber(currentGPS.lat) && isValidNumber(currentGPS.lon)) {
         map.setView([currentGPS.lat, currentGPS.lon], 16);
         placeMarker();
         updateGpsDisplay();
-        tweetBtn.disabled = false;
         if (infoBox) infoBox.classList.add("valid");
     }
     setTimeout(() => { if (map) map.invalidateSize(); }, 250);
@@ -247,53 +296,49 @@ function initMap() {
     mapInitialized = true;
 }
 
-function initMapFallback() {
-    const m = document.getElementById("map");
-    if (m) m.style.display = "block";
-    initMap();
-    map.setView([12.9716, 77.5946], 12);
-    const locInfo = document.getElementById("locationInfo");
-    const mapRestr = document.getElementById("mapRestrictionMsg");
-    if (locInfo) locInfo.style.display = "block";
-    if (mapRestr) mapRestr.style.display = "block";
-    showStatus("Click on the map to set the exact location within GBA area.", "info");
-}
-
 function placeMarker() {
+    if (!map || !currentGPS) return;
     if (marker) map.removeLayer(marker);
-    if (currentGPS && map) {
-        marker = L.marker([currentGPS.lat, currentGPS.lon], {
-            draggable: true,
-            title: "Drag to adjust location"
-        })
-            .addTo(map)
-            .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
-            .openPopup();
+    marker = L.marker([currentGPS.lat, currentGPS.lon], {
+        draggable: true,
+        title: "Drag to adjust location"
+    })
+        .addTo(map)
+        .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
+        .openPopup();
 
-        marker.on("dragend", async e => {
-            const newPos = e.target.getLatLng();
-            const testGPS = { lat: newPos.lat, lon: newPos.lng };
+    marker.on("dragend", async e => {
+        const newPos = e.target.getLatLng();
+        const testGPS = { lat: newPos.lat, lon: newPos.lng };
+        const valid = await validateLocationForCoords(testGPS);
 
-            // ✅ STRICT POLYGON VALIDATION (matches map click)
-            const valid = await validateLocationForCoords(testGPS);
-            if (valid) {
-                currentGPS = testGPS;
-                updateGpsDisplay();
-                if (tweetBtn) tweetBtn.disabled = false;
-                showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, 'success');
-            } else {
-                // REVERT to valid position
-                e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
-                showStatus(`❌ Outside GBA jurisdiction. Drag inside boundary.`, 'error');
-                if (tweetBtn) tweetBtn.disabled = true;
-            }
-        });
-
-
-    }
+        if (valid) {
+            currentGPS = testGPS;
+            updateGpsDisplay();
+            showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
+            updateTweetButtonState();
+        } else {
+            e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
+            showStatus("❌ Outside GBA jurisdiction. Drag inside boundary.", "error");
+            if (tweetBtn) tweetBtn.disabled = true;
+        }
+    });
 }
 
-// --- Corporations from map.txt (NewCorp) ---
+function updateGpsDisplay() {
+    const el = document.getElementById("gpsCoords");
+    if (!el || !currentGPS) return;
+    el.innerHTML = `${currentGPS.lat.toFixed(6)}, ${currentGPS.lon.toFixed(6)}`;
+    const a = document.createElement("a");
+    a.href = `https://www.google.com/maps/search/?api=1&query=${currentGPS.lat},${currentGPS.lon}`;
+    a.target = "_blank";
+    a.className = "gps-link";
+    a.textContent = "🗺️ Open Map";
+    el.appendChild(a);
+}
+
+// --- Polygon loading (unchanged logic) ---
+
 function corpHandleForName(name) {
     switch (name) {
         case "Central": return "@BCCCofficial";
@@ -331,64 +376,46 @@ async function loadCorpPolygons() {
     }).filter(Boolean);
     return corpPolygons;
 }
+
 async function loadWardPolygons() {
     if (wardPolygons) return wardPolygons;
-
     const res = await fetch(WARD_KML_URL);
     if (!res.ok) throw new Error("ward KML not found");
     const kmlText = await res.text();
-
     const parser = new DOMParser();
     const xml = parser.parseFromString(kmlText, "application/xml");
     const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
-
     wardPolygons = placemarks.map(pm => {
         const simpleData = pm.getElementsByTagName("SimpleData");
-
-        let wardNo = "";
-        let wardName = "";
-
+        let wardNo = "", wardName = "";
         for (const sd of simpleData) {
             const nameAttr = sd.getAttribute("name");
-            if (nameAttr === "ward_id") {
-                wardNo = sd.textContent.trim();
-            } else if (nameAttr === "ward_name") {
-                wardName = sd.textContent.trim();
-            }
+            if (nameAttr === "ward_id") wardNo = sd.textContent.trim();
+            else if (nameAttr === "ward_name") wardName = sd.textContent.trim();
         }
-
         const coordsNode = pm.getElementsByTagName("coordinates")[0];
         if (!coordsNode) return null;
-
         const ring = coordsNode.textContent.trim()
             .split(/\s+/)
             .map(pair => pair.split(",").map(Number))
             .map(([lon, lat]) => [lon, lat]);
-
         return { wardNo, wardName, ring };
     }).filter(Boolean);
-
     return wardPolygons;
 }
-
-
 
 async function findCorpForCurrentGPS() {
     if (!currentGPS) return { corpName: "", corpHandle: "" };
     const polys = await loadCorpPolygons();
-    const lon = currentGPS.lon;
-    const lat = currentGPS.lat;
+    const lon = currentGPS.lon, lat = currentGPS.lat;
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            const corpName = p.corp || "";
-            const corpHandle = corpHandleForName(corpName);
-            return { corpName, corpHandle };
+            return { corpName: p.corp || "", corpHandle: corpHandleForName(p.corp) };
         }
     }
     return { corpName: "", corpHandle: "" };
 }
 
-// --- Constituencies from blr_const.txt ---
 async function loadConstituencyPolygons() {
     if (constPolygons) return constPolygons;
     const res = await fetch(CONST_KML_URL);
@@ -401,9 +428,7 @@ async function loadConstituencyPolygons() {
         const simpleData = pm.getElementsByTagName("SimpleData");
         let acName = "";
         for (const sd of simpleData) {
-            if (sd.getAttribute("name") === "AC_NAME") {
-                acName = sd.textContent.trim();
-            }
+            if (sd.getAttribute("name") === "AC_NAME") acName = sd.textContent.trim();
         }
         const coordsNode = pm.getElementsByTagName("coordinates")[0];
         if (!coordsNode) return null;
@@ -419,8 +444,7 @@ async function loadConstituencyPolygons() {
 async function findConstituencyForCurrentGPS() {
     if (!currentGPS) return { acName: "", mlaHandle: "" };
     const polys = await loadConstituencyPolygons();
-    const lon = currentGPS.lon;
-    const lat = currentGPS.lat;
+    const lon = currentGPS.lon, lat = currentGPS.lat;
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
             const handleUser = MLA_HANDLES[p.acName] || "";
@@ -433,11 +457,8 @@ async function findConstituencyForCurrentGPS() {
 
 async function findWardForCurrentGPS() {
     if (!currentGPS) return { wardNo: "", wardName: "" };
-
     const polys = await loadWardPolygons();
-    const lon = currentGPS.lon;
-    const lat = currentGPS.lat;
-
+    const lon = currentGPS.lon, lat = currentGPS.lat;
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
             return { wardNo: p.wardNo, wardName: p.wardName };
@@ -445,7 +466,6 @@ async function findWardForCurrentGPS() {
     }
     return { wardNo: "", wardName: "" };
 }
-
 
 function pointInRing(lon, lat, ring) {
     let inside = false;
@@ -459,33 +479,9 @@ function pointInRing(lon, lat, ring) {
     return inside;
 }
 
-function updateGpsDisplay() {
-    const el = document.getElementById("gpsCoords");
-    if (!el || !currentGPS) return;
-    el.innerHTML = `${currentGPS.lat.toFixed(6)}, ${currentGPS.lon.toFixed(6)}`;
-    const a = document.createElement("a");
-    a.href = `https://www.google.com/maps/search/?api=1&query=${currentGPS.lat},${currentGPS.lon}`;
-    a.target = "_blank";
-    a.className = "gps-link";
-    a.textContent = "🗺️ Open Map";
-    el.appendChild(a);
-}
-
-function showStatus(msg, type) {
-    const el = document.getElementById("status");
-    if (!el) return;
-    if (!msg) { el.style.display = "none"; return; }
-    el.style.display = "block";
-    el.innerHTML = msg;
-    el.style.background = type === "error" ? "#f8d7da"
-        : type === "success" ? "#d4edda"
-            : "#e2e3e5";
-    el.style.borderLeft = `4px solid ${type === "error" ? "#dc3545" :
-        type === "success" ? "#28a745" : "#6c757d"}`;
-}
+// --- Tweet / share ---
 
 async function shareToGBA() {
-    // ✅ FINAL GBA CHECK BEFORE TWEET
     if (!currentGPS || !isValidNumber(currentGPS.lat) || !isInGBA(currentGPS.lat, currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
@@ -515,9 +511,11 @@ async function shareToGBA() {
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
 
-    tweetBtn.disabled = true;
-    tweetBtn.textContent = "Posting...";
-    tweetBtn.classList.add("loading");
+    if (tweetBtn) {
+        tweetBtn.disabled = true;
+        tweetBtn.textContent = "Posting...";
+        tweetBtn.classList.add("loading");
+    }
     showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
     try {
@@ -528,38 +526,8 @@ async function shareToGBA() {
         catch (e) { throw new Error("Bad JSON from API: " + raw.slice(0, 200)); }
 
         if (res.ok && data.success) {
-            const url = data.tweetUrl || data.tweet_url || "";
-            let html = "✅ Tweet posted successfully from @zenc_civic!";
-            if (corpName || acName) {
-                html += `<div class="map-message" style="margin-top:6px;">`;
-                if (corpName) {
-                    html += `Corporation: ${corpName}${corpHandle ? " (" + corpHandle + ")" : ""}<br>`;
-                }
-                if (acName) {
-                    html += `Constituency: ${acName}${mlaHandle ? " – tagged " + mlaHandle : ""}`;
-                }
-                html += `</div>`;
-            }
-            if (url) {
-                html += `<div class="map-message" style="margin-top:8px;">
-                   <a href="${url}" target="_blank">${url}</a>
-                 </div>`;
-            }
-            showStatus(html, "success");
-            if (url) {
-                const copyBtn = document.createElement("button");
-                copyBtn.textContent = "📋 Copy Tweet URL";
-                copyBtn.className = "copy-btn";
-                copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(url).then(() => {
-                        copyBtn.textContent = "✅ Copied!";
-                        setTimeout(() => copyBtn.textContent = "📋 Copy Tweet URL", 2000);
-                    });
-                };
-                document.getElementById("status").appendChild(copyBtn);
-            }
-            document.getElementById("issueType").value = "Pothole";
-            document.getElementById("issueDesc").value = "";
+            showSuccessScreen();
+            return;
         } else {
             showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");
         }
@@ -567,12 +535,76 @@ async function shareToGBA() {
         showStatus("❌ Submission failed: " + e.message, "error");
         console.error("Post error:", e);
     } finally {
-        tweetBtn.disabled = false;
-        tweetBtn.classList.remove("loading");
-        tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+        if (tweetBtn) {
+            tweetBtn.classList.remove("loading");
+            tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+            updateTweetButtonState();
+        }
     }
 }
 
+// --- Wire up DOM ---
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Cache elements
+    uploadOptions = document.getElementById("uploadOptions");
+    previewImg = document.getElementById("preview");
+    locationInfo = document.getElementById("locationInfo");
+    successScreen = document.getElementById("successScreen");
+    statusDiv = document.getElementById("status");
+    imageInput = document.getElementById("imageInput");
+    cameraInput = document.getElementById("cameraInput");
+    tweetBtn = document.getElementById("tweetBtn");
+    infoBox = document.getElementById("infoBox");
+    dropZone = document.getElementById("dropZone");
+    imageConfirm = document.getElementById("imageConfirm");
+    confirmImageCheck = document.getElementById("confirmImageCheck");
+    changeImageBtn = document.getElementById("changeImageBtn");
+
+    const cameraBtn = document.getElementById("cameraBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const submitAnotherBtn = document.getElementById("submitAnotherBtn");
+
+    // Buttons
+    if (cameraBtn && cameraInput) {
+        cameraBtn.addEventListener("click", () => cameraInput.click());
+    }
+    if (uploadBtn && imageInput) {
+        uploadBtn.addEventListener("click", () => imageInput.click());
+    }
+    if (imageInput) {
+        imageInput.addEventListener("change", e => handleImageUpload(e.target.files[0]));
+    }
+    if (cameraInput) {
+        cameraInput.addEventListener("change", e => handleImageUpload(e.target.files[0]));
+    }
+
+    if (dropZone) {
+        dropZone.addEventListener("dragover", e => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+        });
+        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+        dropZone.addEventListener("drop", e => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            if (e.dataTransfer.files.length) {
+                handleImageUpload(e.dataTransfer.files[0]);
+            }
+        });
+    }
+
+    if (changeImageBtn) {
+        changeImageBtn.addEventListener("click", resetApp);
+    }
+    if (confirmImageCheck) {
+        confirmImageCheck.addEventListener("change", updateTweetButtonState);
+    }
+    if (submitAnotherBtn) {
+        submitAnotherBtn.addEventListener("click", resetApp);
+    }
+
+    // Map
     initMap();
+    showUploadOptions();
 });
