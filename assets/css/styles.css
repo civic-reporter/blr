@@ -15,6 +15,7 @@ body {
     backdrop-filter: blur(10px);
 }
 
+/* Dropzone (still used for drag & drop, not primary CTA now) */
 .upload-area {
     border: 3px dashed #dc3545;
     border-radius: 12px;
@@ -98,6 +99,7 @@ body {
     min-width: 150px;
 }
 
+/* Generic button base (tweet, etc.) */
 button {
     background: #dc3545;
     color: #fff;
@@ -188,6 +190,7 @@ h2 {
     }
 }
 
+/* Camera / Upload / Change / Submit Another buttons */
 .upload-options {
     display: flex;
     flex-direction: column;
@@ -201,6 +204,7 @@ h2 {
     flex-wrap: wrap;
 }
 
+/* Shared style for all big CTA buttons (Camera, Upload Photo, Change Photo, Submit Another) */
 .upload-btn {
     flex: 1;
     min-width: 140px;
@@ -209,12 +213,11 @@ h2 {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
 
-    /* gradient + animation */
     background-image: linear-gradient(135deg, #ffffff, #cccccc, #000000);
     background-size: 200% 200%;
     background-position: 0% 50%;
@@ -231,39 +234,20 @@ h2 {
     color: #fff;
 }
 
-
+/* Optional: keep camera slightly highlighted but still on same gradient base if you want */
+/*
 .camera-btn {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
-    border-color: #ff4757;
 }
-
-.camera-btn:hover {
-    border-color: #ff3742;
-    background: linear-gradient(135deg, #ffa500 0%, #ff6b6b 100%);
-}
+*/
 
 .success-icon {
     font-size: 4rem;
     margin-bottom: 1rem;
 }
 
-.success-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
-}
+/* Remove old .success-btn overrides – now using .upload-btn */
 
-.success-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-}
-
+/* Mobile tweaks */
 @media (max-width: 480px) {
     .upload-btn {
         min-width: unset;
@@ -277,6 +261,7 @@ h2 {
     }
 }
 
+/* Image confirm block */
 .image-confirm {
     margin-top: 0.75rem;
     padding: 0.75rem 1rem;
@@ -300,4 +285,12 @@ h2 {
 
 .confirm-check input {
     transform: scale(1.1);
+}
+
+/* Footer inside container */
+.app-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 12px;
 }
