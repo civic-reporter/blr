@@ -522,11 +522,40 @@ async function shareToGBA() {
         const res = await fetch(API_GATEWAY_URL, { method: "POST", body: formData });
         const raw = await res.text();
         let data;
-        try { data = JSON.parse(raw); }
-        catch (e) { throw new Error("Bad JSON from API: " + raw.slice(0, 200)); }
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            throw new Error("Bad JSON from API: " + raw.slice(0, 200));
+        }
 
         if (res.ok && data.success) {
+            const url = data.tweetUrl || data.tweet_url || "";
             showSuccessScreen();
+
+            if (url) {
+                const container = document.getElementById("tweetLinkContainer") || statusDiv;
+                if (container) {
+                    container.innerHTML = `
+                      <div class="map-message" style="margin-top:8px;">
+                        <a href="${url}" target="_blank">${url}</a>
+                      </div>
+                    `;
+
+                    const copyBtn = document.createElement("button");
+                    copyBtn.textContent = "📋 Copy Tweet URL";
+                    copyBtn.className = "copy-btn";
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(url).then(() => {
+                            copyBtn.textContent = "✅ Copied!";
+                            setTimeout(() => {
+                                copyBtn.textContent = "📋 Copy Tweet URL";
+                            }, 2000);
+                        });
+                    };
+                    container.appendChild(copyBtn);
+                }
+            }
+
             return;
         } else {
             showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");

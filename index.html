@@ -30,10 +30,11 @@
           📱 <span>Camera</span>
         </button>
         <!-- File upload button -->
-        <button id="uploadBtn" class="upload-btn upload-btn">
+        <button id="uploadBtn" class="upload-btn">
           📁 <span>Upload Photo</span>
         </button>
       </div>
+      <!-- Hidden real inputs (file, image-only) -->
       <input type="file" id="imageInput" style="display:none" />
       <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
     </div>
@@ -41,15 +42,17 @@
     <!-- Image Preview -->
     <img id="preview" style="display:none;" />
 
+    <!-- Image confirmation -->
     <div id="imageConfirm" style="display:none;" class="image-confirm">
       <p>Is this photo correct?</p>
-      <button id="changeImageBtn" class="upload-btn">🔁 Choose another photo</button>
+      <button id="changeImageBtn" class="upload-btn">
+        🔁 Choose another photo
+      </button>
       <label class="confirm-check">
         <input type="checkbox" id="confirmImageCheck" />
         <span>I confirm this photo clearly shows the issue.</span>
       </label>
     </div>
-
 
     <!-- Map -->
     <div id="map"></div>
@@ -79,7 +82,9 @@
         <small>🔧 Drag marker or click map to adjust location <strong>(within GBA area only)</strong>.</small>
       </div>
 
-      <button id="tweetBtn" onclick="shareToGBA()" disabled>🚨 Post Issue via @zenc_civic</button>
+      <button id="tweetBtn" onclick="shareToGBA()" disabled>
+        🚨 Post Issue via @zenc_civic
+      </button>
     </div>
 
     <!-- Status Messages -->
@@ -90,7 +95,11 @@
       <div class="success-icon">✅</div>
       <h3>Issue Posted Successfully!</h3>
       <p>Your report has been tweeted to @zenc_civic</p>
-      <button id="submitAnotherBtn" onclick="resetApp()" class="success-btn">
+
+      <!-- Tweet URL + copy button go here -->
+      <div id="tweetLinkContainer"></div>
+
+      <button id="submitAnotherBtn" class="success-btn">
         📸 Submit Another Issue
       </button>
     </div>
