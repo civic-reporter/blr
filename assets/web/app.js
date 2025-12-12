@@ -197,16 +197,8 @@ function updateTweetButtonState() {
     if (tweetBtn) {
         tweetBtn.disabled = !enable;
     }
-
-    // Debug to console
-    console.log('updateTweetButtonState:', {
-        imageOk,
-        gpsOk,
-        confirmed,
-        lat: currentGPS && currentGPS.lat,
-        lon: currentGPS && currentGPS.lon
-    });
 }
+
 
 
 
