@@ -693,6 +693,8 @@ async function shareToGBA() {
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
 
+    let wasSuccess = false;
+
     try {
         const res = await fetch(API_GATEWAY_URL, { method: "POST", body: formData });
         const raw = await res.text();
@@ -704,20 +706,19 @@ async function shareToGBA() {
         }
 
         if (res.ok && data.success) {
+            wasSuccess = true;
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // ✅ FIXED: Hide YOUR ACTUAL ELEMENTS
-            ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
+            // ✅ Hide main UI blocks (including tweet button container)
+            ['uploadOptions', 'locationInfo', 'imageConfirm', 'tweetBtnContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
 
-            // Hide form groups, tweet button, map
-            document.querySelectorAll('.form-group, #tweetBtnContainer').forEach(el => {
+            // Hide form groups and map
+            document.querySelectorAll('.form-group').forEach(el => {
                 el.style.display = 'none';
             });
-
-            // Hide map
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.display = 'none';
 
@@ -728,6 +729,9 @@ async function shareToGBA() {
             document.getElementById('issueDesc').value = '';
             if (previewImg) previewImg.src = '';
             if (confirmImageCheck) confirmImageCheck.checked = false;
+
+            // Clear status bar before showing success
+            showStatus("", "");
 
             showSuccessScreen();
 
@@ -757,9 +761,11 @@ async function shareToGBA() {
         showStatus("❌ Submission failed: " + e.message, "error");
         console.error("Post error:", e);
     } finally {
-        // Safe finally block
+        // Safe finally block: only reset button if we did NOT end on success screen
         const tweetContainer = document.getElementById('tweetBtnContainer');
-        if (tweetBtn && tweetContainer && tweetContainer.style.display !== 'none') {
+        const successVisible = successScreen && successScreen.style.display === 'block';
+
+        if (!wasSuccess && tweetBtn && tweetContainer && tweetContainer.style.display !== 'none' && !successVisible) {
             tweetBtn.classList.remove("loading");
             tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
             tweetBtn.disabled = false;
