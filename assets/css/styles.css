@@ -308,3 +308,106 @@ h2 {
     color: #6c757d;
     font-size: 12px;
 }
+
+/* ✅ ADD these CSS rules to your styles.css */
+
+/* 1. Success screen tweet link container */
+#tweetLinkContainer {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #e8f5e8;
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* 2. Map message styling (tweet link text) */
+.map-message {
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.map-message a {
+    color: #1e88e5;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.map-message a:hover {
+    text-decoration: underline;
+}
+
+/* 3. Copy button styling */
+.copy-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+/* 4. Tweet button container (for hiding) */
+#tweetBtnContainer {
+    margin-top: 1.5rem;
+}
+
+/* 5. GPS details (for hiding) */
+#gpsDetails {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: #f0f8ff;
+    border-radius: 8px;
+    font-family: monospace;
+}
+
+/* 6. Form group containers (for hiding) */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* 7. Success screen polish */
+#successScreen {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #4caf50;
+    margin-bottom: 1rem;
+    animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}

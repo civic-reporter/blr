@@ -134,14 +134,44 @@ function resetApp() {
     if (issueDesc) issueDesc.value = "";
     if (confirmImageCheck) confirmImageCheck.checked = false;
 
-    // Reset map view
+    // Reset preview
+    if (previewImg) {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+    }
+
+    // ✅ NEW: Re-show ALL hidden elements
+    ['uploadOptions', 'locationInfo', 'gpsDetails'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.removeProperty('display');
+    });
+    document.querySelectorAll('.form-group').forEach(el => el.style.removeProperty('display'));
+    document.getElementById('map')?.style.removeProperty('display');
+    document.getElementById('tweetBtnContainer')?.style.removeProperty('display');
+
+    // Reset success screen
+    if (successScreen) successScreen.style.display = "none";
+    if (document.getElementById('tweetLinkContainer')) {
+        document.getElementById('tweetLinkContainer').innerHTML = '';
+    }
+
+    // Reset map view + refresh
     if (map) {
         map.setView([12.9716, 77.5946], 13);
+        map.invalidateSize();  // ✅ Fix map sizing after show/hide
+    }
+
+    // Reset tweet button
+    if (tweetBtn) {
+        tweetBtn.classList.remove("loading");
+        tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+        tweetBtn.disabled = true;
     }
 
     showStatus("", "");
     showUploadOptions();
 }
+
 
 // Tweet button gating
 function updateTweetButtonState() {
@@ -489,7 +519,7 @@ function pointInRing(lon, lat, ring) {
 
 // --- Tweet / share ---
 
-async function shareToGBA() {
+async function shareToGBA() {  // ✅ FIXED: async (was "sync")
     if (!currentGPS || !isValidNumber(currentGPS.lat) || !isInGBA(currentGPS.lat, currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
@@ -499,14 +529,7 @@ async function shareToGBA() {
         return;
     }
 
-    const issueType = document.getElementById("issueType").value;
-    const desc = document.getElementById("issueDesc").value.trim();
-
-    const { acName, mlaHandle } = await findConstituencyForCurrentGPS();
-    const { corpName, corpHandle } = await findCorpForCurrentGPS();
-    const { wardNo, wardName } = await findWardForCurrentGPS();
-
-    // Set UI state first so it can repaint
+    // ✅ IMMEDIATE UI UPDATE (before slow lookups)
     if (tweetBtn) {
         tweetBtn.disabled = true;
         tweetBtn.textContent = "Posting...";
@@ -514,8 +537,22 @@ async function shareToGBA() {
     }
     showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
-    // Yield to event loop to let the browser paint the new button state
-    await new Promise(requestAnimationFrame);
+    // ✅ INSTANT VISUAL FEEDBACK
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // ✅ NOW do slow KML lookups (user sees "Posting...")
+    const issueType = document.getElementById("issueType").value;
+    const desc = document.getElementById("issueDesc").value.trim();
+
+    const [
+        { acName, mlaHandle },
+        { corpName, corpHandle },
+        { wardNo, wardName }
+    ] = await Promise.all([
+        findConstituencyForCurrentGPS(),
+        findCorpForCurrentGPS(),
+        findWardForCurrentGPS()
+    ]);
 
     const formData = new FormData();
     formData.append("image", currentImageFile);
@@ -543,33 +580,45 @@ async function shareToGBA() {
         if (res.ok && data.success) {
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // Show in-page success screen
+            // Hide form elements
+            ['uploadOptions', 'tweetBtnContainer', 'gpsDetails', 'locationInfo'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            document.querySelectorAll('.form-group').forEach(el => el.style.display = 'none');
+
+            // FIXED map hiding
+            const mapEl = document.getElementById('map');
+            if (mapEl) mapEl.style.display = 'none';
+
+            // Clear form
+            currentImageFile = null;
+            currentGPS = null;
+            document.getElementById('issueType').value = '';
+            document.getElementById('issueDesc').value = '';
+            if (previewImg) previewImg.src = '';
+            if (confirmImageCheck) confirmImageCheck.checked = false;
+
             showSuccessScreen();
 
-            if (url) {
-                const container = document.getElementById("tweetLinkContainer") || statusDiv;
-                if (container) {
-                    container.innerHTML = `
-                      <div class="map-message" style="margin-top:8px;">
-                        <a href="${url}" target="_blank">${url}</a>
-                      </div>
-                    `;
-
-                    const copyBtn = document.createElement("button");
-                    copyBtn.textContent = "📋 Copy Tweet URL";
-                    copyBtn.className = "copy-btn";
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(url).then(() => {
-                            copyBtn.textContent = "✅ Copied!";
-                            setTimeout(() => {
-                                copyBtn.textContent = "📋 Copy Tweet URL";
-                            }, 2000);
+            // Tweet link + copy
+            if (url && document.getElementById("tweetLinkContainer")) {
+                document.getElementById("tweetLinkContainer").innerHTML = `
+                    <p class="map-message">Tweet posted! <a href="${url}" target="_blank">View on X</a></p>
+                    <button id="copyTweetBtn" class="copy-btn">📋 Copy Tweet URL</button>
+                `;
+                setTimeout(() => {
+                    const copyBtn = document.getElementById('copyTweetBtn');
+                    if (copyBtn) {
+                        copyBtn.addEventListener('click', () => {
+                            navigator.clipboard.writeText(url).then(() => {
+                                copyBtn.textContent = '✅ Copied!';
+                                setTimeout(() => copyBtn.textContent = '📋 Copy Tweet URL', 2000);
+                            });
                         });
-                    };
-                    container.appendChild(copyBtn);
-                }
+                    }
+                }, 50);
             }
-
             return;
         } else {
             showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");
@@ -578,16 +627,16 @@ async function shareToGBA() {
         showStatus("❌ Submission failed: " + e.message, "error");
         console.error("Post error:", e);
     } finally {
-        if (tweetBtn) {
+        // FIXED finally - safe optional chaining
+        const tweetContainer = document.getElementById('tweetBtnContainer');
+        if (tweetBtn && tweetContainer && tweetContainer.style.display !== 'none') {
             tweetBtn.classList.remove("loading");
             tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+            tweetBtn.disabled = false;
             updateTweetButtonState();
         }
     }
 }
-
-
-
 
 // --- Wire up DOM ---
 
@@ -648,6 +697,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (submitAnotherBtn) {
         submitAnotherBtn.addEventListener("click", resetApp);
+    }
+    if (tweetBtn) {
+        tweetBtn.addEventListener("click", shareToGBA);
     }
 
     // Map
