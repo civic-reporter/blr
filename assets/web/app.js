@@ -425,7 +425,9 @@ async function loadNominatimHints(query, suggBox, searchInput) {
 
 function placeMarker() {
     if (!map || !currentGPS) return;
+
     if (marker) map.removeLayer(marker);
+
     marker = L.marker([currentGPS.lat, currentGPS.lon], {
         draggable: true,
         title: "Drag to adjust location"
@@ -434,6 +436,7 @@ function placeMarker() {
         .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
         .openPopup();
 
+    // ✅ Ensure drag always re-validates + updates tweet button
     marker.on("dragend", async e => {
         const newPos = e.target.getLatLng();
         const testGPS = { lat: newPos.lat, lon: newPos.lng };
@@ -443,14 +446,17 @@ function placeMarker() {
             currentGPS = testGPS;
             updateGpsDisplay();
             showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
-            updateTweetButtonState();
+            updateTweetButtonState();  // <‑ enables Tweet if image + confirm OK
         } else {
+            // Snap back and keep tweet disabled
             e.target.setLatLng([currentGPS.lat, currentGPS.lon]);
             showStatus("❌ Outside GBA jurisdiction. Drag inside boundary.", "error");
             if (tweetBtn) tweetBtn.disabled = true;
+            updateTweetButtonState();
         }
     });
 }
+
 
 function updateGpsDisplay() {
     const el = document.getElementById("gpsCoords");
