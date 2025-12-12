@@ -146,7 +146,7 @@ function resetApp() {
         previewImg.style.display = "none";
     }
 
-    // ✅ NEW: Re-show ALL hidden elements
+    // Re-show ALL hidden elements
     ['uploadOptions', 'locationInfo', 'gpsDetails'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.removeProperty('display');
@@ -157,14 +157,24 @@ function resetApp() {
 
     // Reset success screen
     if (successScreen) successScreen.style.display = "none";
-    if (document.getElementById('tweetLinkContainer')) {
-        document.getElementById('tweetLinkContainer').innerHTML = '';
+    const tweetLinkContainer = document.getElementById('tweetLinkContainer');
+    if (tweetLinkContainer) {
+        tweetLinkContainer.innerHTML = '';
     }
 
     // Reset map view + refresh
     if (map) {
         map.setView([12.9716, 77.5946], 13);
-        map.invalidateSize();  // ✅ Fix map sizing after show/hide
+        map.invalidateSize();  // Fix map sizing after show/hide
+    }
+
+    // ✅ Clear search bar and suggestions
+    const searchInput = document.getElementById('gbaSearch');
+    const suggBox = document.getElementById('gbaSearchSuggestions');
+    if (searchInput) searchInput.value = '';
+    if (suggBox) {
+        suggBox.innerHTML = '';
+        suggBox.style.display = 'none';
     }
 
     // Reset tweet button
@@ -177,6 +187,7 @@ function resetApp() {
     showStatus("", "");
     showUploadOptions();
 }
+
 
 
 // Tweet button gating
