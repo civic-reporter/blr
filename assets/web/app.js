@@ -362,6 +362,7 @@ function initMap() {
 
     // Search input
     const wrapper = document.createElement('div');
+    wrapper.id = 'gbaSearchWrapper';
     wrapper.style.position = 'relative';
     wrapper.style.width = '100%';
 
@@ -729,6 +730,8 @@ async function shareToGBA() {
             document.getElementById('issueDesc').value = '';
             if (previewImg) previewImg.src = '';
             if (confirmImageCheck) confirmImageCheck.checked = false;
+            const searchWrapper = document.getElementById('gbaSearchWrapper');
+            if (searchWrapper) searchWrapper.style.display = 'none';
 
             // Clear status bar before showing success
             showStatus("", "");
