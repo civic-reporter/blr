@@ -181,13 +181,28 @@ function updateTweetButtonState() {
         isValidNumber(currentGPS.lon) &&
         isInGBA(currentGPS.lat, currentGPS.lon);
 
-    // Treat confirm checkbox as optional: if it exists, use it; otherwise allow.
-    const confirmed = confirmImageCheck ? confirmImageCheck.checked : true;
+    let confirmed = true;
+    if (confirmImageCheck) {
+        confirmed = !!confirmImageCheck.checked;
+    }
+
+    const enable = imageOk && gpsOk && confirmed;
 
     if (tweetBtn) {
-        tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
+        tweetBtn.disabled = !enable;
     }
+
+    // Debug to console
+    console.log('updateTweetButtonState:', {
+        imageOk,
+        gpsOk,
+        confirmed,
+        lat: currentGPS && currentGPS.lat,
+        lon: currentGPS && currentGPS.lon
+    });
 }
+
+
 
 
 // --- Image handling ---
