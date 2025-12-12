@@ -94,6 +94,12 @@ function showStatus(msg, type) {
 
 // --- UI flow helpers ---
 
+function ensureLocationVisible() {
+    if (locationInfo) {
+        locationInfo.style.display = "block";
+    }
+}
+
 function hideUploadOptions() {
     if (uploadOptions) uploadOptions.style.display = "none";
 }
@@ -317,6 +323,7 @@ async function handleMapClick(e) {
     currentGPS = testGPS;
     placeMarker();
     updateGpsDisplay();
+    ensureLocationVisible();
 
     if (locationInfo) locationInfo.style.display = "block";
     if (infoBox) infoBox.classList.add("valid");
@@ -425,6 +432,7 @@ async function loadNominatimHints(query, suggBox, searchInput) {
                     currentGPS = gps;
                     if (marker && map) map.removeLayer(marker);
                     placeMarker();
+                    ensureLocationVisible();
                     map.setView([gps.lat, gps.lon], 16);
                     showStatus('✅ Location validated inside GBA.', 'success');
                     updateTweetButtonState();
@@ -463,6 +471,7 @@ function placeMarker() {
         if (valid) {
             currentGPS = testGPS;
             updateGpsDisplay();
+            ensureLocationVisible();
             showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
             updateTweetButtonState();  // <‑ enables Tweet if image + confirm OK
         } else {
