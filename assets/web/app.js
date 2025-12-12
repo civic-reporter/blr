@@ -13,6 +13,7 @@ let corpPolygons = null;
 let constPolygons = null;
 let wardPolygons = null;
 let mapInitialized = false;
+let isSubmitting = false;
 
 // Constituency → MLA handle
 const MLA_HANDLES = {
@@ -646,13 +647,19 @@ function pointInRing(lon, lat, ring) {
 
 // --- Tweet / share ---
 
-async function shareToGBA() {
+aasync function shareToGBA() {
+    // 🔒 prevent duplicate submissions
+    if (isSubmitting) return;
+    isSubmitting = true;
+
     if (!currentGPS || !isValidNumber(currentGPS.lat) || !isInGBA(currentGPS.lat, currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
+        isSubmitting = false;
         return;
     }
     if (!currentImageFile) {
         showStatus("❌ Please upload an image first.", "error");
+        isSubmitting = false;
         return;
     }
 
@@ -774,8 +781,14 @@ async function shareToGBA() {
             tweetBtn.disabled = false;
             updateTweetButtonState();
         }
+
+        // Clear submitting flag unless we are on success screen
+        if (!successVisible) {
+            isSubmitting = false;
+        }
     }
 }
+
 
 
 // --- Wire up DOM ---
