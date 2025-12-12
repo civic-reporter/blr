@@ -411,3 +411,15 @@ h2 {
         transform: translateY(-5px);
     }
 }
+
+#gbaSearch {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 2px solid #dc3545;
+    font-size: 15px;
+    font-family: "Segoe UI", sans-serif;
+}
