@@ -332,56 +332,96 @@ function initMap() {
         attribution: "© OpenStreetMap contributors"
     }).addTo(map);
 
-    // Native search bar above map, styled via #gbaSearch in styles.css
+    // Search input
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.width = '100%';
+
     const searchInput = document.createElement('input');
     searchInput.id = 'gbaSearch';
     searchInput.type = 'text';
     searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
 
-    const mapNode = document.getElementById('map');
-    mapNode.parentNode.insertBefore(searchInput, mapNode);
+    const suggBox = document.createElement('div');
+    suggBox.id = 'gbaSearchSuggestions';
+    suggBox.style.display = 'none';
 
-    // Search handler (GBA‑bounded Nominatim)
-    searchInput.onkeypress = async (e) => {
-        if (e.key === 'Enter' && searchInput.value.trim()) {
-            const query = searchInput.value.trim();
-            try {
-                const res = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}` +
-                    `&bounded=1&viewbox=77.40,12.82,77.85,13.20&countrycodes=in&limit=1`
-                );
-                const data = await res.json();
-                if (data[0]) {
-                    const gps = {
-                        lat: parseFloat(data[0].lat),
-                        lon: parseFloat(data[0].lon)
-                    };
-                    const valid = await validateLocationForCoords(gps);
-                    if (valid) {
-                        currentGPS = gps;
-                        if (marker) map.removeLayer(marker);
-                        placeMarker();
-                        map.setView([gps.lat, gps.lon], 16);
-                        showStatus(`✅ ${data[0].display_name.split(',')[0]} validated!`, "success");
-                        updateTweetButtonState();
-                    } else {
-                        showStatus("❌ Outside GBA boundary", "error");
-                    }
-                } else {
-                    showStatus("❌ No GBA results found", "error");
-                }
-            } catch (err) {
-                showStatus("❌ Search failed", "error");
-                console.error(err);
-            }
+    wrapper.appendChild(searchInput);
+    wrapper.appendChild(suggBox);
+
+    const mapNode = document.getElementById('map');
+    mapNode.parentNode.insertBefore(wrapper, mapNode);
+
+    let hintTimeout = null;
+
+    searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim();
+        if (hintTimeout) clearTimeout(hintTimeout);
+        if (q.length < 3) {
+            suggBox.style.display = 'none';
+            suggBox.innerHTML = '';
+            return;
         }
-    };
+        // debounce 300ms
+        hintTimeout = setTimeout(() => loadNominatimHints(q, suggBox, searchInput), 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            suggBox.style.display = 'none';
+        }
+    });
 
     map.on("click", handleMapClick);
     mapInitialized = true;
 }
 
+async function loadNominatimHints(query, suggBox, searchInput) {
+    try {
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}` +
+            `&bounded=1&viewbox=77.40,12.82,77.85,13.20&countrycodes=in&limit=5`
+        );
+        const data = await res.json();
+        suggBox.innerHTML = '';
 
+        if (!data.length) {
+            suggBox.style.display = 'none';
+            return;
+        }
+
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'gba-suggestion-item';
+            div.textContent = item.display_name;
+            div.addEventListener('click', async () => {
+                searchInput.value = item.display_name;
+                suggBox.style.display = 'none';
+
+                const gps = {
+                    lat: parseFloat(item.lat),
+                    lon: parseFloat(item.lon)
+                };
+                const valid = await validateLocationForCoords(gps);
+                if (valid) {
+                    currentGPS = gps;
+                    if (marker && map) map.removeLayer(marker);
+                    placeMarker();
+                    map.setView([gps.lat, gps.lon], 16);
+                    showStatus('✅ Location validated inside GBA.', 'success');
+                    updateTweetButtonState();
+                } else {
+                    showStatus('❌ Outside GBA boundary.', 'error');
+                }
+            });
+            suggBox.appendChild(div);
+        });
+
+        suggBox.style.display = 'block';
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 function placeMarker() {
     if (!map || !currentGPS) return;
