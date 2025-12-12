@@ -326,13 +326,62 @@ function showLocation() {
 
 function initMap() {
     if (mapInitialized) return;
+
     map = L.map("map").setView([12.9716, 77.5946], 12);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors"
     }).addTo(map);
+
+    // Native search bar above map, styled via #gbaSearch in styles.css
+    const searchInput = document.createElement('input');
+    searchInput.id = 'gbaSearch';
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
+
+    const mapNode = document.getElementById('map');
+    mapNode.parentNode.insertBefore(searchInput, mapNode);
+
+    // Search handler (GBA‑bounded Nominatim)
+    searchInput.onkeypress = async (e) => {
+        if (e.key === 'Enter' && searchInput.value.trim()) {
+            const query = searchInput.value.trim();
+            try {
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}` +
+                    `&bounded=1&viewbox=77.40,12.82,77.85,13.20&countrycodes=in&limit=1`
+                );
+                const data = await res.json();
+                if (data[0]) {
+                    const gps = {
+                        lat: parseFloat(data[0].lat),
+                        lon: parseFloat(data[0].lon)
+                    };
+                    const valid = await validateLocationForCoords(gps);
+                    if (valid) {
+                        currentGPS = gps;
+                        if (marker) map.removeLayer(marker);
+                        placeMarker();
+                        map.setView([gps.lat, gps.lon], 16);
+                        showStatus(`✅ ${data[0].display_name.split(',')[0]} validated!`, "success");
+                        updateTweetButtonState();
+                    } else {
+                        showStatus("❌ Outside GBA boundary", "error");
+                    }
+                } else {
+                    showStatus("❌ No GBA results found", "error");
+                }
+            } catch (err) {
+                showStatus("❌ Search failed", "error");
+                console.error(err);
+            }
+        }
+    };
+
     map.on("click", handleMapClick);
     mapInitialized = true;
 }
+
+
 
 function placeMarker() {
     if (!map || !currentGPS) return;
