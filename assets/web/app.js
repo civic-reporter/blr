@@ -506,7 +506,7 @@ async function shareToGBA() {
     const { corpName, corpHandle } = await findCorpForCurrentGPS();
     const { wardNo, wardName } = await findWardForCurrentGPS();
 
-    // Set UI state first so it can repaint
+    // Set UI state first
     if (tweetBtn) {
         tweetBtn.disabled = true;
         tweetBtn.textContent = "Posting...";
@@ -514,8 +514,8 @@ async function shareToGBA() {
     }
     showStatus("📤 Uploading issue to @zenc_civic...", "info");
 
-    // Yield to event loop to let the browser paint the new button state
-    await new Promise(requestAnimationFrame);
+    // ✅ FIXED: Proper RAF for smooth button repaint
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     const formData = new FormData();
     formData.append("image", currentImageFile);
@@ -543,34 +543,47 @@ async function shareToGBA() {
         if (res.ok && data.success) {
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // Show in-page success screen
-            showSuccessScreen();
-
-            if (url) {
-                const container = document.getElementById("tweetLinkContainer") || statusDiv;
-                if (container) {
-                    container.innerHTML = `
-                      <div class="map-message" style="margin-top:8px;">
-                        <a href="${url}" target="_blank">${url}</a>
-                      </div>
-                    `;
-
-                    const copyBtn = document.createElement("button");
-                    copyBtn.textContent = "📋 Copy Tweet URL";
-                    copyBtn.className = "copy-btn";
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(url).then(() => {
-                            copyBtn.textContent = "✅ Copied!";
-                            setTimeout(() => {
-                                copyBtn.textContent = "📋 Copy Tweet URL";
-                            }, 2000);
-                        });
-                    };
-                    container.appendChild(copyBtn);
-                }
+            // Populate tweet link first
+            const tweetContainer = document.getElementById('tweetLinkContainer');
+            if (tweetContainer) {
+                tweetContainer.innerHTML = `
+                    <p class="map-message">Tweet posted! <a href="${url}" target="_blank">View on X</a></p>
+                    <button id="copyTweetBtn" class="copy-btn">📋 Copy Tweet URL</button>
+                `;
             }
 
-            return;
+            // Hide form elements + reset state
+            document.getElementById('uploadOptions').style.display = 'none';
+            document.getElementById('issueType').closest('.form-group')?.style.display = 'none';
+            document.getElementById('issueDesc').closest('.form-group')?.style.display = 'none';
+            document.querySelector('.leaflet-container')?.style.display = 'none';
+            document.getElementById('gpsDetails')?.style.display = 'none';
+            document.getElementById('tweetBtnContainer')?.style.display = 'none';
+
+            // Clear/reset form data
+            currentImageFile = null;
+            currentImageUrl = null;
+            currentGPS = null;
+            document.getElementById('issueType').value = '';
+            document.getElementById('issueDesc').value = '';
+            const preview = document.getElementById('imagePreview');
+            if (preview) preview.src = '';
+            if (confirmImageCheck) confirmImageCheck.checked = false;
+
+            // Show success
+            showSuccessScreen();
+
+            // Wire copy button
+            const copyBtn = document.getElementById('copyTweetBtn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(url).then(() => {
+                        copyBtn.textContent = '✅ Copied!';
+                        setTimeout(() => copyBtn.textContent = '📋 Copy Tweet URL', 2000);
+                    });
+                });
+            }
+            return; // ✅ EXIT EARLY - prevents finally block
         } else {
             showStatus(`❌ Failed to post: ${data.message || data.error || res.status}`, "error");
         }
@@ -578,13 +591,16 @@ async function shareToGBA() {
         showStatus("❌ Submission failed: " + e.message, "error");
         console.error("Post error:", e);
     } finally {
-        if (tweetBtn) {
+        // ✅ Only runs on ERROR - tweet button stays hidden on success
+        if (tweetBtn && document.getElementById('tweetBtnContainer')?.style.display !== 'none') {
             tweetBtn.classList.remove("loading");
             tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
+            tweetBtn.disabled = false;
             updateTweetButtonState();
         }
     }
 }
+
 
 
 
