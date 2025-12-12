@@ -180,12 +180,15 @@ function updateTweetButtonState() {
         isValidNumber(currentGPS.lat) &&
         isValidNumber(currentGPS.lon) &&
         isInGBA(currentGPS.lat, currentGPS.lon);
-    const confirmed = confirmImageCheck && confirmImageCheck.checked;
+
+    // Treat confirm checkbox as optional: if it exists, use it; otherwise allow.
+    const confirmed = confirmImageCheck ? confirmImageCheck.checked : true;
 
     if (tweetBtn) {
         tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
     }
 }
+
 
 // --- Image handling ---
 
@@ -469,6 +472,7 @@ function updateGpsDisplay() {
     a.textContent = "🗺️ Open Map";
     el.appendChild(a);
 }
+
 
 // --- Polygon loading (unchanged logic) ---
 
