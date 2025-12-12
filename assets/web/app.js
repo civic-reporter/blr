@@ -519,7 +519,7 @@ function pointInRing(lon, lat, ring) {
 
 // --- Tweet / share ---
 
-async function shareToGBA() {  // ✅ FIXED: async (was "sync")
+async function shareToGBA() {
     if (!currentGPS || !isValidNumber(currentGPS.lat) || !isInGBA(currentGPS.lat, currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
@@ -540,7 +540,7 @@ async function shareToGBA() {  // ✅ FIXED: async (was "sync")
     // ✅ INSTANT VISUAL FEEDBACK
     await new Promise(resolve => requestAnimationFrame(resolve));
 
-    // ✅ NOW do slow KML lookups (user sees "Posting...")
+    // ✅ FAST PARALLEL KML LOOKUPS
     const issueType = document.getElementById("issueType").value;
     const desc = document.getElementById("issueDesc").value.trim();
 
@@ -580,18 +580,22 @@ async function shareToGBA() {  // ✅ FIXED: async (was "sync")
         if (res.ok && data.success) {
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // Hide form elements
-            ['uploadOptions', 'tweetBtnContainer', 'gpsDetails', 'locationInfo'].forEach(id => {
+            // ✅ FIXED: Hide YOUR ACTUAL ELEMENTS
+            ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-            document.querySelectorAll('.form-group').forEach(el => el.style.display = 'none');
 
-            // FIXED map hiding
+            // Hide form groups, tweet button, map
+            document.querySelectorAll('.form-group, #tweetBtnContainer').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Hide map
             const mapEl = document.getElementById('map');
             if (mapEl) mapEl.style.display = 'none';
 
-            // Clear form
+            // Clear form state
             currentImageFile = null;
             currentGPS = null;
             document.getElementById('issueType').value = '';
@@ -601,7 +605,7 @@ async function shareToGBA() {  // ✅ FIXED: async (was "sync")
 
             showSuccessScreen();
 
-            // Tweet link + copy
+            // Tweet link + copy button
             if (url && document.getElementById("tweetLinkContainer")) {
                 document.getElementById("tweetLinkContainer").innerHTML = `
                     <p class="map-message">Tweet posted! <a href="${url}" target="_blank">View on X</a></p>
@@ -627,7 +631,7 @@ async function shareToGBA() {  // ✅ FIXED: async (was "sync")
         showStatus("❌ Submission failed: " + e.message, "error");
         console.error("Post error:", e);
     } finally {
-        // FIXED finally - safe optional chaining
+        // Safe finally block
         const tweetContainer = document.getElementById('tweetBtnContainer');
         if (tweetBtn && tweetContainer && tweetContainer.style.display !== 'none') {
             tweetBtn.classList.remove("loading");
@@ -637,6 +641,7 @@ async function shareToGBA() {  // ✅ FIXED: async (was "sync")
         }
     }
 }
+
 
 // --- Wire up DOM ---
 
