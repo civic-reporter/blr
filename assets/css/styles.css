@@ -1,88 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --x-bg-primary: #000000;
+    /* Lights Out black */
+    --x-bg-secondary: #14171A;
+    /* Dim near-black */
+    --x-bg-card: #1a1b1f;
+    /* Card surfaces */
+    --x-text-primary: #d9d9d9;
+    /* Light text */
+    --x-text-secondary: #657786;
+    /* Subtle text */
+    --x-border: #2f3336;
+    --x-accent: #1d9bf0;
+    /* X blue */
+    --x-red: #f4212e;
+    /* Red accent */
+    --x-success: #17bf63;
+    --x-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="light"] {
+    --x-bg-primary: #ffffff;
+    --x-bg-secondary: #f7f9fa;
+    --x-bg-card: #ffffff;
+    --x-text-primary: #0f1419;
+    --x-text-secondary: #536471;
+    --x-border: #e1e8ed;
+}
+
 body {
-    font-family: "Segoe UI", sans-serif;
+    font-family: var(--x-font);
+    background: var(--x-bg-primary);
+    color: var(--x-text-primary);
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    line-height: 1.3;
 }
 
 .container {
-    background: #f8f9fa;
-    border-radius: 12px;
+    background: var(--x-bg-card);
+    border-radius: var(--radius);
     padding: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
+    border: 1px solid var(--x-border);
+    box-shadow: var(--shadow);
 }
 
-/* Dropzone (still used for drag & drop, not primary CTA now) */
 .upload-area {
-    border: 3px dashed #dc3545;
-    border-radius: 12px;
+    border: 2px dashed var(--x-text-secondary);
+    border-radius: var(--radius);
     padding: 32px;
     text-align: center;
     cursor: pointer;
-    transition: 0.3s;
-    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .upload-area:hover {
-    background: #f8d7da;
-    border-color: #c82333;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--x-accent);
 }
 
 .upload-area.dragover {
-    border-color: #28a745;
-    background: #d4edda;
+    border-color: var(--x-success);
+    background: rgba(23, 191, 99, 0.1);
 }
 
 #preview {
     max-width: 100%;
     max-height: 260px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     margin: 16px auto;
-    /* center horizontally */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow);
     display: block;
-    /* needed for margin:auto */
+    border: 1px solid var(--x-border);
 }
-
 
 #map {
     height: 260px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     margin: 16px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--x-border);
 }
 
 .info-box {
-    background: #fff;
+    background: var(--x-bg-secondary);
     padding: 16px;
-    border-radius: 8px;
-    border-left: 5px solid #dc3545;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--x-red);
     margin-top: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 .info-box.valid {
-    border-left-color: #28a745;
+    border-left-color: var(--x-success);
 }
 
 .gps-link {
     display: inline-block;
-    background: #007bff;
+    background: var(--x-accent);
     color: #fff;
     padding: 6px 12px;
     border-radius: 6px;
     text-decoration: none;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     margin-left: 8px;
-    transition: 0.2s;
+    transition: all 0.2s;
 }
 
 .gps-link:hover {
-    background: #0056b3;
+    background: #1a8cd8;
     transform: scale(1.05);
 }
 
@@ -97,39 +131,46 @@ body {
 .issue-row input {
     padding: 8px;
     border-radius: 6px;
-    border: 2px solid #dc3545;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
     flex: 1;
     min-width: 150px;
 }
 
-/* Generic button base (tweet, etc.) */
 button {
-    background: #dc3545;
+    background: var(--x-accent);
     color: #fff;
-    border: none;
+    border: 1px solid var(--x-accent);
     padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s;
     width: 100%;
     margin-top: 12px;
+    font-family: var(--x-font);
 }
 
 button:hover:not(:disabled) {
-    background: #c82333;
+    background: #1a8cd8;
+    border-color: #1a8cd8;
     transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
 }
 
 button:disabled {
-    background: #6c757d;
+    background: var(--x-text-secondary);
+    border-color: var(--x-text-secondary);
     cursor: not-allowed;
     transform: none;
+    color: #8b98a5;
 }
 
 .copy-btn {
-    background: #28a745 !important;
+    background: var(--x-red) !important;
+    border-color: var(--x-red) !important;
     width: auto !important;
     padding: 8px 16px !important;
     margin-top: 8px !important;
@@ -137,59 +178,64 @@ button:disabled {
 }
 
 .copy-btn:hover {
-    background: #218838 !important;
+    background: #d51e2a !important;
+    border-color: #d51e2a !important;
 }
 
 .gba-handle {
-    font-weight: bold;
-    color: #dc3545;
+    font-weight: 600;
+    color: var(--x-accent);
 }
 
-/* Status box + variants */
 #status {
     margin-top: 10px;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     font-size: 14px;
     display: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--x-border);
 }
 
 .status-error {
-    background: #f8d7da;
-    border-left: 4px solid #dc3545;
+    background: rgba(244, 33, 46, 0.1);
+    border-left: 4px solid var(--x-red);
+    color: var(--x-text-primary);
 }
 
 .status-success {
-    background: #d4edda;
-    border-left: 4px solid #28a745;
+    background: rgba(23, 191, 99, 0.1);
+    border-left: 4px solid var(--x-success);
+    color: var(--x-text-primary);
 }
 
 .status-info {
-    background: #e2e3e5;
-    border-left: 4px solid #6c757d;
+    background: rgba(101, 119, 134, 0.1);
+    border-left: 4px solid var(--x-text-secondary);
+    color: var(--x-text-primary);
 }
 
 h2 {
-    color: #333;
+    color: var(--x-text-primary);
     text-align: center;
     margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .header-text {
     text-align: center;
-    color: #666;
+    color: var(--x-text-secondary);
     margin-bottom: 24px;
 }
 
 .map-message {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
     border-radius: 6px;
     padding: 8px;
     margin: 8px 0;
     font-size: 13px;
-    color: #856404;
+    color: var(--x-text-primary);
 }
 
 .loading::after {
@@ -203,13 +249,6 @@ h2 {
     }
 }
 
-@media(max-width:480px) {
-    #map {
-        height: 50vh;
-    }
-}
-
-/* Camera / Upload / Change / Submit Another buttons */
 .upload-options {
     display: flex;
     flex-direction: column;
@@ -223,12 +262,11 @@ h2 {
     flex-wrap: wrap;
 }
 
-/* Shared style for all big CTA buttons (Camera, Upload Photo, Change Photo, Submit Another) */
 .upload-btn {
     flex: 1;
     min-width: 140px;
     padding: 1rem 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius);
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -236,162 +274,24 @@ h2 {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-
-    background-image: linear-gradient(135deg, #ffffff, #cccccc, #000000);
-    background-size: 200% 200%;
-    background-position: 0% 50%;
-    color: #000;
-    border: 1px solid #555;
-    transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--x-accent);
+    color: #fff;
+    border: 1px solid var(--x-accent);
+    font-family: var(--x-font);
+    transition: all 0.3s;
 }
 
 .upload-btn:hover,
 .upload-btn:focus-visible {
-    background-position: 100% 50%;
+    background: #1a8cd8;
+    border-color: #1a8cd8;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    color: #fff;
-}
-
-/* Optional: keep camera slightly highlighted but still on same gradient base if you want */
-/*
-.camera-btn {
-}
-*/
-
-.success-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-}
-
-/* Mobile tweaks */
-@media (max-width: 480px) {
-    .upload-btn {
-        min-width: unset;
-        padding: 1.2rem;
-        font-size: 15px;
-    }
-
-    .camera-btn {
-        order: -1;
-        /* Camera first on mobile */
-    }
-}
-
-/* Image confirm block */
-.image-confirm {
-    margin-top: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    background: #f5f5f5;
-    font-size: 14px;
-}
-
-.image-confirm p {
-    margin: 0 0 0.5rem;
-    font-weight: 600;
-}
-
-.confirm-check {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-    cursor: pointer;
-}
-
-.confirm-check input {
-    transform: scale(1.1);
-}
-
-/* Footer inside container */
-.app-footer {
-    margin-top: 1.5rem;
-    text-align: center;
-    color: #6c757d;
-    font-size: 12px;
-}
-
-/* ✅ ADD these CSS rules to your styles.css */
-
-/* 1. Success screen tweet link container */
-#tweetLinkContainer {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: #e8f5e8;
-    border: 2px solid #4caf50;
-    border-radius: 12px;
-    text-align: center;
-}
-
-/* 2. Map message styling (tweet link text) */
-.map-message {
-    margin: 0 0 1rem 0;
-    font-weight: 600;
-    color: #2e7d32;
-}
-
-.map-message a {
-    color: #1e88e5;
-    text-decoration: none;
-    font-weight: 700;
-}
-
-.map-message a:hover {
-    text-decoration: underline;
-}
-
-/* 3. Copy button styling */
-.copy-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.copy-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-
-.copy-btn:active {
-    transform: translateY(0);
-}
-
-/* 4. Tweet button container (for hiding) */
-#tweetBtnContainer {
-    margin-top: 1.5rem;
-}
-
-/* 5. GPS details (for hiding) */
-#gpsDetails {
-    margin: 1rem 0;
-    padding: 0.75rem;
-    background: #f0f8ff;
-    border-radius: 8px;
-    font-family: monospace;
-}
-
-/* 6. Form group containers (for hiding) */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-/* 7. Success screen polish */
-#successScreen {
-    text-align: center;
-    padding: 2rem 1rem;
+    box-shadow: var(--shadow-hover);
 }
 
 .success-icon {
     font-size: 4rem;
-    color: #4caf50;
+    color: var(--x-success);
     margin-bottom: 1rem;
     animation: bounce 0.6s ease-out;
 }
@@ -415,6 +315,68 @@ h2 {
     }
 }
 
+.image-confirm {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    background: var(--x-bg-secondary);
+    font-size: 14px;
+    border: 1px solid var(--x-border);
+}
+
+.image-confirm p {
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    color: var(--x-text-primary);
+}
+
+.confirm-check {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+
+.confirm-check input {
+    transform: scale(1.1);
+    accent-color: var(--x-accent);
+}
+
+.app-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: var(--x-text-secondary);
+    font-size: 12px;
+}
+
+#tweetLinkContainer {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(23, 191, 99, 0.1);
+    border: 2px solid var(--x-success);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+#gpsDetails {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: var(--x-bg-secondary);
+    border-radius: var(--radius);
+    font-family: 'Monaco', 'Menlo', monospace;
+    border: 1px solid var(--x-border);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+#successScreen {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
 #gbaSearch {
     display: block;
     width: 100%;
@@ -422,9 +384,17 @@ h2 {
     padding: 10px 12px;
     margin-bottom: 8px;
     border-radius: 6px;
-    border: 2px solid #dc3545;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
     font-size: 15px;
-    font-family: "Segoe UI", sans-serif;
+    font-family: var(--x-font);
+}
+
+#gbaSearch:focus {
+    outline: none;
+    border-color: var(--x-accent);
+    box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2);
 }
 
 #gbaSearchSuggestions {
@@ -433,19 +403,39 @@ h2 {
     width: 100%;
     max-height: 220px;
     overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ccc;
+    background: var(--x-bg-card);
+    border: 1px solid var(--x-border);
     border-top: none;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow-hover);
     font-size: 14px;
 }
 
 .gba-suggestion-item {
     padding: 8px 10px;
     cursor: pointer;
+    color: var(--x-text-primary);
+    border-bottom: 1px solid var(--x-border);
 }
 
-.gba-suggestion-item:hover {
-    background: #f8f9fa;
+.gba-suggestion-item:hover,
+.gba-suggestion-item:focus {
+    background: var(--x-bg-secondary);
+}
+
+.gba-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+    #map {
+        height: 50vh;
+    }
+
+    .upload-btn {
+        min-width: unset;
+        padding: 1.2rem;
+        font-size: 15px;
+    }
 }
