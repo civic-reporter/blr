@@ -216,17 +216,13 @@ function updateTweetButtonState() {
 
 // --- Image handling ---
 
-async function handleImageUpload(file) {
+function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
 
-    // 🔥 COMPRESSION HERE - cuts 70% size (5MB → 1MB)
-    showStatus("🗜️ Compressing image...", "info");
-    const compressedFile = await compressImage(file);
-    currentImageFile = compressedFile;  // Use compressed version
-
+    currentImageFile = file;
     if (confirmImageCheck) confirmImageCheck.checked = false;
     if (tweetBtn) tweetBtn.disabled = true;
 
@@ -240,7 +236,7 @@ async function handleImageUpload(file) {
         if (imageConfirm) imageConfirm.style.display = "block";
         extractGPSFromExif(e.target.result);
     };
-    reader.readAsDataURL(compressedFile);  // Read compressed file
+    reader.readAsDataURL(file);
 }
 
 // --- EXIF + GPS ---
@@ -623,28 +619,6 @@ async function findConstituencyForCurrentGPS() {
     }
     return { acName: "", mlaHandle: "" };
 }
-
-async function compressImage(file) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        img.onload = () => {
-            // ✅ 5MB SAFE: 1024px max, 85% quality
-            const MAX_SIZE = 1024;  // Increased from 800px
-            const size = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height, 1);
-            canvas.width = img.width * size;
-            canvas.height = img.height * size;
-
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            // 85% quality = ~4.5MB max even for 12MP photos
-            canvas.toBlob(resolve, 'image/jpeg', 0.85);
-        };
-        img.src = URL.createObjectURL(file);
-    });
-}
-
 
 async function findWardForCurrentGPS() {
     if (!currentGPS) return { wardNo: "", wardName: "" };
