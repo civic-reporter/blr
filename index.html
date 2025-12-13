@@ -18,6 +18,10 @@
 </head>
 
 <body>
+  <button id="themeToggle" type="button" class="theme-toggle-btn">
+    ☀️ / 🌙
+  </button>
+
   <div class="container">
     <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
 
@@ -114,7 +118,30 @@
     </div>
   </div>
 
-  <!-- Load your app -->
+  <!-- Load the app -->
+  <script>
+    const html = document.documentElement;
+
+    // On load: use saved theme or default to light
+    (function initTheme() {
+      const saved = localStorage.getItem("theme");
+      const initial = saved || "light";
+      html.setAttribute("data-theme", initial);
+    })();
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("themeToggle");
+      if (!btn) return;
+
+      btn.addEventListener("click", () => {
+        const current = html.getAttribute("data-theme") || "light";
+        const next = current === "light" ? "dark" : "light";
+        html.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    });
+  </script>
+
   <script src="assets/web/app.js"></script>
 </body>
 
