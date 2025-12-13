@@ -275,6 +275,7 @@ async function extractGPSFromExif(dataUrl) {
             } else {
                 showStatus(`✅ GBA GPS verified: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
             }
+
             showLocation();
             updateTweetButtonState();
             return;
@@ -283,27 +284,10 @@ async function extractGPSFromExif(dataUrl) {
         console.error("🚨 EXIF failed:", e);
     }
 
-    // Live GPS fallback
-    try {
-        const liveGPS = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-                pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-                reject,
-                { enableHighAccuracy: true, timeout: 5000 }
-            );
-        });
-        if (isInGBA(liveGPS.lat, liveGPS.lon)) {
-            currentGPS = liveGPS;
-            showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
-            showLocation();
-            updateTweetButtonState();
-            return;
-        }
-    } catch (e) {
-        // ignore
-    }
-
-    showStatus("ℹ️ Click map for location.", "info");
+    // ❌ No live GPS fallback anymore.
+    // Force user to use search or map drag.
+    showLocation(); // ensure map + search box visible
+    showStatus("ℹ️ No GPS in photo. Use search box or tap/drag on the map to set location.", "info");
     if (tweetBtn) tweetBtn.disabled = true;
 }
 
