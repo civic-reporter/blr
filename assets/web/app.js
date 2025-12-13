@@ -216,18 +216,16 @@ function updateTweetButtonState() {
 
 // --- Image handling ---
 
-// ✅ STEP 1: Extract GPS from original file FIRST
 async function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
 
-    currentImageFile = file;  // Keep ORIGINAL for GPS
+    currentImageFile = file;  // Keep original for GPS
     if (confirmImageCheck) confirmImageCheck.checked = false;
     if (tweetBtn) tweetBtn.disabled = true;
 
-    // ✅ STEP 2: Show original preview + extract GPS
     const reader = new FileReader();
     reader.onload = async (e) => {
         if (previewImg) {
@@ -235,19 +233,20 @@ async function handleImageUpload(file) {
             previewImg.style.display = "block";
         }
 
-        // ✅ STEP 3: Extract GPS from original BEFORE compression
+        // ✅ Extract GPS silently
         await extractGPSFromExif(e.target.result);
 
-        // ✅ STEP 4: Compress ONLY for Lambda AFTER GPS extracted
-        showStatus("🗜️ Compressing for upload...", "info");
+        // ✅ Compress silently in background (no status)
         const compressedFile = await compressImage(file);
-        currentImageFile = compressedFile;  // Replace with compressed
+        currentImageFile = compressedFile;  // Replace silently
 
+        // ✅ Show UI flow normally
         hideUploadOptions();
         if (imageConfirm) imageConfirm.style.display = "block";
     };
-    reader.readAsDataURL(file);  // Read ORIGINAL file
+    reader.readAsDataURL(file);
 }
+
 
 
 // --- EXIF + GPS ---
