@@ -216,28 +216,39 @@ function updateTweetButtonState() {
 
 // --- Image handling ---
 
-function handleImageUpload(file) {
+// ✅ STEP 1: Extract GPS from original file FIRST
+async function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
 
-    currentImageFile = file;
+    currentImageFile = file;  // Keep ORIGINAL for GPS
     if (confirmImageCheck) confirmImageCheck.checked = false;
     if (tweetBtn) tweetBtn.disabled = true;
 
+    // ✅ STEP 2: Show original preview + extract GPS
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
         if (previewImg) {
             previewImg.src = e.target.result;
             previewImg.style.display = "block";
         }
+
+        // ✅ STEP 3: Extract GPS from original BEFORE compression
+        await extractGPSFromExif(e.target.result);
+
+        // ✅ STEP 4: Compress ONLY for Lambda AFTER GPS extracted
+        showStatus("🗜️ Compressing for upload...", "info");
+        const compressedFile = await compressImage(file);
+        currentImageFile = compressedFile;  // Replace with compressed
+
         hideUploadOptions();
         if (imageConfirm) imageConfirm.style.display = "block";
-        extractGPSFromExif(e.target.result);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file);  // Read ORIGINAL file
 }
+
 
 // --- EXIF + GPS ---
 
@@ -619,6 +630,24 @@ async function findConstituencyForCurrentGPS() {
     }
     return { acName: "", mlaHandle: "" };
 }
+
+async function compressImage(file) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        img.onload = () => {
+            const size = Math.min(1024 / img.width, 1024 / img.height, 1);
+            canvas.width = img.width * size;
+            canvas.height = img.height * size;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(resolve, 'image/jpeg', 0.85);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+}
+
 
 async function findWardForCurrentGPS() {
     if (!currentGPS) return { wardNo: "", wardName: "" };
