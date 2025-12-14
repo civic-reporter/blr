@@ -462,3 +462,9 @@ h2 {
     justify-content: center;
     z-index: 2000;
 }
+
+@media (min-width: 769px) {
+    #cameraBtn {
+        display: none;
+    }
+}
