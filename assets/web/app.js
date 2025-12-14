@@ -631,6 +631,77 @@ async function compressImage(file) {
     });
 }
 
+async function getLiveGPSIfInGBA() {
+    return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+            return resolve(null);
+        }
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const gp = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                if (isInGBA(gp.lat, gp.lon)) {
+                    resolve(gp);
+                } else {
+                    resolve(null);
+                }
+            },
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 5000 }
+        );
+    });
+}
+
+async function handleCameraCapture(file) {
+    if (!file || !file.type.startsWith("image/")) {
+        showStatus("❌ Please capture a photo.", "error");
+        return;
+    }
+
+    currentImageFile = file;  // keep original for GPS / compression
+    if (confirmImageCheck) confirmImageCheck.checked = false;
+    if (tweetBtn) tweetBtn.disabled = true;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        if (previewImg) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = "block";
+        }
+
+        // 1) Try EXIF GPS from camera photo
+        await extractGPSFromExif(e.target.result);
+
+        // 2) If EXIF did not set a valid GBA currentGPS, try live GPS
+        const needsGPS =
+            !currentGPS ||
+            !isValidNumber(currentGPS.lat) ||
+            !isValidNumber(currentGPS.lon) ||
+            !isInGBA(currentGPS.lat, currentGPS.lon);
+
+        if (needsGPS) {
+            const liveGPS = await getLiveGPSIfInGBA();
+            if (liveGPS) {
+                currentGPS = liveGPS;
+                showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
+                showLocation();
+                updateTweetButtonState();
+            } else {
+                showLocation();
+                showStatus("ℹ️ Set location using search or by tapping/dragging on the map.", "info");
+                if (tweetBtn) tweetBtn.disabled = true;
+            }
+        }
+
+        // 3) Compress silently for upload
+        const compressedFile = await compressImage(file);
+        currentImageFile = compressedFile;
+
+        hideUploadOptions();
+        if (imageConfirm) imageConfirm.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+}
+
 
 async function findWardForCurrentGPS() {
     if (!currentGPS) return { wardNo: "", wardName: "" };
@@ -823,7 +894,7 @@ document.addEventListener("DOMContentLoaded", () => {
         imageInput.addEventListener("change", e => handleImageUpload(e.target.files[0]));
     }
     if (cameraInput) {
-        cameraInput.addEventListener("change", e => handleImageUpload(e.target.files[0]));
+        cameraInput.addEventListener("change", e => handleCameraCapture(e.target.files[0]));
     }
 
     if (dropZone) {
