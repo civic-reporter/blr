@@ -1,6 +1,5 @@
 import { CONFIG } from './config.js';
-import { pointInRing } from './utils.js';
-import { CONFIG as config } from './config.js';
+import { pointInRing, isValidNumber } from './utils.js';
 
 let corpPolygons = null;
 let constPolygons = null;
@@ -50,6 +49,7 @@ export async function loadCorpPolygons() {
 }
 
 export async function validateLocationForCoords(testGPS) {
+    // ✅ FIXED: Now has isValidNumber
     if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
     try {
         const polys = await loadCorpPolygons();
