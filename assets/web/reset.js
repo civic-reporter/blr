@@ -1,7 +1,7 @@
 import { showUploadOptions, showStatus } from './ui.js';
 
 export function resetApp() {
-    // Clear state
+    // 1. Clear global state
     window.currentImageFile = null;
     window.currentGPS = null;
     if (window.map && window.marker) {
@@ -9,7 +9,7 @@ export function resetApp() {
         window.marker = null;
     }
 
-    // Reset form
+    // 2. Reset form + preview
     document.getElementById('issueType').value = 'Pothole';
     document.getElementById('issueDesc').value = '';
     const preview = document.getElementById('preview');
@@ -20,11 +20,11 @@ export function resetApp() {
     const confirmCheck = document.getElementById('confirmImageCheck');
     if (confirmCheck) confirmCheck.checked = false;
 
-    // ✅ CRITICAL: Reset MAP + SEARCH
-    const mapEl = document.getElementById('map');
-    const searchWrapper = document.getElementById('gbaSearchWrapper');
+    // 3. Reset search + map (HIDE until needed)
     const searchInput = document.getElementById('gbaSearch');
     const suggBox = document.getElementById('gbaSearchSuggestions');
+    const searchWrapper = document.getElementById('gbaSearchWrapper');
+    const mapEl = document.getElementById('map');
 
     if (searchInput) searchInput.value = '';
     if (suggBox) {
@@ -34,18 +34,14 @@ export function resetApp() {
     if (searchWrapper) searchWrapper.style.display = 'none';
     if (mapEl) mapEl.style.display = 'none';
 
-    // Show upload options
-    ['uploadOptions'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.removeProperty('display');
-    });
-
+    // 4. Reset tweet button
     if (window.tweetBtn) {
         window.tweetBtn.classList.remove('loading');
         window.tweetBtn.textContent = '🚨 Post Issue via @zenc_civic';
         window.tweetBtn.disabled = true;
     }
 
+    // 5. Show upload screen
     showStatus('', '');
     showUploadOptions();
 }
