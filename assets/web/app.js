@@ -11,6 +11,11 @@ window.currentGPS = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     cacheUIElements();
+    const checkbox = document.getElementById("confirmImageCheck");
+    if (checkbox) {
+        checkbox.addEventListener("change", updateTweetButtonState);
+        console.log("✅ Checkbox listener added");
+    }
 
     // Wire ALL buttons + drop
     document.getElementById("cameraBtn")?.addEventListener("click", () =>

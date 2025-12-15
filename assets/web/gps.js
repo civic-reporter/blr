@@ -29,11 +29,33 @@ export async function extractGPSFromExif(dataUrl) {
             console.log("✅ EXIF GPS extracted:", lat.toFixed(6), lon.toFixed(6));
 
             window.currentGPS = { lat, lon };
+
+            // ✅ CRITICAL: UPDATE TWEET + SHOW MARKER IMMEDIATELY
+            updateTweetButtonState();
+
             showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
-            // GBA boundary check
-            return { lat, lon };
+            // ✅ GPS PHOTO MARKER + MAP CENTER
+            showLocation();
+            if (window.map && typeof placeMarker === 'function') {
+                setTimeout(() => {
+                    window.map.setView([lat, lon], 16);
+                    placeMarker();
+                    console.log("🎯 GPS photo marker placed:", lat.toFixed(4), lon.toFixed(4));
+                }, 150);
+            }
 
+            // GBA boundary check
+            if (!isInGBA(lat, lon)) {
+                console.warn("⚠️ GPS outside GBA bounds");
+                showStatus("⚠️ Outside GBA limits - drag marker inside", "warning");
+                if (window.tweetBtn) window.tweetBtn.disabled = true;
+            } else {
+                console.log("✅ GPS inside GBA");
+                showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
+            }
+
+            return { lat, lon };
         } else {
             console.log("ℹ️ No EXIF GPS arrays found");
         }
