@@ -1,4 +1,4 @@
-// UI State Management - NO DUPLICATES
+// UI State Management - PRODUCTION READY
 import { isValidNumber, isInGBA } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
@@ -41,7 +41,8 @@ export function showStatus(msg, type) {
 export function showUploadOptions() {
     if (uploadOptions) uploadOptions.style.display = "flex";
     if (previewImg) {
-        previewImg.src = ""; previewImg.style.display = "none";
+        previewImg.src = "";
+        previewImg.style.display = "none";
     }
     if (imageConfirm) imageConfirm.style.display = "none";
     if (locationInfo) locationInfo.style.display = "none";
@@ -73,7 +74,10 @@ export function updateTweetButtonState() {
         isInGBA(window.currentGPS.lat, window.currentGPS.lon);
     let confirmed = true;
     if (confirmImageCheck) confirmed = !!confirmImageCheck.checked;
-    if (tweetBtn) tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
+    if (tweetBtn) {
+        tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
+        console.log("🔧 Tweet state:", { imageOk, gpsOk, confirmed, disabled: tweetBtn.disabled });
+    }
 }
 
 export function ensureLocationVisible() {
@@ -91,7 +95,6 @@ export function showImageConfirm() {
     if (locationInfo) locationInfo.style.display = "block";
 }
 
-// ✅ SINGLE hideUploadOptions - NO DUPLICATE
 export function hideUploadOptions() {
     const uploadOptions = document.getElementById("uploadOptions");
     if (uploadOptions) {
