@@ -24,26 +24,32 @@ export async function extractGPSFromExif(dataUrl) {
             window.currentGPS = { lat, lon };
             updateTweetButtonState();
             showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
-            showLocation();
 
-            if (window.map && typeof placeMarker === 'function') {
+            // ✅ FIXED: Map operations FIRST, then showLocation()
+            if (window.map) {
+                window.map.setView([lat, lon], 16);
+                // ✅ Ensure placeMarker exists + delay for mobile
                 setTimeout(() => {
-                    window.map.setView([lat, lon], 16);
-                    placeMarker();
-                }, 150);
+                    if (typeof placeMarker === 'function') {
+                        placeMarker();
+                    } else {
+                        console.warn("❌ placeMarker() not defined");
+                    }
+                }, 300); // ↑ Mobile needs longer delay
             }
 
+            showLocation(); // Last - uses currentGPS
             return { lat, lon };
         }
     } catch (e) {
         console.error("🚨 EXIF error:", e);
     }
 
-    // ✅ FALLBACK - AFTER try/catch (SYNTAX SAFE)
     showLocation();
     showStatus("ℹ️ No GPS. Use map/search.", "info");
     return null;
 }
+
 
 
 export async function getLiveGPSIfInGBA() {
