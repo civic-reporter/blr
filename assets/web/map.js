@@ -1,51 +1,59 @@
 import { CONFIG } from './config.js';
 import { pointInRing, isValidNumber } from './utils.js';
-import { showStatus, showLocation, updateTweetButtonState, ensureLocationVisible } from './ui.js';
+import { showStatus, updateTweetButtonState, ensureLocationVisible } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
-let map, marker;
+let mapInstance, markerInstance;
 let mapInitialized = false;
 
 export function initMap() {
     if (mapInitialized) return;
 
-    map = L.map("map").setView([12.9716, 77.5946], 12);
+    // ✅ GLOBAL MAP + MARKER EXPOSURE
+    window.map = L.map("map").setView([12.9716, 77.5946], 12);
+    mapInstance = window.map;
+
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors"
-    }).addTo(map);
+    }).addTo(window.map);
 
     setupSearch();
-    map.on("click", handleMapClick);
+    window.map.on("click", handleMapClick);
     mapInitialized = true;
+    console.log("🗺️ Map + marker ready");
 }
 
 function setupSearch() {
+    const existing = document.getElementById('gbaSearchWrapper');
+    if (existing) existing.remove();
+
     const wrapper = document.createElement('div');
     wrapper.id = 'gbaSearchWrapper';
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '100%';
+    wrapper.style.cssText = 'position:relative;width:100%;margin-bottom:10px;';
 
     const searchInput = document.createElement('input');
     searchInput.id = 'gbaSearch';
     searchInput.type = 'text';
-    searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
+    searchInput.placeholder = 'Search GBA location...';
+    searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
 
     const suggBox = document.createElement('div');
     suggBox.id = 'gbaSearchSuggestions';
-    suggBox.style.display = 'none';
+    suggBox.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;max-height:200px;overflow:auto;z-index:1000;';
 
     wrapper.appendChild(searchInput);
     wrapper.appendChild(suggBox);
 
     const mapNode = document.getElementById('map');
-    mapNode.parentNode.insertBefore(wrapper, mapNode);
+    if (mapNode?.parentNode) {
+        mapNode.parentNode.insertBefore(wrapper, mapNode);
+    }
 
-    let hintTimeout = null;
-
+    let hintTimeout;
     searchInput.addEventListener('input', () => {
         const q = searchInput.value.trim();
         if (hintTimeout) clearTimeout(hintTimeout);
-        if (q.length < 3) {
+        if (q.length < 2) {
             suggBox.style.display = 'none';
             suggBox.innerHTML = '';
             return;
@@ -54,80 +62,8 @@ function setupSearch() {
     });
 
     document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) {
-            suggBox.style.display = 'none';
-        }
+        if (!wrapper.contains(e.target)) suggBox.style.display = 'none';
     });
-}
-
-export async function handleMapClick(e) {
-    const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
-    const valid = await validateLocationForCoords(testGPS);
-
-    if (!valid) {
-        window.currentGPS = null;
-        if (marker && map) { map.removeLayer(marker); marker = null; }
-        if (window.tweetBtn) window.tweetBtn.disabled = true;
-        if (document.getElementById("infoBox")) document.getElementById("infoBox").classList.remove("valid");
-        showStatus("❌ Map clicks outside GBA jurisdiction are not allowed.", "error");
-        return;
-    }
-
-    window.currentGPS = testGPS;
-    placeMarker();
-    updateGpsDisplay();
-    ensureLocationVisible();
-
-    if (document.getElementById("locationInfo")) document.getElementById("locationInfo").style.display = "block";
-    if (document.getElementById("infoBox")) document.getElementById("infoBox").classList.add("valid");
-    showStatus("✅ Location verified within GBA jurisdiction.", "success");
-
-    updateTweetButtonState();
-}
-
-export function placeMarker() {
-    if (!map || !window.currentGPS) return;
-
-    if (marker) map.removeLayer(marker);
-
-    marker = L.marker([window.currentGPS.lat, window.currentGPS.lon], {
-        draggable: true,
-        title: "Drag to adjust location"
-    })
-        .addTo(map)
-        .bindPopup("Issue location ✅<br>Drag to adjust within GBA area")
-        .openPopup();
-
-    marker.on("dragend", async e => {
-        const newPos = e.target.getLatLng();
-        const testGPS = { lat: newPos.lat, lon: newPos.lng };
-        const valid = await validateLocationForCoords(testGPS);
-
-        if (valid) {
-            window.currentGPS = testGPS;
-            updateGpsDisplay();
-            ensureLocationVisible();
-            showStatus(`✅ Dragged to GBA: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
-            updateTweetButtonState();
-        } else {
-            e.target.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
-            showStatus("❌ Outside GBA jurisdiction. Drag inside boundary.", "error");
-            if (window.tweetBtn) window.tweetBtn.disabled = true;
-            updateTweetButtonState();
-        }
-    });
-}
-
-function updateGpsDisplay() {
-    const el = document.getElementById("gpsCoords");
-    if (!el || !window.currentGPS) return;
-    el.innerHTML = `${window.currentGPS.lat.toFixed(6)}, ${window.currentGPS.lon.toFixed(6)}`;
-    const a = document.createElement("a");
-    a.href = `https://www.google.com/maps/search/?api=1&query=${window.currentGPS.lat},${window.currentGPS.lon}`;
-    a.target = "_blank";
-    a.className = "gps-link";
-    a.textContent = "🗺️ Open Map";
-    el.appendChild(a);
 }
 
 async function loadNominatimHints(query, suggBox, searchInput) {
@@ -139,41 +75,97 @@ async function loadNominatimHints(query, suggBox, searchInput) {
         const data = await res.json();
         suggBox.innerHTML = '';
 
-        if (!data.length) {
-            suggBox.style.display = 'none';
-            return;
-        }
-
-        data.forEach(item => {
+        data.slice(0, 5).forEach(item => {
             const div = document.createElement('div');
-            div.className = 'gba-suggestion-item';
-            div.textContent = item.display_name;
+            div.className = 'sugg-item';
+            div.style.cssText = 'padding:8px;cursor:pointer;border-bottom:1px solid #eee;';
+            div.textContent = item.display_name.split(',')[0];
             div.addEventListener('click', async () => {
                 searchInput.value = item.display_name;
                 suggBox.style.display = 'none';
 
-                const gps = {
-                    lat: parseFloat(item.lat),
-                    lon: parseFloat(item.lon)
-                };
+                const gps = { lat: parseFloat(item.lat), lon: parseFloat(item.lon) };
                 const valid = await validateLocationForCoords(gps);
-                if (valid) {
+                if (valid && window.map) {
                     window.currentGPS = gps;
-                    if (marker && map) map.removeLayer(marker);
                     placeMarker();
-                    ensureLocationVisible();
-                    map.setView([gps.lat, gps.lon], 16);
-                    showStatus('✅ Location validated inside GBA.', 'success');
+                    window.map.setView([gps.lat, gps.lon], 16);
+                    showStatus('✅ GBA location set', 'success');
                     updateTweetButtonState();
                 } else {
-                    showStatus('❌ Outside GBA boundary.', 'error');
+                    showStatus('❌ Outside GBA', 'error');
                 }
             });
             suggBox.appendChild(div);
         });
-
-        suggBox.style.display = 'block';
+        suggBox.style.display = data.length ? 'block' : 'none';
     } catch (err) {
-        console.error(err);
+        console.error("Search error:", err);
+    }
+}
+
+export async function handleMapClick(e) {
+    console.log("🖱️ Map clicked:", e.latlng.lat, e.latlng.lng);
+    const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
+    const valid = await validateLocationForCoords(testGPS);
+
+    if (!valid) {
+        if (markerInstance) window.map.removeLayer(markerInstance);
+        window.currentGPS = null;
+        showStatus("❌ Outside GBA - click inside boundary", "error");
+        return;
+    }
+
+    window.currentGPS = testGPS;
+    placeMarker();
+    updateGpsDisplay();
+    ensureLocationVisible();
+    showStatus(`✅ Clicked: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
+    updateTweetButtonState();
+}
+
+export function placeMarker() {
+    console.log("📍 Placing marker at:", window.currentGPS?.lat, window.currentGPS?.lon);
+
+    if (markerInstance) window.map.removeLayer(markerInstance);
+
+    markerInstance = L.marker([window.currentGPS.lat, window.currentGPS.lon], {
+        draggable: true
+    }).addTo(window.map).bindPopup("Drag to adjust location").openPopup();
+
+    // ✅ DRAG HANDLER
+    markerInstance.on('dragend', async (e) => {
+        const newPos = e.target.getLatLng();
+        const testGPS = { lat: newPos.lat, lon: newPos.lng };
+        console.log("🔄 Marker dragged to:", testGPS.lat.toFixed(4), testGPS.lon.toFixed(4));
+
+        const valid = await validateLocationForCoords(testGPS);
+        if (valid) {
+            window.currentGPS = testGPS;
+            updateGpsDisplay();
+            showStatus(`✅ Dragged: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
+            updateTweetButtonState();
+        } else {
+            // Snap back
+            markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
+            showStatus("❌ Outside GBA jurisdiction", "error");
+        }
+    });
+
+    window.marker = markerInstance;  // Global backup
+}
+
+function updateGpsDisplay() {
+    const el = document.getElementById("gpsCoords");
+    if (el && window.currentGPS) {
+        el.innerHTML = `${window.currentGPS.lat.toFixed(6)}, ${window.currentGPS.lon.toFixed(6)}`;
+        const link = el.querySelector('.gps-link');
+        if (link) link.remove();
+        const a = document.createElement('a');
+        a.href = `https://www.google.com/maps/search/?api=1&query=${window.currentGPS.lat},${window.currentGPS.lon}`;
+        a.target = '_blank';
+        a.className = 'gps-link';
+        a.textContent = '🗺️ Maps';
+        el.appendChild(a);
     }
 }
