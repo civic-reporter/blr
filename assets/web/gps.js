@@ -1,8 +1,7 @@
-// GPS module - COMPLETE (EXIF + Live GPS fallback)
+// GPS module - SYNTAX FIXED
 import { showStatus, showLocation, updateTweetButtonState } from './ui.js';
 import { isInGBA } from './utils.js';
 
-// ✅ piexif is GLOBAL - loaded via <script> in index.html
 export async function extractGPSFromExif(dataUrl) {
     console.log("🔍 EXIF parse start");
 
@@ -40,53 +39,25 @@ export async function extractGPSFromExif(dataUrl) {
         console.error("🚨 EXIF error:", e);
     }
 
+    // ✅ SINGLE FALLBACK - INSIDE FUNCTION
     showLocation();
     showStatus("ℹ️ No GPS. Use map/search.", "info");
     return null;
 }
 
-
-// No GPS fallback → force map/search
-console.log("ℹ️ No EXIF GPS → show map for manual selection");
-showLocation();
-showStatus("ℹ️ No GPS in photo. Use search or tap/drag map to set location.", "info");
-if (window.tweetBtn) window.tweetBtn.disabled = true;
-return null;
-}
-
 export async function getLiveGPSIfInGBA() {
-    console.log("📍 Attempting live GPS fallback...");
+    console.log("📍 Live GPS fallback...");
     return new Promise((resolve) => {
-        if (!navigator.geolocation) {
-            console.error("❌ Browser lacks geolocation API");
-            return resolve(null);
-        }
+        if (!navigator.geolocation) return resolve(null);
 
         navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const gp = {
-                    lat: pos.coords.latitude,
-                    lon: pos.coords.longitude,
-                    accuracy: pos.coords.accuracy
-                };
-                console.log("📍 Live GPS success:", gp.lat.toFixed(6), gp.lon.toFixed(6), `±${gp.accuracy}m`);
-
-                if (isInGBA(gp.lat, gp.lon)) {
-                    resolve(gp);
-                } else {
-                    console.warn("🚫 Live GPS outside GBA bounds");
-                    resolve(null);
-                }
+            pos => {
+                const gp = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                if (isInGBA(gp.lat, gp.lon)) resolve(gp);
+                else resolve(null);
             },
-            (err) => {
-                console.error("❌ Live GPS failed:", err.code, err.message);
-                resolve(null);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 8000,
-                maximumAge: 60000
-            }
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000 }
         );
     });
 }
