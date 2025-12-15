@@ -83,16 +83,19 @@ export function updateTweetButtonState() {
         isValidNumber(window.currentGPS.lon) &&
         isInGBA(window.currentGPS.lat, window.currentGPS.lon);
 
-    // ✅ 1-LINE FIX - DOM only, no cached vars
+    // ✅ PURE DOM - NO CACHED VARS
     const checkbox = document.getElementById("confirmImageCheck");
-    const confirmed = !checkbox || checkbox.checked;  // ← THIS LINE
+    const confirmed = !checkbox || checkbox.checked;
 
+    const tweetBtn = document.getElementById("tweetBtn");
     const shouldEnable = imageOk && gpsOk && confirmed;
+
     if (tweetBtn) {
         tweetBtn.disabled = !shouldEnable;
-        console.log("TWEET:", { imageOk, gpsOk, confirmed, disabled: !shouldEnable });
+        console.log("🔧 Tweet DOM:", { imageOk, gpsOk, confirmed, shouldEnable });
     }
 }
+
 
 
 
