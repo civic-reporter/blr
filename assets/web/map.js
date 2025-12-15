@@ -80,6 +80,7 @@ async function loadNominatimHints(query, suggBox, searchInput) {
             div.className = 'gba-suggestion-item';
             div.style.cssText = 'padding:8px;cursor:pointer;border-bottom:1px solid #eee;';
             div.textContent = item.display_name.split(',')[0];
+            // In loadNominatimHints() click handler - REPLACE:
             div.addEventListener('click', async () => {
                 searchInput.value = item.display_name;
                 suggBox.style.display = 'none';
@@ -92,11 +93,14 @@ async function loadNominatimHints(query, suggBox, searchInput) {
                     placeMarker();
                     window.map.setView([gps.lat, gps.lon], 16);
                     showStatus(`✅ ${item.display_name.split(',')[0]}`, 'success');
-                    updateTweetButtonState();
+
+                    // ✅ FORCE TWEET UPDATE
+                    setTimeout(updateTweetButtonState, 50);
                 } else {
                     showStatus('❌ Outside GBA boundary', 'error');
                 }
             });
+
             suggBox.appendChild(div);
         });
         suggBox.style.display = data.length ? 'block' : 'none';

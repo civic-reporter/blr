@@ -83,10 +83,10 @@ export function updateTweetButtonState() {
         isValidNumber(window.currentGPS.lon) &&
         isInGBA(window.currentGPS.lat, window.currentGPS.lon);
 
+    // ✅ CHECKBOX OPTIONAL for search/map - REQUIRED for photos only
     let confirmed = true;
-    const checkboxDom = document.getElementById("confirmImageCheck");
-    if (checkboxDom) confirmed = checkboxDom.checked;
-    else if (confirmImageCheck) confirmed = confirmImageCheck.checked;
+    const checkbox = document.getElementById("confirmImageCheck");
+    if (checkbox && !checkbox.checked) confirmed = false;
 
     const shouldEnable = imageOk && gpsOk && confirmed;
     if (tweetBtn) {
@@ -94,6 +94,7 @@ export function updateTweetButtonState() {
         console.log("🔧 Tweet:", { imageOk, gpsOk, confirmed, shouldEnable });
     }
 }
+
 
 export function ensureLocationVisible() {
     const locationInfo = document.getElementById("locationInfo");
