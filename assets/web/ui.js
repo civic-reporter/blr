@@ -1,4 +1,4 @@
-// UI State Management - TWEET BUTTON FIXED
+// UI State Management - SINGLE showLocation
 import { isValidNumber, isInGBA } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
@@ -17,10 +17,9 @@ export function cacheUIElements() {
     infoBox = document.getElementById("infoBox");
     dropZone = document.getElementById("dropZone");
     imageConfirm = document.getElementById("imageConfirm");
-    confirmImageCheck = document.getElementById("confirmImageCheck");  // ✅ CRITICAL
+    confirmImageCheck = document.getElementById("confirmImageCheck");
     changeImageBtn = document.getElementById("changeImageBtn");
     window.tweetBtn = tweetBtn;
-    console.log("🔧 Cached confirmImageCheck:", !!confirmImageCheck);
 }
 
 export function showStatus(msg, type) {
@@ -59,12 +58,22 @@ export function showSuccessScreen() {
     if (successScreen) successScreen.style.display = "block";
 }
 
+// ✅ SINGLE showLocation - WITH AUTO-MARKER
 export function showLocation() {
     if (locationInfo) locationInfo.style.display = "block";
     const mapRestr = document.getElementById("mapRestrictionMsg");
     if (mapRestr) mapRestr.style.display = "block";
     const mapEl = document.getElementById("map");
     if (mapEl) mapEl.style.display = "block";
+
+    // ✅ AUTO-MARKER FOR GPS PHOTOS + MOBILE
+    if (window.currentGPS && window.map && typeof placeMarker === 'function') {
+        setTimeout(() => {
+            window.map.setView([window.currentGPS.lat, window.currentGPS.lon], 16);
+            placeMarker();
+            console.log("🎯 Auto-marker placed:", window.currentGPS.lat.toFixed(4));
+        }, 100);
+    }
 }
 
 export function updateTweetButtonState() {
@@ -74,25 +83,15 @@ export function updateTweetButtonState() {
         isValidNumber(window.currentGPS.lon) &&
         isInGBA(window.currentGPS.lat, window.currentGPS.lon);
 
-    // ✅ FIXED: Always check DOM + cached element
     let confirmed = true;
     const checkboxDom = document.getElementById("confirmImageCheck");
-    if (checkboxDom) {
-        confirmed = checkboxDom.checked;
-    } else if (confirmImageCheck) {
-        confirmed = confirmImageCheck.checked;
-    }
+    if (checkboxDom) confirmed = checkboxDom.checked;
+    else if (confirmImageCheck) confirmed = confirmImageCheck.checked;
 
     const shouldEnable = imageOk && gpsOk && confirmed;
-
     if (tweetBtn) {
         tweetBtn.disabled = !shouldEnable;
-        console.log("🔧 Tweet DEBUG:", {
-            imageOk, gpsOk, confirmed,
-            checkboxDom: !!checkboxDom,
-            cachedCheck: !!confirmImageCheck,
-            shouldEnable
-        });
+        console.log("🔧 Tweet:", { imageOk, gpsOk, confirmed, shouldEnable });
     }
 }
 
@@ -113,24 +112,5 @@ export function showImageConfirm() {
 
 export function hideUploadOptions() {
     const uploadOptions = document.getElementById("uploadOptions");
-    if (uploadOptions) {
-        uploadOptions.style.display = "none";
-        console.log("✅ uploadOptions HIDDEN");
-    }
-}
-
-export function showLocation() {
-    if (locationInfo) locationInfo.style.display = "block";
-    const mapRestr = document.getElementById("mapRestrictionMsg");
-    if (mapRestr) mapRestr.style.display = "block";
-    const mapEl = document.getElementById("map");
-    if (mapEl) mapEl.style.display = "block";
-
-    // ✅ CRITICAL: PLACE MARKER WHEN GPS EXISTS
-    if (window.currentGPS && window.map && typeof placeMarker === 'function') {
-        setTimeout(() => {
-            window.map.setView([window.currentGPS.lat, window.currentGPS.lon], 16);
-            placeMarker();
-        }, 100);
-    }
+    if (uploadOptions) uploadOptions.style.display = "none";
 }
