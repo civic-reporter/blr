@@ -118,3 +118,19 @@ export function hideUploadOptions() {
         console.log("✅ uploadOptions HIDDEN");
     }
 }
+
+export function showLocation() {
+    if (locationInfo) locationInfo.style.display = "block";
+    const mapRestr = document.getElementById("mapRestrictionMsg");
+    if (mapRestr) mapRestr.style.display = "block";
+    const mapEl = document.getElementById("map");
+    if (mapEl) mapEl.style.display = "block";
+
+    // ✅ CRITICAL: PLACE MARKER WHEN GPS EXISTS
+    if (window.currentGPS && window.map && typeof placeMarker === 'function') {
+        setTimeout(() => {
+            window.map.setView([window.currentGPS.lat, window.currentGPS.lon], 16);
+            placeMarker();
+        }, 100);
+    }
+}
