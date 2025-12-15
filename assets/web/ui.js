@@ -66,6 +66,13 @@ export function showLocation() {
     const mapEl = document.getElementById("map");
     if (mapEl) mapEl.style.display = "block";
 
+    // ✅ SHOW SEARCH BAR
+    const searchWrapper = document.getElementById('gbaSearchWrapper');
+    if (searchWrapper) {
+        searchWrapper.style.display = 'block';
+        console.log("🔍 Search bar shown");
+    }
+
     // ✅ AUTO-MARKER FOR GPS PHOTOS + MOBILE
     if (window.currentGPS && window.map && typeof placeMarker === 'function') {
         setTimeout(() => {
@@ -75,6 +82,7 @@ export function showLocation() {
         }, 100);
     }
 }
+
 
 export function updateTweetButtonState() {
     const imageOk = !!window.currentImageFile;

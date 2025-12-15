@@ -19,30 +19,34 @@ export async function extractGPSFromExif(dataUrl) {
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
 
         if (latArr && lonArr && latRef && lonRef) {
-            const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
-            const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
-
-            console.log("✅ GPS extracted:", lat.toFixed(4), lon.toFixed(4));
+            // ... GPS extraction ...
             window.currentGPS = { lat, lon };
 
-            // ✅ SIMPLE: Just tweet state + show location
-            updateTweetButtonState();  // Pure DOM - tweet green!
+            updateTweetButtonState();
             showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
-            showLocation();  // Map handles marker automatically
 
-            if (!isInGBA(lat, lon)) {
-                showStatus("⚠️ Outside GBA - use map", "warning");
-            }
+            // ✅ WAIT FOR MAP THEN CENTER + MARKER
+            const waitForMap = setInterval(() => {
+                if (window.map && typeof placeMarker === 'function') {
+                    clearInterval(waitForMap);
+                    window.map.setView([lat, lon], 16);
+                    placeMarker();
+                    console.log("🎯 GPS marker loaded");
+                }
+            }, 100);
 
+            showLocation();
             return { lat, lon };
         }
-    } catch (e) {
-        console.error("🚨 EXIF error:", e);
-    }
 
-    showLocation();
-    showStatus("ℹ️ No GPS. Use map/search.", "info");
-    return null;
+    }
+    } catch (e) {
+    console.error("🚨 EXIF error:", e);
+}
+
+showLocation();
+showStatus("ℹ️ No GPS. Use map/search.", "info");
+return null;
 }
 
 export async function getLiveGPSIfInGBA() {
