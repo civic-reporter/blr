@@ -180,7 +180,3 @@ function updateGpsDisplay() {
     a.textContent = '🗺️ Open Map';
     el.appendChild(a);
 }
-
-// ✅ EXPLICIT EXPORTS
-export { placeMarker };
-window.placeMarker = placeMarker;
