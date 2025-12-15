@@ -39,11 +39,12 @@ export async function extractGPSFromExif(dataUrl) {
         console.error("🚨 EXIF error:", e);
     }
 
-    // ✅ SINGLE FALLBACK - INSIDE FUNCTION
+    // ✅ FALLBACK - AFTER try/catch (SYNTAX SAFE)
     showLocation();
     showStatus("ℹ️ No GPS. Use map/search.", "info");
     return null;
 }
+
 
 export async function getLiveGPSIfInGBA() {
     console.log("📍 Live GPS fallback...");
