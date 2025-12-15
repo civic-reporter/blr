@@ -20,7 +20,10 @@ export function initMap() {
     setupSearch();
     window.map.on("click", handleMapClick);
     mapInitialized = true;
-    console.log("🗺️ Map + search ready");
+
+    // ✅ EXPORT + GLOBALIZE placeMarker
+    window.placeMarker = placeMarker;
+    console.log("🗺️ Map + search ready - placeMarker GLOBAL ✅");
 }
 
 function setupSearch() {
@@ -80,7 +83,6 @@ async function loadNominatimHints(query, suggBox, searchInput) {
             div.className = 'gba-suggestion-item';
             div.style.cssText = 'padding:8px;cursor:pointer;border-bottom:1px solid #eee;';
             div.textContent = item.display_name.split(',')[0];
-            // In loadNominatimHints() click handler - REPLACE:
             div.addEventListener('click', async () => {
                 searchInput.value = item.display_name;
                 suggBox.style.display = 'none';
@@ -90,17 +92,14 @@ async function loadNominatimHints(query, suggBox, searchInput) {
                 if (valid && window.map) {
                     window.currentGPS = gps;
                     if (markerInstance) window.map.removeLayer(markerInstance);
-                    placeMarker();
+                    window.placeMarker();  // ✅ USE GLOBAL
                     window.map.setView([gps.lat, gps.lon], 16);
                     showStatus(`✅ ${item.display_name.split(',')[0]}`, 'success');
-
-                    // ✅ FORCE TWEET UPDATE
                     setTimeout(updateTweetButtonState, 50);
                 } else {
                     showStatus('❌ Outside GBA boundary', 'error');
                 }
             });
-
             suggBox.appendChild(div);
         });
         suggBox.style.display = data.length ? 'block' : 'none';
@@ -122,17 +121,17 @@ export async function handleMapClick(e) {
     }
 
     window.currentGPS = testGPS;
-    placeMarker();
+    window.placeMarker();  // ✅ USE GLOBAL
     updateGpsDisplay();
     ensureLocationVisible();
     showStatus(`✅ Clicked: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
     updateTweetButtonState();
 }
 
+// ✅ EXPORT placeMarker
 export function placeMarker() {
     console.log("📍 Placing marker at:", window.currentGPS?.lat?.toFixed(4), window.currentGPS?.lon?.toFixed(4));
 
-    // ✅ SAFETY CHECK
     if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isValidNumber(window.currentGPS.lon)) {
         console.warn("❌ Invalid GPS for marker");
         return;
@@ -146,7 +145,6 @@ export function placeMarker() {
         .bindPopup("Issue location ✅<br>Drag to adjust within GBA")
         .openPopup();
 
-    // ✅ DRAG HANDLER
     markerInstance.on('dragend', async (e) => {
         const newPos = e.target.getLatLng();
         const testGPS = { lat: newPos.lat, lon: newPos.lng };
@@ -159,13 +157,12 @@ export function placeMarker() {
             showStatus(`✅ Dragged: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
             updateTweetButtonState();
         } else {
-            // Snap back
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
             showStatus("❌ Outside GBA jurisdiction", "error");
         }
     });
 
-    window.marker = markerInstance;  // Global backup
+    window.marker = markerInstance;
 }
 
 function updateGpsDisplay() {
@@ -183,3 +180,7 @@ function updateGpsDisplay() {
     a.textContent = '🗺️ Open Map';
     el.appendChild(a);
 }
+
+// ✅ EXPLICIT EXPORTS
+export { placeMarker };
+window.placeMarker = placeMarker;

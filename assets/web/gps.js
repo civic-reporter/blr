@@ -25,20 +25,19 @@ export async function extractGPSFromExif(dataUrl) {
             updateTweetButtonState();
             showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
-            // ✅ FIXED: Map operations FIRST, then showLocation()
             if (window.map) {
                 window.map.setView([lat, lon], 16);
-                // ✅ Ensure placeMarker exists + delay for mobile
                 setTimeout(() => {
-                    if (typeof placeMarker === 'function') {
-                        placeMarker();
+                    // ✅ FIXED: Use GLOBAL placeMarker
+                    if (window.placeMarker) {
+                        window.placeMarker();
                     } else {
-                        console.warn("❌ placeMarker() not defined");
+                        console.warn("❌ window.placeMarker() not defined");
                     }
-                }, 300); // ↑ Mobile needs longer delay
+                }, 300);
             }
 
-            showLocation(); // Last - uses currentGPS
+            showLocation();
             return { lat, lon };
         }
     } catch (e) {
@@ -49,9 +48,6 @@ export async function extractGPSFromExif(dataUrl) {
     showStatus("ℹ️ No GPS. Use map/search.", "info");
     return null;
 }
-
-
-
 export async function getLiveGPSIfInGBA() {
     console.log("📍 Live GPS fallback...");
     return new Promise((resolve) => {
