@@ -1,4 +1,4 @@
-// UI State Management - PRODUCTION READY
+// UI State Management - TWEET BUTTON FIXED
 import { isValidNumber, isInGBA } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
@@ -17,9 +17,10 @@ export function cacheUIElements() {
     infoBox = document.getElementById("infoBox");
     dropZone = document.getElementById("dropZone");
     imageConfirm = document.getElementById("imageConfirm");
-    confirmImageCheck = document.getElementById("confirmImageCheck");
+    confirmImageCheck = document.getElementById("confirmImageCheck");  // ✅ CRITICAL
     changeImageBtn = document.getElementById("changeImageBtn");
     window.tweetBtn = tweetBtn;
+    console.log("🔧 Cached confirmImageCheck:", !!confirmImageCheck);
 }
 
 export function showStatus(msg, type) {
@@ -72,11 +73,26 @@ export function updateTweetButtonState() {
         isValidNumber(window.currentGPS.lat) &&
         isValidNumber(window.currentGPS.lon) &&
         isInGBA(window.currentGPS.lat, window.currentGPS.lon);
+
+    // ✅ FIXED: Always check DOM + cached element
     let confirmed = true;
-    if (confirmImageCheck) confirmed = !!confirmImageCheck.checked;
+    const checkboxDom = document.getElementById("confirmImageCheck");
+    if (checkboxDom) {
+        confirmed = checkboxDom.checked;
+    } else if (confirmImageCheck) {
+        confirmed = confirmImageCheck.checked;
+    }
+
+    const shouldEnable = imageOk && gpsOk && confirmed;
+
     if (tweetBtn) {
-        tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
-        console.log("🔧 Tweet state:", { imageOk, gpsOk, confirmed, disabled: tweetBtn.disabled });
+        tweetBtn.disabled = !shouldEnable;
+        console.log("🔧 Tweet DEBUG:", {
+            imageOk, gpsOk, confirmed,
+            checkboxDom: !!checkboxDom,
+            cachedCheck: !!confirmImageCheck,
+            shouldEnable
+        });
     }
 }
 
