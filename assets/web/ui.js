@@ -1,4 +1,6 @@
-// UI State Management - FIXED
+// UI State Management - FIXED (NO DUPLICATES)
+import { isValidNumber, isInGBA } from './utils.js';
+
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
 let imageInput, cameraInput, tweetBtn, infoBox, dropZone;
 let imageConfirm, confirmImageCheck, changeImageBtn;
@@ -74,36 +76,27 @@ export function updateTweetButtonState() {
     if (tweetBtn) tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
 }
 
-// ✅ NEW EXPORTS FOR map.js
+// ✅ FIXED EXPORTS - NO DUPLICATES
 export function ensureLocationVisible() {
     if (document.getElementById("locationInfo")) {
         document.getElementById("locationInfo").style.display = "block";
     }
 }
 
-export function hideUploadOptions() {
-    if (document.getElementById("uploadOptions")) {
-        document.getElementById("uploadOptions").style.display = "none";
-    }
-}
-
-// Add this NEW function to ui.js (at bottom):
 export function showImageConfirm() {
     const imageConfirm = document.getElementById("imageConfirm");
     const locationInfo = document.getElementById("locationInfo");
     if (imageConfirm) {
         imageConfirm.style.display = "block";
-        console.log("✅ imageConfirm shown");
+        console.log("✅ imageConfirm SHOWN");
     }
-    if (locationInfo) {
-        locationInfo.style.display = "block";  // Show location section too
-    }
+    if (locationInfo) locationInfo.style.display = "block";
 }
 
 export function hideUploadOptions() {
     const uploadOptions = document.getElementById("uploadOptions");
     if (uploadOptions) {
         uploadOptions.style.display = "none";
-        console.log("✅ uploadOptions hidden");
+        console.log("✅ uploadOptions HIDDEN");
     }
 }
