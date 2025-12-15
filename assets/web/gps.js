@@ -4,12 +4,10 @@ import { isInGBA } from './utils.js';
 
 // ✅ piexif is GLOBAL - loaded via <script> in index.html
 export async function extractGPSFromExif(dataUrl) {
-    console.log("🔍 EXIF parse start", dataUrl ? `[${dataUrl.length} chars]` : "NO DATA");
+    console.log("🔍 EXIF parse start");
 
     try {
-        // piexif is global from CDN/local script
         if (typeof piexif === 'undefined') {
-            console.error("🚨 piexif.js NOT LOADED - check index.html");
             throw new Error("piexif not available");
         }
 
@@ -20,54 +18,30 @@ export async function extractGPSFromExif(dataUrl) {
         const lonArr = gps[piexif.GPSIFD.GPSLongitude];
         const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
 
-        console.log("📸 EXIF GPS raw:", { latArr, lonArr, latRef, lonRef });
-
         if (latArr && lonArr && latRef && lonRef) {
             const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
 
-            console.log("✅ EXIF GPS extracted:", lat.toFixed(6), lon.toFixed(6));
-
+            console.log("✅ GPS extracted:", lat.toFixed(4), lon.toFixed(4));
             window.currentGPS = { lat, lon };
 
-            // ✅ CRITICAL: UPDATE TWEET + SHOW MARKER IMMEDIATELY
-            updateTweetButtonState();
+            // ✅ SIMPLE: Just tweet state + show location
+            updateTweetButtonState();  // Pure DOM - tweet green!
+            showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
+            showLocation();  // Map handles marker automatically
 
-            showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
-
-            // ✅ GPS PHOTO MARKER + MAP CENTER
-            showLocation();
-            if (window.map && typeof placeMarker === 'function') {
-                setTimeout(() => {
-                    window.map.setView([lat, lon], 16);
-                    placeMarker();
-                    console.log("🎯 GPS photo marker placed:", lat.toFixed(4), lon.toFixed(4));
-                }, 150);
-            }
-
-            // GBA boundary check
             if (!isInGBA(lat, lon)) {
-                console.warn("⚠️ GPS outside GBA bounds");
-                showStatus("⚠️ Outside GBA limits - drag marker inside", "warning");
-                if (window.tweetBtn) window.tweetBtn.disabled = true;
-            } else {
-                console.log("✅ GPS inside GBA");
-                showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
+                showStatus("⚠️ Outside GBA - use map", "warning");
             }
 
             return { lat, lon };
-        } else {
-            console.log("ℹ️ No EXIF GPS arrays found");
         }
     } catch (e) {
-        console.error("🚨 EXIF parse ERROR:", e.message, e.stack);
+        console.error("🚨 EXIF error:", e);
     }
 
-    // No GPS fallback → force map/search
-    console.log("ℹ️ No EXIF GPS → show map for manual selection");
     showLocation();
-    showStatus("ℹ️ No GPS in photo. Use search or tap/drag map to set location.", "info");
-    if (window.tweetBtn) window.tweetBtn.disabled = true;
+    showStatus("ℹ️ No GPS. Use map/search.", "info");
     return null;
 }
 
