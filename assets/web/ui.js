@@ -1,33 +1,88 @@
-/* ui.js
- * Reusable UI helpers for the GBA Civic Reporter.
- */
+// UI State Management - FIXED
+let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
+let imageInput, cameraInput, tweetBtn, infoBox, dropZone;
+let imageConfirm, confirmImageCheck, changeImageBtn;
 
-window.GBA_UI = {
-    showGPSOutput(text) {
-        const box = document.getElementById("gpsOutput");
-        box.style.display = "block";
-        box.textContent = text;
-    },
+export function cacheUIElements() {
+    uploadOptions = document.getElementById("uploadOptions");
+    previewImg = document.getElementById("preview");
+    locationInfo = document.getElementById("locationInfo");
+    successScreen = document.getElementById("successScreen");
+    statusDiv = document.getElementById("status");
+    imageInput = document.getElementById("imageInput");
+    cameraInput = document.getElementById("cameraInput");
+    tweetBtn = document.getElementById("tweetBtn");
+    infoBox = document.getElementById("infoBox");
+    dropZone = document.getElementById("dropZone");
+    imageConfirm = document.getElementById("imageConfirm");
+    confirmImageCheck = document.getElementById("confirmImageCheck");
+    changeImageBtn = document.getElementById("changeImageBtn");
+    window.tweetBtn = tweetBtn;
+}
 
-    hideGPSOutput() {
-        const box = document.getElementById("gpsOutput");
-        box.style.display = "none";
-        box.textContent = "";
-    },
-
-    alertError(msg) {
-        alert(msg);
-    },
-
-    highlightInvalid() {
-        const box = document.getElementById("gpsOutput");
-        box.style.background = "#ffe6e6";
-        box.style.borderLeft = "4px solid #cc0000";
-    },
-
-    highlightValid() {
-        const box = document.getElementById("gpsOutput");
-        box.style.background = "#e6ffec";
-        box.style.borderLeft = "4px solid #00aa44";
+export function showStatus(msg, type) {
+    if (!statusDiv) return;
+    if (!msg) {
+        statusDiv.style.display = "none";
+        statusDiv.innerHTML = "";
+        statusDiv.classList.remove("status-error", "status-success", "status-info");
+        return;
     }
-};
+    statusDiv.style.display = "block";
+    statusDiv.innerHTML = msg;
+    statusDiv.classList.remove("status-error", "status-success", "status-info");
+    if (type === "error") statusDiv.classList.add("status-error");
+    else if (type === "success") statusDiv.classList.add("status-success");
+    else statusDiv.classList.add("status-info");
+}
+
+export function showUploadOptions() {
+    if (uploadOptions) uploadOptions.style.display = "flex";
+    if (previewImg) {
+        previewImg.src = ""; previewImg.style.display = "none";
+    }
+    if (imageConfirm) imageConfirm.style.display = "none";
+    if (locationInfo) locationInfo.style.display = "none";
+    if (successScreen) successScreen.style.display = "none";
+    if (statusDiv) statusDiv.innerHTML = "";
+    if (tweetBtn) tweetBtn.disabled = true;
+    window.currentImageFile = null;
+    window.currentGPS = null;
+}
+
+export function showSuccessScreen() {
+    if (locationInfo) locationInfo.style.display = "none";
+    if (successScreen) successScreen.style.display = "block";
+}
+
+export function showLocation() {
+    if (locationInfo) locationInfo.style.display = "block";
+    const mapRestr = document.getElementById("mapRestrictionMsg");
+    if (mapRestr) mapRestr.style.display = "block";
+    const mapEl = document.getElementById("map");
+    if (mapEl) mapEl.style.display = "block";
+}
+
+export function updateTweetButtonState() {
+    const imageOk = !!window.currentImageFile;
+    const gpsOk = window.currentGPS &&
+        isValidNumber(window.currentGPS.lat) &&
+        isValidNumber(window.currentGPS.lon) &&
+        isInGBA(window.currentGPS.lat, window.currentGPS.lon);
+    let confirmed = true;
+    if (confirmImageCheck) confirmed = !!confirmImageCheck.checked;
+    if (tweetBtn) tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
+}
+
+// ✅ NEW EXPORTS FOR map.js
+export function ensureLocationVisible() {
+    if (document.getElementById("locationInfo")) {
+        document.getElementById("locationInfo").style.display = "block";
+    }
+}
+
+export function hideUploadOptions() {
+    if (document.getElementById("uploadOptions")) {
+        document.getElementById("uploadOptions").style.display = "none";
+    }
+}
