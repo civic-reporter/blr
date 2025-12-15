@@ -1,5 +1,5 @@
-// Main app
-import { cacheUIElements, showUploadOptions } from './ui.js';
+// Main app - COMPLETE
+import { cacheUIElements, showUploadOptions, updateTweetButtonState } from './ui.js';  // ✅ FIXED IMPORT
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
 import { shareToGBA } from './twitter.js';
@@ -11,6 +11,8 @@ window.currentGPS = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     cacheUIElements();
+
+    // ✅ CHECKBOX LISTENER - NOW WORKS
     const checkbox = document.getElementById("confirmImageCheck");
     if (checkbox) {
         checkbox.addEventListener("change", updateTweetButtonState);
