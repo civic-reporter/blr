@@ -1,42 +1,45 @@
 import { showUploadOptions, showStatus } from './ui.js';
 
 export function resetApp() {
-    // 1️⃣ Clear global state
+    // Clear state
     window.currentImageFile = null;
     window.currentGPS = null;
-
-    // 2️⃣ Clear map marker
     if (window.map && window.marker) {
         window.map.removeLayer(window.marker);
         window.marker = null;
     }
 
-    // 3️⃣ Reset form + preview
+    // Reset form
     document.getElementById('issueType').value = 'Pothole';
     document.getElementById('issueDesc').value = '';
-    document.getElementById('preview').src = '';
-    document.getElementById('preview').style.display = 'none';
-    document.getElementById('confirmImageCheck').checked = false;
+    const preview = document.getElementById('preview');
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    const confirmCheck = document.getElementById('confirmImageCheck');
+    if (confirmCheck) confirmCheck.checked = false;
 
-    // 4️⃣ RESET MAP + SEARCH (CRITICAL)
+    // ✅ CRITICAL: Reset MAP + SEARCH
     const mapEl = document.getElementById('map');
+    const searchWrapper = document.getElementById('gbaSearchWrapper');
     const searchInput = document.getElementById('gbaSearch');
     const suggBox = document.getElementById('gbaSearchSuggestions');
-    const searchWrapper = document.getElementById('gbaSearchWrapper');
 
     if (searchInput) searchInput.value = '';
-    if (suggBox) suggBox.innerHTML = '', suggBox.style.display = 'none';
+    if (suggBox) {
+        suggBox.innerHTML = '';
+        suggBox.style.display = 'none';
+    }
     if (searchWrapper) searchWrapper.style.display = 'none';
-    if (mapEl) mapEl.style.display = 'none';  // Hide until needed
+    if (mapEl) mapEl.style.display = 'none';
 
-    // 5️⃣ Show ALL UI sections
-    ['uploadOptions', 'locationInfo'].forEach(id => {
+    // Show upload options
+    ['uploadOptions'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.removeProperty('display');
     });
-    document.querySelectorAll('.form-group').forEach(el => el.style.removeProperty('display'));
 
-    // 6️⃣ Reset tweet button
     if (window.tweetBtn) {
         window.tweetBtn.classList.remove('loading');
         window.tweetBtn.textContent = '🚨 Post Issue via @zenc_civic';
