@@ -86,3 +86,24 @@ export function hideUploadOptions() {
         document.getElementById("uploadOptions").style.display = "none";
     }
 }
+
+// Add this NEW function to ui.js (at bottom):
+export function showImageConfirm() {
+    const imageConfirm = document.getElementById("imageConfirm");
+    const locationInfo = document.getElementById("locationInfo");
+    if (imageConfirm) {
+        imageConfirm.style.display = "block";
+        console.log("✅ imageConfirm shown");
+    }
+    if (locationInfo) {
+        locationInfo.style.display = "block";  // Show location section too
+    }
+}
+
+export function hideUploadOptions() {
+    const uploadOptions = document.getElementById("uploadOptions");
+    if (uploadOptions) {
+        uploadOptions.style.display = "none";
+        console.log("✅ uploadOptions hidden");
+    }
+}

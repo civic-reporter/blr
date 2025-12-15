@@ -1,7 +1,6 @@
 import { extractGPSFromExif, getLiveGPSIfInGBA } from './gps.js';
-import { compressImage } from './utils.js';
+import { compressImage, isInGBA, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState } from './ui.js';
-import { isInGBA, isValidNumber } from './utils.js';
 
 export async function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
@@ -10,23 +9,29 @@ export async function handleImageUpload(file) {
     }
 
     window.currentImageFile = file;
-    if (document.getElementById("confirmImageCheck")) document.getElementById("confirmImageCheck").checked = false;
+    const confirmCheck = document.getElementById("confirmImageCheck");
+    if (confirmCheck) confirmCheck.checked = false;
     if (window.tweetBtn) window.tweetBtn.disabled = true;
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-        if (document.getElementById("preview")) {
-            document.getElementById("preview").src = e.target.result;
-            document.getElementById("preview").style.display = "block";
+        const preview = document.getElementById("preview");
+        if (preview) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
         }
 
+        // ✅ GPS FIRST
         await extractGPSFromExif(e.target.result);
 
+        // ✅ Compress AFTER GPS
         const compressedFile = await compressImage(file);
         window.currentImageFile = compressedFile;
 
+        // ✅ CRITICAL: Show imageConfirm for ALL (mobile + upload)
         hideUploadOptions();
-        if (document.getElementById("imageConfirm")) document.getElementById("imageConfirm").style.display = "block";
+        const imageConfirm = document.getElementById("imageConfirm");
+        if (imageConfirm) imageConfirm.style.display = "block";
     };
     reader.readAsDataURL(file);
 }
@@ -38,14 +43,16 @@ export async function handleCameraCapture(file) {
     }
 
     window.currentImageFile = file;
-    if (document.getElementById("confirmImageCheck")) document.getElementById("confirmImageCheck").checked = false;
+    const confirmCheck = document.getElementById("confirmImageCheck");
+    if (confirmCheck) confirmCheck.checked = false;
     if (window.tweetBtn) window.tweetBtn.disabled = true;
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-        if (document.getElementById("preview")) {
-            document.getElementById("preview").src = e.target.result;
-            document.getElementById("preview").style.display = "block";
+        const preview = document.getElementById("preview");
+        if (preview) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
         }
 
         await extractGPSFromExif(e.target.result);
@@ -60,18 +67,16 @@ export async function handleCameraCapture(file) {
                 showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
                 showLocation();
                 updateTweetButtonState();
-            } else {
-                showLocation();
-                showStatus("ℹ️ Set location using search or by tapping/dragging on the map.", "info");
-                if (window.tweetBtn) window.tweetBtn.disabled = true;
             }
         }
 
         const compressedFile = await compressImage(file);
         window.currentImageFile = compressedFile;
 
+        // ✅ CRITICAL: Show imageConfirm for camera TOO
         hideUploadOptions();
-        if (document.getElementById("imageConfirm")) document.getElementById("imageConfirm").style.display = "block";
+        const imageConfirm = document.getElementById("imageConfirm");
+        if (imageConfirm) imageConfirm.style.display = "block";
     };
     reader.readAsDataURL(file);
 }
