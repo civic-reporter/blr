@@ -32,19 +32,8 @@ export async function extractGPSFromExif(dataUrl) {
             showStatus(`✅ GPS from photo: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
             // GBA boundary check
-            if (!isInGBA(lat, lon)) {
-                console.warn("⚠️ GPS outside GBA bounds");
-                showStatus("⚠️ Outside GBA limits - drag marker inside", "warning");
-                if (window.tweetBtn) window.tweetBtn.disabled = true;
-            } else {
-                console.log("✅ GPS inside GBA");
-                showStatus(`✅ GBA GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
-                if (window.tweetBtn) window.tweetBtn.disabled = false;
-            }
-
-            showLocation();
-            updateTweetButtonState();
             return { lat, lon };
+
         } else {
             console.log("ℹ️ No EXIF GPS arrays found");
         }
