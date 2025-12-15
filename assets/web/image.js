@@ -23,6 +23,9 @@ export async function handleImageUpload(file) {
 
         // ✅ GPS FIRST
         await extractGPSFromExif(e.target.result);
+        // ✅ FORCE MAP + MARKER
+        showLocation();  // Triggers auto-marker from ui.js
+        updateTweetButtonState();
 
         // ✅ Compress AFTER GPS
         const compressedFile = await compressImage(file);
