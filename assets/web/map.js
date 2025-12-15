@@ -9,7 +9,7 @@ let mapInitialized = false;
 export function initMap() {
     if (mapInitialized) return;
 
-    // ✅ GLOBAL MAP + MARKER EXPOSURE
+    // ✅ GLOBAL MAP EXPOSURE
     window.map = L.map("map").setView([12.9716, 77.5946], 12);
     mapInstance = window.map;
 
@@ -20,7 +20,7 @@ export function initMap() {
     setupSearch();
     window.map.on("click", handleMapClick);
     mapInitialized = true;
-    console.log("🗺️ Map + marker ready");
+    console.log("🗺️ Map + search ready");
 }
 
 function setupSearch() {
@@ -34,7 +34,7 @@ function setupSearch() {
     const searchInput = document.createElement('input');
     searchInput.id = 'gbaSearch';
     searchInput.type = 'text';
-    searchInput.placeholder = 'Search GBA location...';
+    searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
     searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
 
     const suggBox = document.createElement('div');
@@ -77,7 +77,7 @@ async function loadNominatimHints(query, suggBox, searchInput) {
 
         data.slice(0, 5).forEach(item => {
             const div = document.createElement('div');
-            div.className = 'sugg-item';
+            div.className = 'gba-suggestion-item';
             div.style.cssText = 'padding:8px;cursor:pointer;border-bottom:1px solid #eee;';
             div.textContent = item.display_name.split(',')[0];
             div.addEventListener('click', async () => {
@@ -88,12 +88,13 @@ async function loadNominatimHints(query, suggBox, searchInput) {
                 const valid = await validateLocationForCoords(gps);
                 if (valid && window.map) {
                     window.currentGPS = gps;
+                    if (markerInstance) window.map.removeLayer(markerInstance);
                     placeMarker();
                     window.map.setView([gps.lat, gps.lon], 16);
-                    showStatus('✅ GBA location set', 'success');
+                    showStatus(`✅ ${item.display_name.split(',')[0]}`, 'success');
                     updateTweetButtonState();
                 } else {
-                    showStatus('❌ Outside GBA', 'error');
+                    showStatus('❌ Outside GBA boundary', 'error');
                 }
             });
             suggBox.appendChild(div);
@@ -105,7 +106,7 @@ async function loadNominatimHints(query, suggBox, searchInput) {
 }
 
 export async function handleMapClick(e) {
-    console.log("🖱️ Map clicked:", e.latlng.lat, e.latlng.lng);
+    console.log("🖱️ Map clicked:", e.latlng.lat.toFixed(4), e.latlng.lng.toFixed(4));
     const testGPS = { lat: e.latlng.lat, lon: e.latlng.lng };
     const valid = await validateLocationForCoords(testGPS);
 
@@ -125,13 +126,21 @@ export async function handleMapClick(e) {
 }
 
 export function placeMarker() {
-    console.log("📍 Placing marker at:", window.currentGPS?.lat, window.currentGPS?.lon);
+    console.log("📍 Placing marker at:", window.currentGPS?.lat?.toFixed(4), window.currentGPS?.lon?.toFixed(4));
+
+    // ✅ SAFETY CHECK
+    if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isValidNumber(window.currentGPS.lon)) {
+        console.warn("❌ Invalid GPS for marker");
+        return;
+    }
 
     if (markerInstance) window.map.removeLayer(markerInstance);
 
     markerInstance = L.marker([window.currentGPS.lat, window.currentGPS.lon], {
         draggable: true
-    }).addTo(window.map).bindPopup("Drag to adjust location").openPopup();
+    }).addTo(window.map)
+        .bindPopup("Issue location ✅<br>Drag to adjust within GBA")
+        .openPopup();
 
     // ✅ DRAG HANDLER
     markerInstance.on('dragend', async (e) => {
@@ -157,15 +166,16 @@ export function placeMarker() {
 
 function updateGpsDisplay() {
     const el = document.getElementById("gpsCoords");
-    if (el && window.currentGPS) {
-        el.innerHTML = `${window.currentGPS.lat.toFixed(6)}, ${window.currentGPS.lon.toFixed(6)}`;
-        const link = el.querySelector('.gps-link');
-        if (link) link.remove();
-        const a = document.createElement('a');
-        a.href = `https://www.google.com/maps/search/?api=1&query=${window.currentGPS.lat},${window.currentGPS.lon}`;
-        a.target = '_blank';
-        a.className = 'gps-link';
-        a.textContent = '🗺️ Maps';
-        el.appendChild(a);
-    }
+    if (!el || !window.currentGPS) return;
+
+    el.innerHTML = `${window.currentGPS.lat.toFixed(6)}, ${window.currentGPS.lon.toFixed(6)}`;
+    const link = el.querySelector('.gps-link');
+    if (link) link.remove();
+
+    const a = document.createElement('a');
+    a.href = `https://www.google.com/maps/search/?api=1&query=${window.currentGPS.lat},${window.currentGPS.lon}`;
+    a.target = '_blank';
+    a.className = 'gps-link';
+    a.textContent = '🗺️ Open Map';
+    el.appendChild(a);
 }
