@@ -1,4 +1,4 @@
-// UI State Management - FIXED (NO DUPLICATES)
+// UI State Management - NO DUPLICATES
 import { isValidNumber, isInGBA } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
@@ -76,11 +76,9 @@ export function updateTweetButtonState() {
     if (tweetBtn) tweetBtn.disabled = !(imageOk && gpsOk && confirmed);
 }
 
-// ✅ FIXED EXPORTS - NO DUPLICATES
 export function ensureLocationVisible() {
-    if (document.getElementById("locationInfo")) {
-        document.getElementById("locationInfo").style.display = "block";
-    }
+    const locationInfo = document.getElementById("locationInfo");
+    if (locationInfo) locationInfo.style.display = "block";
 }
 
 export function showImageConfirm() {
@@ -93,6 +91,7 @@ export function showImageConfirm() {
     if (locationInfo) locationInfo.style.display = "block";
 }
 
+// ✅ SINGLE hideUploadOptions - NO DUPLICATE
 export function hideUploadOptions() {
     const uploadOptions = document.getElementById("uploadOptions");
     if (uploadOptions) {
