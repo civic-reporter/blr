@@ -3,7 +3,7 @@ export const translations = {
     en: {
         // Home page (index.html)
         homeTitle: "Zen Citizen",
-        homeSubtitle: "Namma Bengaluru, Namma Voice",
+        homeSubtitle: "Namma Bengaluru, Namma Dhwani",
         gpsPhotos: "📸 GPS Photos",
         instantTweets: "⚡ Instant Tweets",
         wardMapping: "🗺️ Ward Mapping",
