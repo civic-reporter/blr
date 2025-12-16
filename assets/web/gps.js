@@ -21,6 +21,15 @@ export async function extractGPSFromExif(dataUrl) {
             const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
             const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
 
+            // Check if location is in GBA before accepting it
+            if (!isInGBA(lat, lon)) {
+                window.currentGPS = null;
+                showStatus(`❌ GPS location outside GBA boundary`, "error");
+                showLocation();
+                updateTweetButtonState();
+                return null;
+            }
+
             window.currentGPS = { lat, lon };
             updateTweetButtonState();
             showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
