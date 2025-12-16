@@ -414,14 +414,15 @@ h2 {
 }
 
 .success-card {
-    background: var(--card-bg);
+    background: var(--x-bg-card);
     border-radius: 24px;
     padding: 3rem 2rem;
     max-width: 600px;
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     text-align: center;
     animation: successSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 auto;
 }
 
 @keyframes successSlideIn {
@@ -458,12 +459,12 @@ h2 {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: var(--x-text);
+    color: var(--x-text-primary);
 }
 
 .success-message {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: var(--x-text-secondary);
     margin-bottom: 2rem;
     line-height: 1.6;
 }
@@ -498,13 +499,14 @@ h2 {
 }
 
 .success-btn.primary {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .success-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
 }
 
 .success-btn i {
@@ -519,12 +521,12 @@ h2 {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: var(--text-secondary);
+    color: var(--x-text-secondary);
     font-size: 0.95rem;
 }
 
 .success-footer i {
-    color: var(--primary);
+    color: var(--x-success);
 }
 
 #successScreen {
