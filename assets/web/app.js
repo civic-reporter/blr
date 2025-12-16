@@ -19,6 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("✅ Checkbox listener added");
     }
 
+    // Clear error message when issue type is selected
+    const issueType = document.getElementById("issueType");
+    if (issueType) {
+        issueType.addEventListener("change", () => {
+            const statusDiv = document.getElementById("status");
+            if (statusDiv && statusDiv.textContent.includes("Please select an issue type")) {
+                statusDiv.style.display = "none";
+                statusDiv.textContent = "";
+            }
+        });
+    }
+
     // Wire ALL buttons + drop
     document.getElementById("cameraBtn")?.addEventListener("click", () =>
         document.getElementById("cameraInput").click());
