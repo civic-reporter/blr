@@ -1,121 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="light" lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>GBA Civic Reporter – Greater Bengaluru Authority</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>🏛️ Zen Citizen - Bengaluru Civic Platform</title>
 
-  <!-- Local libs -->
-  <link rel="stylesheet" href="assets/css/leaflet.css" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+    <!-- Modern fonts + icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <script src="assets/js/piexif.min.js"></script>
-  <script src="assets/js/leaflet.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
 
-  <link rel="stylesheet" href="assets/css/Control.Geocoder.css" />
-  <script src="assets/js/Control.Geocoder.js"></script>
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#28a745">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
 <body>
-  <div class="container">
-    <h2>🏛️ GBA Civic Reporter – Greater Bengaluru Authority</h2>
+    <!-- Floating theme toggle -->
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon" style="display:none;"></i>
+    </button>
 
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="logo">
+                <i class="fas fa-landmark"></i>
+                <h1 data-i18n="homeTitle">Zen Citizen</h1>
+            </div>
 
-    <!-- Image Upload Options (visible when no image loaded) -->
-    <div id="uploadOptions" class="upload-options">
-      <p class="header-text">Click or upload a photo (GPS is auto-detected). If GPS is missing, choose the location on
-        the
-        map.</p>
-      <div class="button-group">
-        <!-- Camera button (mobile only) -->
-        <button id="cameraBtn" class="upload-btn camera-btn">
-          📱 <span>Mobile Camera</span>
-        </button>
-        <!-- File upload button -->
-        <button id="uploadBtn" class="upload-btn">
-          📁 <span>Upload Photo</span>
-        </button>
-      </div>
-      <!-- Hidden real inputs (file, image-only) -->
-      <input type="file" id="imageInput" style="display:none" />
-      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
-    </div>
+            <div class="tagline">
+                <p data-i18n="homeSubtitle">Bengaluru's fastest civic reporting platform</p>
+                <div class="stats">
+                    <span data-i18n="gpsPhotos">📸 GPS Photos</span>
+                    <span data-i18n="instantTweets">⚡ Instant Tweets</span>
+                    <span data-i18n="wardMapping">🗺️ Ward Mapping</span>
+                </div>
+            </div>
 
-    <!-- Image Preview -->
-    <img id="preview" style="display:none;" />
+            <!-- Modern card buttons -->
+            <div class="action-cards">
+                <a href="blr-civic-index.html" class="action-card civic-card" data-category="civic">
+                    <div class="card-icon">🏗️</div>
+                    <div class="card-content">
+                        <h3 data-i18n="civicIssues">Civic Issues</h3>
+                        <p data-i18n="civicDesc">Potholes, drainage, streetlights</p>
+                        <div class="card-footer">
+                            <span data-i18n="greaterBengaluruAuthority">Greater Bengaluru Authority</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
 
-    <!-- Image confirmation -->
-    <div id="imageConfirm" style="display:none;" class="image-confirm">
-      <p>Is this photo correct?</p>
-      <button id="changeImageBtn" class="upload-btn">
-        🔁 Choose another photo
-      </button>
-      <label class="confirm-check">
-        <input type="checkbox" id="confirmImageCheck" />
-        <span>I confirm this photo clearly shows the issue.</span>
-      </label>
-    </div>
+                <a href="blr-traffic-index.html" class="action-card traffic-card" data-category="traffic">
+                    <div class="card-icon">🚦</div>
+                    <div class="card-content">
+                        <h3 data-i18n="trafficIssues">Traffic Issues</h3>
+                        <p data-i18n="trafficDesc">Signals, jams, parking violations</p>
+                        <div class="card-footer">
+                            <span data-i18n="bengaluruTrafficPolice">Bengaluru Traffic Police</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
 
-    <!-- Map -->
-    <div id="map"></div>
+            <!-- Quick stats + social proof -->
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-camera"></i>
+                    <span data-i18n="photoToPost">Photo → Post in 10s</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span data-i18n="gpsAutoDetect">GPS Auto-detect</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fab fa-x-twitter"></i>
+                    <span data-i18n="directToAuthorities">Direct to authorities</span>
+                </div>
+            </div>
 
-    <!-- Location Info & Form -->
-    <div id="locationInfo" style="display:none">
-      <div class="info-box" id="infoBox">
-        <div><strong>📍 Location:</strong> <span id="gpsCoords"></span></div>
-        <div id="mapRestrictionMsg" class="map-message" style="display:none">
-          ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
+            <!-- CTA -->
+            <div class="cta-section">
+                <p data-i18n="builtForCitizens">Built for Bengaluru citizens 🇮🇳</p>
+            </div>
         </div>
-        <div class="issue-row">
-          <select id="issueType">
-            <option value="Pothole">Pothole</option>
-            <option value="Footpath">Footpath</option>
-            <option value="Drainage">Drainage issue</option>
-            <option value="Streetlight">Streetlight</option>
-            <option value="Garbage">Garbage</option>
-            <option value="Manhole">Manhole</option>
-            <option value="Road">Road repair</option>
-            <option value="Other">Other</option>
-          </select>
-          <input id="issueDesc" placeholder="Extra details (optional), please ref" maxlength="120" />
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <small data-i18n="footerText">&copy; 2025 Zen Citizen. Made with ❤️ for Bengaluru</small>
+            <div class="social-links">
+                <a id="privacyLink" href="privacy.html"
+                    style="margin-right: 1rem; text-decoration: none; color: var(--x-text-secondary);">
+                    <i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span>
+                </a>
+                <a href="https://twitter.com/zenc_civic" target="_blank" aria-label="X (formerly Twitter)">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+            </div>
         </div>
-        <div><strong>𝕏 Tweet from:</strong>
-          <span class="gba-handle">@zenc_civic</span>
-        </div>
-        <small>🔧 Drag marker or click map to adjust location <strong>(within GBA area only)</strong>.</small>
-      </div>
+    </footer>
 
-      <button id="tweetBtn" disabled>
-        🚨 Post Issue via @zenc_civic
-      </button>
-    </div>
+    <!-- Enhanced theme script -->
+    <script>
+        const html = document.documentElement;
 
-    <!-- Status Messages -->
-    <div id="status"></div>
+        function initTheme() {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? "dark" : "light");
+            html.setAttribute("data-theme", initial);
+            updateThemeToggle(initial);
+        }
 
-    <!-- Success Screen (Submit Another Issue) -->
-    <div id="successScreen" style="display:none; text-align:center; padding: 2rem;">
-      <div class="success-icon">✅</div>
-      <h3>Issue Posted Successfully!</h3>
-      <p>Your report has been tweeted to GBA via @zenc_civic</p>
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            } else {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            }
+        }
 
-      <!-- Tweet URL + copy button stay here, within the container -->
-      <div id="tweetLinkContainer"></div>
+        // Initialize
+        initTheme();
 
-      <button id="submitAnotherBtn" class="upload-btn">
-        📸 Submit Another Issue
-      </button>
-    </div>
+        window.addEventListener("DOMContentLoaded", () => {
+            // Initialize language switcher
+            import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+                initLanguageSwitcher();
+            });
 
-    <!-- Inline copyright inside the container -->
-    <div class="app-footer">
-      <small>© Zen Citizen</small>
-    </div>
-  </div>
+            const btn = document.getElementById("themeToggle");
+            if (!btn) return;
 
-  <!-- Load your app -->
-  <script src="assets/web/app.js"></script>
+            btn.addEventListener("click", () => {
+                const current = html.getAttribute("data-theme") || "light";
+                const next = current === "light" ? "dark" : "light";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+                updateThemeToggle(next);
+            });
+
+            // Animate cards on load
+            document.querySelectorAll('.action-card').forEach((card, i) => {
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.classList.add('animate-in');
+            });
+        });
+    </script>
 </body>
 
 </html>

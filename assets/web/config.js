@@ -1,20 +1,57 @@
-/* config.js
- * Global constants & configuration for GBA Civic Reporter
- */
+// Configuration - Zen Citizen (Civic + Traffic)
+export const CONFIG = {
+    // Civic API
+    API_GATEWAY_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
 
-window.GBA_CONFIG = {
-    DEFAULT_CENTER: [12.9716, 77.5946],  // Bengaluru
-    DEFAULT_ZOOM: 11,
+    // Traffic API (update this with your traffic API endpoint)
+    TRAFFIC_API_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
 
-    TILE_LAYER: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    // Google Places API
+    GOOGLE_MAPS_API_KEY: "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0",
 
-    // Optional KML boundary for validation
-    BOUNDARY_KML_URL: "assets/data/map.kml",  // Change if needed
+    // Civic jurisdiction data
+    MAP_KML_URL: "assets/data/map.kml",
+    CONST_KML_URL: "assets/data/blr_const.kml",
+    WARD_KML_URL: "assets/data/wards.kml",
 
-    MARKER_ICON: {
-        radius: 6,
-        color: "#ff0000",
-        fillColor: "#ff6666",
-        fillOpacity: 0.9,
+    // Traffic jurisdiction data
+    TRAFFIC_KML_URL: "assets/data/blr-traffic.kml",
+
+    // Geographic boundary
+    GBA_BBOX: {
+        south: 12.82, north: 13.20,
+        west: 77.40, east: 77.85
     }
+};
+
+export const MLA_HANDLES = {
+    "Yeshwanthpur": "STSomashekarMLA",
+    "Yelahanka": "SRVishwanathBJP",
+    "Vijayanagara": "MLAHRGaviyappa",
+    "Shivajinagar": "ArshadRizwan",
+    "Shantinagar": "mlanaharis",
+    "Sarvagnanagar": "thekjgeorge",
+    "Rajarajeshwarinagar": "MunirathnaMLA",
+    "Rajajinagar": "nimmasuresh",
+    "Pulakeshinagar": "",
+    "Padmanabhanagar": "RAshokaBJP",
+    "Malleshwaram": "drashwathcn",
+    "Mahalakshmi Layout": "GopalaiahK",
+    "Mahadevapura": "MALimbavali",
+    "Krishnarajapuram": "BABasavaraja",
+    "Jayanagar": "CKRBJP",
+    "Hoskote": "SBG4Hosakote",
+    "Hebbal": "byrathi_suresh",
+    "Govindaraja Nagar": "Priyakrishna_K",
+    "Gandhinagar": "dineshgrao",
+    "Dasarahalli": "munirajusbjp",
+    "Chickpet": "BGUdayBJP",
+    "Chamrajpet": "BZZameerAhmedK",
+    "C. V. Raman Nagar": "SRaghuMLA",
+    "Byatarayanapura": "krishnabgowda",
+    "Bommanahalli": "msrbommanahalli",
+    "Basavanagudi": "Ravi_LA",
+    "Vijayanagar": "mkrishnappa_MLA",
+    "BTM Layout": "RLR_BTM",
+    "Anekal (SC)": "MLAShivanna"
 };

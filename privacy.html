@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Privacy Policy - Zen Citizen</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+    <!-- Floating theme toggle -->
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon" style="display:none;"></i>
+    </button>
+
+    <!-- Language toggle -->
+    <a href="privacy-kn.html" class="language-toggle-btn" style="text-decoration: none; color: inherit;"
+        title="Switch to Kannada">
+        ಕನ್ನಡ
+    </a>
+
+    <div class="container" style="max-width: 800px; margin: 2rem auto;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-landmark" style="font-size: 2rem;"></i>
+                <h1>Zen Citizen</h1>
+            </a>
+        </div>
+
+        <h2 data-i18n="privacyTitle">Privacy Policy & Terms of Service</h2>
+        <p><em data-i18n="privacyLastUpdated">Last updated: December 2025</em></p>
+
+        <h3>📋 Overview</h3>
+        <p>Zen Citizen is a civic reporting platform that allows Bengaluru citizens to report civic and traffic issues
+            directly to authorities via X (formerly Twitter).</p>
+
+        <h3>🔒 Data Privacy</h3>
+        <h4>We Do NOT Store Your Data</h4>
+        <ul>
+            <li><strong>No user data collection:</strong> We do not collect, store, or retain any personal information,
+                user accounts, or identifiable data.</li>
+            <li><strong>No image storage:</strong> Photos you upload are processed in your browser and posted directly
+                to X. We do not store images on our servers.</li>
+            <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the
+                map, used only for the report, and not stored by us.</li>
+            <li><strong>AI processing:</strong> Face detection and blurring (for traffic reports) happens in your
+                browser using client-side AI before transmission. After face blurring, images are sent to AWS
+                Rekognition for content moderation to prevent misuse. Text descriptions are analyzed using AWS
+                Comprehend to prevent abusive language. These AWS services process data transiently for moderation
+                purposes only and do not retain your content.</li>
+        </ul>
+
+        <h3>📸 Public Posting</h3>
+        <p><strong>Important:</strong> When you submit a report:</p>
+        <ul>
+            <li>Your image and location details are <strong>posted publicly on X</strong> (formerly Twitter)</li>
+            <li>The post is accessible to anyone on the internet</li>
+            <li>Posts are tagged with relevant authorities (@zenc_civic, @BlrCityPolice)</li>
+            <li>Once posted, the content is governed by X's terms and privacy policy</li>
+        </ul>
+
+        <h3>🍪 Cookies & Local Storage</h3>
+        <p>We use browser local storage only for:</p>
+        <ul>
+            <li>Theme preference (light/dark mode)</li>
+            <li>Language preference (English/Kannada)</li>
+        </ul>
+        <p>No tracking cookies or analytics are used.</p>
+
+        <h3>✅ User Consent</h3>
+        <p>By using Zen Citizen, you acknowledge and agree that:</p>
+        <ul>
+            <li>Images and location data you submit will be posted publicly on X</li>
+            <li>You have the right to photograph and share the reported issue</li>
+            <li>You will not post images containing sensitive personal information</li>
+            <li>Face blurring (for traffic reports) is provided as a privacy feature, but you are responsible for the
+                content you post</li>
+        </ul>
+
+        <h3>🛡️ Security</h3>
+        <ul>
+            <li>All connections use HTTPS encryption</li>
+            <li>Image compression and face detection happen in your browser</li>
+            <li>API calls to X are made securely through our gateway</li>
+        </ul>
+
+        <h3>⚖️ Liability</h3>
+        <p>Zen Citizen is provided "as is" without warranties. We are not responsible for:</p>
+        <ul>
+            <li>Response times or actions taken by authorities</li>
+            <li>Content posted by users</li>
+            <li>Third-party services (X platform, map providers)</li>
+        </ul>
+
+        <h3>📧 Contact</h3>
+        <p>For questions or concerns, reach out via <a href="https://twitter.com/zenc_civic"
+                target="_blank">@zenc_civic</a> on X.</p>
+
+        <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--x-border);">
+            <a href="index.html" class="upload-btn" style="display: inline-block;">
+                <i class="fas fa-home"></i> <span data-i18n="backToHome">Back to Home</span>
+            </a>
+        </div>
+
+        <div class="app-footer" style="margin-top: 2rem;">
+            <small>© 2025 Zen Citizen. Made with ❤️ for Bengaluru</small>
+        </div>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+
+        function initTheme() {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? "dark" : "light");
+            html.setAttribute("data-theme", initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            } else {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            }
+        }
+
+        initTheme();
+
+        window.addEventListener("DOMContentLoaded", () => {
+            // Initialize language switcher
+            import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+                initLanguageSwitcher();
+            });
+
+            document.getElementById("themeToggle").addEventListener("click", () => {
+                const current = html.getAttribute("data-theme") || "light";
+                const next = current === "light" ? "dark" : "light";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+                updateThemeToggle(next);
+            });
+        });
+    </script>
+</body>
+
+</html>
