@@ -21,6 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("✅ Traffic: Checkbox listener added");
     }
 
+    // Clear error message when issue type is selected
+    const trafficCategory = document.getElementById("trafficCategory");
+    if (trafficCategory) {
+        trafficCategory.addEventListener("change", () => {
+            const statusDiv = document.getElementById("status");
+            if (statusDiv && statusDiv.textContent.includes("Please select a traffic issue type")) {
+                statusDiv.style.display = "none";
+                statusDiv.textContent = "";
+            }
+        });
+    }
+
     // Wire buttons
     document.getElementById("cameraBtn")?.addEventListener("click", () =>
         document.getElementById("cameraInput").click());
