@@ -126,17 +126,28 @@
     <div id="status"></div>
 
     <!-- Success Screen (Submit Another Issue) -->
-    <div id="successScreen" style="display:none; text-align:center; padding: 2rem;">
-      <div class="success-icon">✅</div>
-      <h3>Issue Posted Successfully!</h3>
-      <p>Your report has been tweeted to GBA via @zenc_civic</p>
+    <div id="successScreen" class="success-container" style="display:none;">
+      <div class="success-card">
+        <div class="success-icon-large">✅</div>
+        <h2 class="success-title" data-i18n="issuePostedSuccess">Issue Posted Successfully!</h2>
+        <p class="success-message" data-i18n="issuePostedDesc">Your report has been tweeted to GBA via
+          <strong>@zenc_civic</strong></p>
 
-      <!-- Tweet URL + copy button stay here, within the container -->
-      <div id="tweetLinkContainer"></div>
+        <!-- Tweet URL + copy button -->
+        <div id="tweetLinkContainer" class="tweet-link-box"></div>
 
-      <button id="submitAnotherBtn" class="upload-btn">
-        📸 Submit Another Issue
-      </button>
+        <div class="success-actions">
+          <button id="submitAnotherBtn" class="success-btn primary">
+            <i class="fas fa-camera"></i>
+            <span data-i18n="submitAnotherIssue">Submit Another Issue</span>
+          </button>
+        </div>
+
+        <div class="success-footer">
+          <i class="fas fa-check-circle"></i>
+          <span data-i18n="successThankYou">Thank you for making Bengaluru better!</span>
+        </div>
+      </div>
     </div>
 
     <!-- Inline copyright inside the container -->

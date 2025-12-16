@@ -96,11 +96,15 @@
                 </div>
                 <div class="issue-row">
                     <select id="trafficCategory" required
-                        data-i18n-options="selectTrafficIssue,signalDown,trafficJam,wrongParking,speedBreaker,diversion,otherTraffic">
+                        data-i18n-options="selectTrafficIssue,signalDown,trafficJam,wrongParking,noParking,drivingWithMobile,noHelmet,speedBreaker,diversion,otherTraffic">
                         <option value="" data-i18n="selectTrafficIssue">Select traffic issue...</option>
                         <option value="signal-down" data-i18n="signalDown">🚦 Traffic Signal Down</option>
                         <option value="traffic-jam" data-i18n="trafficJam">🚗 Traffic Jam</option>
                         <option value="wrong-parking" data-i18n="wrongParking">🚗‍ Wrong Parking</option>
+                        <option value="no-parking" data-i18n="noParking">🚫 No Parking Zone Violation</option>
+                        <option value="driving-with-mobile" data-i18n="drivingWithMobile">📱 Driving with Mobile
+                        </option>
+                        <option value="no-helmet" data-i18n="noHelmet">🪖 No Helmet (Rider/Pillion)</option>
                         <option value="speed-breaker" data-i18n="speedBreaker">🚧 Missing Speed Breaker</option>
                         <option value="diversion" data-i18n="diversion">🛣️ Diversion Needed</option>
                         <option value="other" data-i18n="otherTraffic">Other traffic issue</option>
@@ -123,14 +127,29 @@
         <div id="status"></div>
 
         <!-- Success Screen -->
-        <div id="successScreen" style="display:none; text-align:center; padding: 2rem;">
-            <div class="success-icon">✅</div>
-            <h3>Traffic Issue Reported!</h3>
-            <p>Your report tweeted to @BlrCityPolice</p>
-            <div id="tweetLinkContainer"></div>
-            <button id="submitAnotherBtn" class="upload-btn">
-                🚦 Report Another Traffic Issue
-            </button>
+        <div id="successScreen" class="success-container" style="display:none;">
+            <div class="success-card">
+                <div class="success-icon-large">🚦</div>
+                <h2 class="success-title" data-i18n="trafficReportedSuccess">Traffic Issue Reported!</h2>
+                <p class="success-message" data-i18n="trafficReportedDesc">Your traffic report has been posted via
+                    <strong>@zenc_civic</strong> to <strong>@BlrCityPolice</strong>
+                </p>
+
+                <!-- Tweet URL + copy button -->
+                <div id="tweetLinkContainer" class="tweet-link-box"></div>
+
+                <div class="success-actions">
+                    <button id="submitAnotherBtn" class="success-btn primary">
+                        <i class="fas fa-camera"></i>
+                        <span data-i18n="submitAnotherReport">Submit Another Report</span>
+                    </button>
+                </div>
+
+                <div class="success-footer">
+                    <i class="fas fa-check-circle"></i>
+                    <span data-i18n="successThankYou">Thank you for making Bengaluru better!</span>
+                </div>
+            </div>
         </div>
 
         <!-- Footer -->
