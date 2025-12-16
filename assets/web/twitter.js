@@ -76,6 +76,13 @@ export async function shareToGBA() {
         return;
     }
 
+    // Validate issue type selection
+    const issueType = document.getElementById("issueType")?.value;
+    if (!issueType) {
+        showStatus("❌ Please select an issue type.", "error");
+        return;
+    }
+
     if (window.tweetBtn) {
         window.tweetBtn.disabled = true;
         window.tweetBtn.textContent = "Posting...";
@@ -85,7 +92,6 @@ export async function shareToGBA() {
 
     await new Promise(resolve => requestAnimationFrame(resolve));
 
-    const issueType = document.getElementById("issueType")?.value || "Pothole";
     const desc = document.getElementById("issueDesc")?.value.trim() || "";
 
     const [
