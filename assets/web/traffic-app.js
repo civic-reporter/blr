@@ -4,6 +4,7 @@ import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
 import { submitTraffic } from './traffic-submission.js';
 import { resetApp } from './reset.js';
+import { blurFacesInImage } from '../js/face-blur.js';
 
 // Global state for traffic reports
 window.currentImageFile = null;
@@ -27,9 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("imageInput").click());
 
     document.getElementById("imageInput")?.addEventListener("change", e =>
-        handleImageUpload(e.target.files[0]));
+        handleTrafficImageUpload(e.target.files[0]));
     document.getElementById("cameraInput")?.addEventListener("change", e =>
-        handleCameraCapture(e.target.files[0]));
+        handleTrafficCameraCapture(e.target.files[0]));
 
     // Traffic submit button (different ID from civic)
     document.getElementById("trafficSubmit")?.addEventListener("click", submitTraffic);
@@ -54,3 +55,44 @@ document.addEventListener("DOMContentLoaded", () => {
     initMap();
     showUploadOptions();
 });
+
+// Traffic-specific image handlers with face blurring
+async function handleTrafficImageUpload(file) {
+    await handleImageUpload(file);
+    await blurAndUpdatePreview();
+}
+
+async function handleTrafficCameraCapture(file) {
+    await handleCameraCapture(file);
+    await blurAndUpdatePreview();
+}
+
+async function blurAndUpdatePreview() {
+    if (!window.currentImageFile) return;
+
+    const preview = document.getElementById("preview");
+    if (!preview) return;
+
+    // Show blurring status
+    const statusDiv = document.getElementById("status");
+    if (statusDiv) {
+        statusDiv.textContent = "🔍 Blurring faces for privacy...";
+        statusDiv.className = "status info";
+        statusDiv.style.display = "block";
+    }
+
+    // Blur faces
+    const blurredBlob = await blurFacesInImage(window.currentImageFile);
+    window.currentImageFile = blurredBlob;
+
+    // Update preview with blurred image
+    const blurredUrl = URL.createObjectURL(blurredBlob);
+    preview.src = blurredUrl;
+
+    // Clear status after a moment
+    setTimeout(() => {
+        if (statusDiv && statusDiv.textContent.includes("Blurring")) {
+            statusDiv.style.display = "none";
+        }
+    }, 2000);
+}
