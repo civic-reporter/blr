@@ -1,6 +1,7 @@
 import { extractGPSFromExif, getLiveGPSIfInGBA } from './gps.js';
 import { compressImage, isInGBA, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState } from './ui.js';
+import { validateLocationForCoords } from './validation.js';
 
 export async function handleImageUpload(file) {
     if (!file || !file.type.startsWith("image/")) {
@@ -66,10 +67,20 @@ export async function handleCameraCapture(file) {
         if (needsGPS) {
             const liveGPS = await getLiveGPSIfInGBA();
             if (liveGPS) {
-                window.currentGPS = liveGPS;
-                showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
-                showLocation();
-                updateTweetButtonState();
+                // Validate live GPS against actual GBA polygon boundaries
+                const valid = await validateLocationForCoords(liveGPS);
+                if (valid) {
+                    window.currentGPS = liveGPS;
+                    showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
+                    showLocation();
+                    updateTweetButtonState();
+                } else {
+                    window.currentGPS = null;
+                    showStatus("❌ Live GPS outside GBA boundary", "error");
+                    showLocation();
+                }
+            } else {
+                showStatus("ℹ️ No valid GPS. Use map/search.", "info");
             }
         }
 
