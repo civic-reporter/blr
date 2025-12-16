@@ -34,57 +34,48 @@ function setupSearch() {
     wrapper.id = 'gbaSearchWrapper';
     wrapper.style.cssText = 'position:relative;width:100%;margin-bottom:10px;';
 
-    const searchInput = document.createElement('input');
-    searchInput.id = 'gbaSearch';
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
-    searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
-
-    wrapper.appendChild(searchInput);
-
     const mapNode = document.getElementById('map');
     if (mapNode?.parentNode) {
         mapNode.parentNode.insertBefore(wrapper, mapNode);
     }
 
     // Initialize Google Places Autocomplete when API is ready
-    initGoogleAutocomplete(searchInput);
+    initGoogleAutocomplete(wrapper);
 }
 
-function initGoogleAutocomplete(searchInput) {
+function initGoogleAutocomplete(wrapper) {
     // Wait for Google Maps API to be loaded
     const checkGoogle = setInterval(() => {
-        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+        if (typeof google !== 'undefined' && google.maps && google.maps.places && google.maps.places.PlaceAutocompleteElement) {
             clearInterval(checkGoogle);
-            setupGoogleAutocomplete(searchInput);
+            setupGoogleAutocomplete(wrapper);
         }
     }, 100);
 }
 
-function setupGoogleAutocomplete(searchInput) {
-    const bangalore = new google.maps.LatLng(12.9716, 77.5946);
+async function setupGoogleAutocomplete(wrapper) {
+    // Use the new PlaceAutocompleteElement
+    const autocompleteElement = document.createElement('gmp-place-autocomplete');
+    autocompleteElement.id = 'gbaSearch';
+    autocompleteElement.setAttribute('placeholder', 'Search GBA (MG Road, Jayanagar 4th Block)...');
+    autocompleteElement.style.cssText = 'width:100%;';
 
-    const autocomplete = new google.maps.places.Autocomplete(searchInput, {
-        bounds: new google.maps.LatLngBounds(
-            new google.maps.LatLng(CONFIG.GBA_BBOX.south, CONFIG.GBA_BBOX.west),
-            new google.maps.LatLng(CONFIG.GBA_BBOX.north, CONFIG.GBA_BBOX.east)
-        ),
-        strictBounds: false,
-        componentRestrictions: { country: 'in' },
-        fields: ['geometry', 'name', 'formatted_address']
-    });
+    wrapper.appendChild(autocompleteElement);
 
-    autocomplete.addListener('place_changed', async () => {
-        const place = autocomplete.getPlace();
+    // Configure location bias to Bengaluru GBA
+    const { Place } = await google.maps.importLibrary("places");
 
-        if (!place.geometry || !place.geometry.location) {
+    autocompleteElement.addEventListener('gmp-placeselect', async (event) => {
+        const place = event.place;
+
+        if (!place.location) {
             showStatus('❌ No location found', 'error');
             return;
         }
 
         const gps = {
-            lat: place.geometry.location.lat(),
-            lon: place.geometry.location.lng()
+            lat: place.location.lat(),
+            lon: place.location.lng()
         };
 
         const valid = await validateLocationForCoords(gps);
@@ -93,12 +84,21 @@ function setupGoogleAutocomplete(searchInput) {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.placeMarker();
             window.map.setView([gps.lat, gps.lon], 16);
-            showStatus(`✅ ${place.name || place.formatted_address}`, 'success');
+            showStatus(`✅ ${place.displayName || place.formattedAddress}`, 'success');
             setTimeout(updateTweetButtonState, 50);
         } else {
             showStatus('❌ Outside GBA boundary', 'error');
         }
     });
+
+    // Set location bias
+    autocompleteElement.locationBias = {
+        south: CONFIG.GBA_BBOX.south,
+        west: CONFIG.GBA_BBOX.west,
+        north: CONFIG.GBA_BBOX.north,
+        east: CONFIG.GBA_BBOX.east
+    };
+    autocompleteElement.componentRestrictions = { country: 'in' };
 }
 
 export async function handleMapClick(e) {
