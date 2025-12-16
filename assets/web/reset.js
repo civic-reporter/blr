@@ -9,9 +9,17 @@ export function resetApp() {
         window.marker = null;
     }
 
-    // 2. Reset form + preview
-    document.getElementById('issueType').value = 'Pothole';
-    document.getElementById('issueDesc').value = '';
+    // 2. Reset form + preview (support both civic and traffic)
+    const issueTypeEl = document.getElementById('issueType');
+    const trafficCategoryEl = document.getElementById('trafficCategory');
+    const issueDescEl = document.getElementById('issueDesc');
+    const trafficDescEl = document.getElementById('trafficDesc');
+
+    if (issueTypeEl) issueTypeEl.value = 'Pothole';
+    if (trafficCategoryEl) trafficCategoryEl.value = '';
+    if (issueDescEl) issueDescEl.value = '';
+    if (trafficDescEl) trafficDescEl.value = '';
+
     const preview = document.getElementById('preview');
     if (preview) {
         preview.src = '';
@@ -34,11 +42,19 @@ export function resetApp() {
     if (searchWrapper) searchWrapper.style.display = 'none';
     if (mapEl) mapEl.style.display = 'none';
 
-    // 4. Reset tweet button
-    if (window.tweetBtn) {
-        window.tweetBtn.classList.remove('loading');
-        window.tweetBtn.textContent = '🚨 Post Issue via @zenc_civic';
-        window.tweetBtn.disabled = true;
+    // 4. Reset buttons (support both civic and traffic)
+    const tweetBtn = document.getElementById('tweetBtn');
+    const trafficSubmitBtn = document.getElementById('trafficSubmit');
+
+    if (tweetBtn) {
+        tweetBtn.classList.remove('loading');
+        tweetBtn.textContent = '🚨 Post Issue via @zenc_civic';
+        tweetBtn.disabled = true;
+    }
+    if (trafficSubmitBtn) {
+        trafficSubmitBtn.classList.remove('loading');
+        trafficSubmitBtn.textContent = '🚦 Report Traffic to @BlrCityPolice';
+        trafficSubmitBtn.disabled = true;
     }
 
     // 5. Show upload screen
