@@ -56,6 +56,8 @@ export function showUploadOptions() {
 export function showSuccessScreen() {
     if (locationInfo) locationInfo.style.display = "none";
     if (successScreen) successScreen.style.display = "block";
+    if (previewImg) previewImg.style.display = "none";
+    if (imageConfirm) imageConfirm.style.display = "none";
 }
 
 // ✅ SINGLE showLocation - WITH AUTO-MARKER
