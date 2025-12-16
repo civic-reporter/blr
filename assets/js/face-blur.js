@@ -3,6 +3,26 @@
 
 let faceApiLoaded = false;
 
+function waitForFaceApi(timeout = 5000) {
+    return new Promise((resolve) => {
+        if (typeof faceapi !== 'undefined') {
+            resolve(true);
+            return;
+        }
+
+        const startTime = Date.now();
+        const checkInterval = setInterval(() => {
+            if (typeof faceapi !== 'undefined') {
+                clearInterval(checkInterval);
+                resolve(true);
+            } else if (Date.now() - startTime > timeout) {
+                clearInterval(checkInterval);
+                resolve(false);
+            }
+        }, 100);
+    });
+}
+
 export async function loadFaceDetectionModels() {
     if (faceApiLoaded) return true;
 
@@ -22,10 +42,14 @@ export async function loadFaceDetectionModels() {
 
 export async function blurFacesInImage(imageFile) {
     try {
-        // Check if face-api is available
+        // Wait for face-api to be available (max 5 seconds)
         if (typeof faceapi === 'undefined') {
-            console.warn('⚠️ face-api.js not loaded, skipping face blur');
-            return imageFile;
+            console.log('⏳ Waiting for face-api.js to load...');
+            const available = await waitForFaceApi(5000);
+            if (!available) {
+                console.warn('⚠️ face-api.js not loaded, skipping face blur');
+                return imageFile;
+            }
         }
 
         // Load models if not already loaded
@@ -35,10 +59,13 @@ export async function blurFacesInImage(imageFile) {
         // Create image element
         const img = await createImageFromFile(imageFile);
 
-        // Detect faces
+        // Detect faces with more sensitive settings
         const detections = await faceapi.detectAllFaces(
             img,
-            new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 })
+            new faceapi.TinyFaceDetectorOptions({
+                inputSize: 512,        // Larger input for better detection
+                scoreThreshold: 0.3    // Lower threshold = more sensitive
+            })
         );
 
         if (!detections || detections.length === 0) {
