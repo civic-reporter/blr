@@ -6,6 +6,9 @@ export const CONFIG = {
     // Traffic API (update this with your traffic API endpoint)
     TRAFFIC_API_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
 
+    // Google Places API
+    GOOGLE_MAPS_API_KEY: "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0",
+
     // Civic jurisdiction data
     MAP_KML_URL: "assets/data/map.kml",
     CONST_KML_URL: "assets/data/blr_const.kml",
