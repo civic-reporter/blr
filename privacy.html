@@ -47,8 +47,11 @@
                 to X. We do not store images on our servers.</li>
             <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the
                 map, used only for the report, and not stored by us.</li>
-            <li><strong>AI processing:</strong> Face detection and blurring (for traffic reports) happens entirely in
-                your browser using client-side AI. No images are sent to external AI services.</li>
+            <li><strong>AI processing:</strong> Face detection and blurring (for traffic reports) happens in your
+                browser using client-side AI before transmission. After face blurring, images are sent to AWS
+                Rekognition for content moderation to prevent misuse. Text descriptions are analyzed using AWS
+                Comprehend to prevent abusive language. These AWS services process data transiently for moderation
+                purposes only and do not retain your content.</li>
         </ul>
 
         <h3>📸 Public Posting</h3>
