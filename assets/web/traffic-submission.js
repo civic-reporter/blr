@@ -211,11 +211,23 @@ function attachRetryHandler() {
         console.log('Retry button found:', retryBtn);
         if (retryBtn) {
             retryBtn.addEventListener('click', () => {
-                console.log('Retry button clicked');
-                import('./reset.js').then(mod => {
-                    console.log('Reset module loaded:', mod);
-                    mod.resetApp();
-                });
+                console.log('Retry button clicked - keeping image and GPS');
+
+                // Hide the retry button
+                retryBtn.remove();
+
+                // Clear error status and reset submit button
+                showStatus('📸 Ready to submit', 'info');
+
+                // Re-enable submit button
+                const submitBtn = document.getElementById('trafficSubmit');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🚦 Report Traffic to @BlrCityPolice';
+                    submitBtn.classList.remove('loading');
+                }
+
+                updateTweetButtonState();
             });
         }
     }, 100);

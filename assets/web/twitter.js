@@ -206,11 +206,22 @@ function attachRetryHandler() {
         console.log('Retry button found:', retryBtn);
         if (retryBtn) {
             retryBtn.addEventListener('click', () => {
-                console.log('Retry button clicked');
-                import('./reset.js').then(mod => {
-                    console.log('Reset module loaded:', mod);
-                    mod.resetApp();
-                });
+                console.log('Retry button clicked - keeping image and GPS');
+
+                // Hide the retry button
+                retryBtn.remove();
+
+                // Clear error status and reset tweet button
+                showStatus('📸 Ready to submit', 'info');
+
+                // Re-enable tweet button
+                if (window.tweetBtn) {
+                    window.tweetBtn.disabled = false;
+                    window.tweetBtn.textContent = '🐦 Report to @zenc_civic';
+                    window.tweetBtn.classList.remove('loading');
+                }
+
+                updateTweetButtonState();
             });
         }
     }, 100);
