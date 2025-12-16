@@ -65,6 +65,13 @@ export async function submitTraffic() {
         return;
     }
 
+    // Validate issue type selection
+    const trafficCategory = document.getElementById("trafficCategory")?.value;
+    if (!trafficCategory) {
+        showStatus("❌ Please select a traffic issue type.", "error");
+        return;
+    }
+
     // Disable submit button during submission
     const submitBtn = document.getElementById("trafficSubmit");
     if (submitBtn) {
@@ -78,8 +85,7 @@ export async function submitTraffic() {
     // Allow UI to update
     await new Promise(resolve => requestAnimationFrame(resolve));
 
-    // Get form values
-    const trafficCategory = document.getElementById("trafficCategory")?.value || "other";
+    // Get form values (already validated above)
     const trafficDesc = document.getElementById("trafficDesc")?.value.trim() || "";
 
     // Image is already blurred from upload

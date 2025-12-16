@@ -95,8 +95,9 @@
           ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
         </div>
         <div class="issue-row">
-          <select id="issueType"
-            data-i18n-options="pothole,footpath,drainageIssue,streetlight,garbage,manhole,roadRepair,other">
+          <select id="issueType" required
+            data-i18n-options="selectCivicIssue,pothole,footpath,drainageIssue,streetlight,garbage,manhole,roadRepair,other">
+            <option value="" data-i18n="selectCivicIssue">Select civic issue...</option>
             <option value="Pothole" data-i18n="pothole">Pothole</option>
             <option value="Footpath" data-i18n="footpath">Footpath</option>
             <option value="Drainage" data-i18n="drainageIssue">Drainage issue</option>
