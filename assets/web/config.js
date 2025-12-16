@@ -1,4 +1,4 @@
-// Configuration - Zen Citizen (Civic + Traffic)
+// Configuration - Civic Reporter (Civic + Traffic)
 export const CONFIG = {
     // Civic API
     API_GATEWAY_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",

@@ -2,7 +2,7 @@
 export const translations = {
     en: {
         // Home page (index.html)
-        homeTitle: "Zen Citizen",
+        homeTitle: "Civic Reporter",
         homeSubtitle: "Namma Bengaluru, Namma Dhwani",
         gpsPhotos: "📸 GPS Photos",
         instantTweets: "⚡ Instant Tweets",
@@ -17,7 +17,7 @@ export const translations = {
         gpsAutoDetect: "GPS Auto-detect",
         directToAuthorities: "Direct to authorities",
         builtForCitizens: "Built for Bengaluru citizens 🇮🇳",
-        footerText: "© 2025 Zen Citizen. Made with ❤️ for Bengaluru",
+        footerText: "© 2025 Civic Reporter. Made with ❤️ for Bengaluru",
 
         // Civic Page (blr-civic-index.html)
         civicReporterTitle: "🏛️ Civic Reporter - Bengaluru",
@@ -68,7 +68,7 @@ export const translations = {
         otherTraffic: "Other traffic issue",
         locationDetails: "Location details, road name (optional)",
         dragMarkerTraffic: "🔧 Drag marker or click map to set exact location.",
-        reportTraffic: "🚦 Report Traffic to @BlrCityPolice",
+        reportTraffic: "🚦 Report",
         trafficReportedSuccess: "Traffic Issue Reported!",
         trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to @BlrCityPolice",
         submitAnotherReport: "Submit Another Report",
@@ -168,7 +168,7 @@ export const translations = {
         otherTraffic: "ಇತರ ಟ್ರಾಫಿಕ್ ಸಮಸ್ಯೆ",
         locationDetails: "ಸ್ಥಳದ ವಿವರಣೆ, ರಸ್ತೆ ಹೆಸರು (ಐಚ್ಛಿಕ)",
         dragMarkerTraffic: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ನಿಖರ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಲು.",
-        reportTraffic: "🚦 @BlrCityPolice ಗೆ ಟ್ರಾಫಿಕ್ ವರದಿ ಮಾಡಿ",
+        reportTraffic: "🚦 ವರದಿ ಮಾಡಿ",
         trafficReportedSuccess: "ಟ್ರಾಫಿಕ್ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!",
         trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @BlrCityPolice ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
         submitAnotherReport: "ಮತ್ತೊಂದು ವರದಿ ಸಲ್ಲಿಸಿ",
