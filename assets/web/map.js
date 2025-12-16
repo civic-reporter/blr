@@ -40,72 +40,65 @@ function setupSearch() {
     searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
     searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
 
-    const suggBox = document.createElement('div');
-    suggBox.id = 'gbaSearchSuggestions';
-    suggBox.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;max-height:200px;overflow:auto;z-index:1000;';
-
     wrapper.appendChild(searchInput);
-    wrapper.appendChild(suggBox);
 
     const mapNode = document.getElementById('map');
     if (mapNode?.parentNode) {
         mapNode.parentNode.insertBefore(wrapper, mapNode);
     }
 
-    let hintTimeout;
-    searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim();
-        if (hintTimeout) clearTimeout(hintTimeout);
-        if (q.length < 2) {
-            suggBox.style.display = 'none';
-            suggBox.innerHTML = '';
-            return;
-        }
-        hintTimeout = setTimeout(() => loadNominatimHints(q, suggBox, searchInput), 300);
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) suggBox.style.display = 'none';
-    });
+    // Initialize Google Places Autocomplete when API is ready
+    initGoogleAutocomplete(searchInput);
 }
 
-async function loadNominatimHints(query, suggBox, searchInput) {
-    try {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}` +
-            `&bounded=1&viewbox=77.40,12.82,77.85,13.20&countrycodes=in&limit=5`
-        );
-        const data = await res.json();
-        suggBox.innerHTML = '';
+function initGoogleAutocomplete(searchInput) {
+    // Wait for Google Maps API to be loaded
+    const checkGoogle = setInterval(() => {
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            clearInterval(checkGoogle);
+            setupGoogleAutocomplete(searchInput);
+        }
+    }, 100);
+}
 
-        data.slice(0, 5).forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'gba-suggestion-item';
-            div.style.cssText = 'padding:8px;cursor:pointer;border-bottom:1px solid #eee;';
-            div.textContent = item.display_name.split(',')[0];
-            div.addEventListener('click', async () => {
-                searchInput.value = item.display_name;
-                suggBox.style.display = 'none';
+function setupGoogleAutocomplete(searchInput) {
+    const bangalore = new google.maps.LatLng(12.9716, 77.5946);
 
-                const gps = { lat: parseFloat(item.lat), lon: parseFloat(item.lon) };
-                const valid = await validateLocationForCoords(gps);
-                if (valid && window.map) {
-                    window.currentGPS = gps;
-                    if (markerInstance) window.map.removeLayer(markerInstance);
-                    window.placeMarker();  // ✅ USE GLOBAL
-                    window.map.setView([gps.lat, gps.lon], 16);
-                    showStatus(`✅ ${item.display_name.split(',')[0]}`, 'success');
-                    setTimeout(updateTweetButtonState, 50);
-                } else {
-                    showStatus('❌ Outside GBA boundary', 'error');
-                }
-            });
-            suggBox.appendChild(div);
-        });
-        suggBox.style.display = data.length ? 'block' : 'none';
-    } catch (err) {
-        console.error("Search error:", err);
-    }
+    const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+        bounds: new google.maps.LatLngBounds(
+            new google.maps.LatLng(CONFIG.GBA_BBOX.south, CONFIG.GBA_BBOX.west),
+            new google.maps.LatLng(CONFIG.GBA_BBOX.north, CONFIG.GBA_BBOX.east)
+        ),
+        strictBounds: false,
+        componentRestrictions: { country: 'in' },
+        fields: ['geometry', 'name', 'formatted_address']
+    });
+
+    autocomplete.addListener('place_changed', async () => {
+        const place = autocomplete.getPlace();
+
+        if (!place.geometry || !place.geometry.location) {
+            showStatus('❌ No location found', 'error');
+            return;
+        }
+
+        const gps = {
+            lat: place.geometry.location.lat(),
+            lon: place.geometry.location.lng()
+        };
+
+        const valid = await validateLocationForCoords(gps);
+        if (valid && window.map) {
+            window.currentGPS = gps;
+            if (markerInstance) window.map.removeLayer(markerInstance);
+            window.placeMarker();
+            window.map.setView([gps.lat, gps.lon], 16);
+            showStatus(`✅ ${place.name || place.formatted_address}`, 'success');
+            setTimeout(updateTweetButtonState, 50);
+        } else {
+            showStatus('❌ Outside GBA boundary', 'error');
+        }
+    });
 }
 
 export async function handleMapClick(e) {
