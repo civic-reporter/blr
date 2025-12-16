@@ -78,6 +78,10 @@ export const translations = {
         error: "Error",
         loading: "Loading...",
         tryAgain: "Try Again",
+        privacyLink: "Privacy",
+        privacyTitle: "Privacy Policy & Terms of Service",
+        privacyLastUpdated: "Last updated: December 2025",
+        backToHome: "Back to Home",
     },
 
     kn: {
@@ -159,6 +163,10 @@ export const translations = {
         error: "ದೋಷ",
         loading: "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
         tryAgain: "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+        privacyLink: "ಗೌಪ್ಯತೆ",
+        privacyTitle: "ಗೌಪ್ಯತಾ ನೀತಿ ಮತ್ತು ಸೇವಾ ಶರತುಗಳು",
+        privacyLastUpdated: "ಕೊನೆಯ ನವೀಕರಣ: ಡಿಸೆಂಬರ್ 2025",
+        backToHome: "ಮನೆಗೆ ಹೋಗಿ",
     }
 };
 

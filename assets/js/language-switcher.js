@@ -83,6 +83,12 @@ export function setPageLanguage(lang) {
         }
     });
 
+    // Update privacy page links based on language
+    const privacyLink = document.getElementById('privacyLink');
+    if (privacyLink) {
+        privacyLink.href = lang === 'kn' ? 'privacy-kn.html' : 'privacy.html';
+    }
+
     // Dispatch custom event for pages that need dynamic translation
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
 }
