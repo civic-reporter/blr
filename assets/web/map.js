@@ -94,7 +94,11 @@ function setupGoogleAutocomplete(searchInput) {
             showStatus(`✅ ${place.name || place.formatted_address}`, 'success');
             setTimeout(updateTweetButtonState, 50);
         } else {
+            // Clear GPS and remove marker for invalid location
+            if (markerInstance) window.map.removeLayer(markerInstance);
+            window.currentGPS = null;
             showStatus('❌ Outside GBA boundary', 'error');
+            updateTweetButtonState();
         }
     });
 }
