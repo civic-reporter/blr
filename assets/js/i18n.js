@@ -45,6 +45,10 @@ export const translations = {
         dragMarkerInstruction: "🔧 Drag marker or click map to adjust location (within GBA area only).",
         postIssue: "🚨 Post Issue via @zenc_civic",
         resetBtn: "🔁 Reset",
+        issuePostedSuccess: "Issue Posted Successfully!",
+        issuePostedDesc: "Your report has been tweeted to GBA via @zenc_civic",
+        submitAnotherIssue: "Submit Another Issue",
+        successThankYou: "Thank you for making Bengaluru better!",
 
         // Traffic Page (blr-traffic-index.html)
         trafficReporterTitle: "🚦 Traffic Reporter – Bengaluru",
@@ -56,12 +60,18 @@ export const translations = {
         signalDown: "🚦 Traffic Signal Down",
         trafficJam: "🚗 Traffic Jam",
         wrongParking: "🚗‍ Wrong Parking",
+        noParking: "🚫 No Parking Zone Violation",
+        drivingWithMobile: "📱 Driving with Mobile",
+        noHelmet: "🪖 No Helmet (Rider/Pillion)",
         speedBreaker: "🚧 Missing Speed Breaker",
         diversion: "🛣️ Diversion Needed",
         otherTraffic: "Other traffic issue",
         locationDetails: "Location details, road name (optional)",
         dragMarkerTraffic: "🔧 Drag marker or click map to set exact location.",
         reportTraffic: "🚦 Report Traffic to @BlrCityPolice",
+        trafficReportedSuccess: "Traffic Issue Reported!",
+        trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to @BlrCityPolice",
+        submitAnotherReport: "Submit Another Report",
 
         // Common UI Elements
         toggleLanguage: "ಕನ್ನಡ",
@@ -131,6 +141,14 @@ export const translations = {
         dragMarkerInstruction: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ಸ್ಥಳವನ್ನು ಸರಿಸುವಿಕೆಗೆ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ (GBA ಪ್ರದೇಶದೊಳಗೆ ಮಾತ್ರ).",
         postIssue: "🚨 @zenc_civic ಮೂಲಕ ಸಮಸ್ಯೆ ಪೋಸ್ಟ್ ಮಾಡಿ",
         resetBtn: "🔁 ಮರುಹೊಂದಿಸಿ",
+        issuePostedSuccess: "ಸಮಸ್ಯೆ ಯಶಸ್ವಿಯಾಗಿ ಪೋಸ್ಟ್ ಆಗಿದೆ!",
+        issuePostedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @zenc_civic ಮೂಲಕ GBA ಗೆ ಟ್ವೀಟ್ ಮಾಡಲಾಗಿದೆ",
+        submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
+        successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
+        issuePostedSuccess: "ಸಮಸ್ಯೆ ಯಶಸ್ವಿಯಾಗಿ ಪೋಸ್ಟ್ ಆಗಿದೆ!",
+        issuePostedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @zenc_civic ಮೂಲಕ GBA ಗೆ ಟ್ವೀಟ್ ಮಾಡಲಾಗಿದೆ",
+        submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
+        successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
 
         // Traffic Page
         trafficReporterTitle: "🚦 ಟ್ರಾಫಿಕ್ ವರದಿ – ಬೆಂಗಳೂರು",
@@ -142,12 +160,18 @@ export const translations = {
         signalDown: "🚦 ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್ ನಿಜುಗೆ",
         trafficJam: "🚗 ಟ್ರಾಫಿಕ್ ನಿಜಮ್ಮೆ",
         wrongParking: "🚗‍ ತಪ್ಪು ಪಾರ್ಕಿಂಗ್",
+        noParking: "🚫 ನೋ ಪಾರ್ಕಿಂಗ್ ವಲಯ ಉಲ್ಲಂಘನೆ",
+        drivingWithMobile: "📱 ಮೊಬೈಲ್ ನೊಂದಿಗೆ ಚಾಲನೆ",
+        noHelmet: "🪖 ಹೆಲ್ಮೆಟ್ ಇಲ್ಲ (ಸವಾರ/ಪಿಲ್ಲಿಯನ್)",
         speedBreaker: "🚧 ಸ್ಪೀಡ್ ಬ್ರೇಕರ್ ಕಾಣೆ",
         diversion: "🛣️ ದಾರಿ ಬದಲಾವಣೆ ಅಗತ್ಯ",
         otherTraffic: "ಇತರ ಟ್ರಾಫಿಕ್ ಸಮಸ್ಯೆ",
         locationDetails: "ಸ್ಥಳದ ವಿವರಣೆ, ರಸ್ತೆ ಹೆಸರು (ಐಚ್ಛಿಕ)",
         dragMarkerTraffic: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ನಿಖರ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಲು.",
         reportTraffic: "🚦 @BlrCityPolice ಗೆ ಟ್ರಾಫಿಕ್ ವರದಿ ಮಾಡಿ",
+        trafficReportedSuccess: "ಟ್ರಾಫಿಕ್ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!",
+        trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @BlrCityPolice ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+        submitAnotherReport: "ಮತ್ತೊಂದು ವರದಿ ಸಲ್ಲಿಸಿ",
 
         // Common UI Elements
         toggleLanguage: "English",
