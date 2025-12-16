@@ -1,9 +1,20 @@
-// Configuration - GBA Civic Reporter
+// Configuration - Zen Citizen (Civic + Traffic)
 export const CONFIG = {
+    // Civic API
     API_GATEWAY_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
+
+    // Traffic API (update this with your traffic API endpoint)
+    TRAFFIC_API_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
+
+    // Civic jurisdiction data
     MAP_KML_URL: "assets/data/map.kml",
     CONST_KML_URL: "assets/data/blr_const.kml",
     WARD_KML_URL: "assets/data/wards.kml",
+
+    // Traffic jurisdiction data
+    TRAFFIC_KML_URL: "assets/data/blr-traffic.kml",
+
+    // Geographic boundary
     GBA_BBOX: {
         south: 12.82, north: 13.20,
         west: 77.40, east: 77.85

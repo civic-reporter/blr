@@ -95,13 +95,26 @@ export function updateTweetButtonState() {
     const checkbox = document.getElementById("confirmImageCheck");
     const confirmed = !checkbox || checkbox.checked;
 
-    const tweetBtn = document.getElementById("tweetBtn");
     const shouldEnable = imageOk && gpsOk && confirmed;
 
+    // Update civic button (if present)
+    const tweetBtn = document.getElementById("tweetBtn");
     if (tweetBtn) {
         tweetBtn.disabled = !shouldEnable;
-        console.log("🔧 Tweet DOM:", { imageOk, gpsOk, confirmed, shouldEnable });
+        console.log("🔧 Civic button state:", { imageOk, gpsOk, confirmed, shouldEnable });
     }
+
+    // Update traffic button (if present)
+    const trafficBtn = document.getElementById("trafficSubmit");
+    if (trafficBtn) {
+        trafficBtn.disabled = !shouldEnable;
+        console.log("🔧 Traffic button state:", { imageOk, gpsOk, confirmed, shouldEnable });
+    }
+}
+
+// Alias for traffic flow compatibility
+export function updateSubmitButtonState() {
+    updateTweetButtonState();
 }
 
 
