@@ -197,7 +197,7 @@ export async function submitTraffic() {
         // Re-enable button if not successful
         if (!wasSuccess && submitBtn && !document.getElementById("successScreen")?.style.display === 'block') {
             submitBtn.classList.remove("loading");
-            submitBtn.textContent = "🚦 Report Traffic to @BlrCityPolice";
+            submitBtn.textContent = "🚦 Report";
             submitBtn.disabled = false;
             updateSubmitButtonState();
         }
@@ -228,7 +228,7 @@ function attachRetryHandler() {
                 const submitBtn = document.getElementById('trafficSubmit');
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '🚦 Report Traffic to @BlrCityPolice';
+                    submitBtn.textContent = '🚦 Report';
                     submitBtn.classList.remove('loading');
                 }
 

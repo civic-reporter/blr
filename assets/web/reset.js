@@ -53,7 +53,7 @@ export function resetApp() {
     }
     if (trafficSubmitBtn) {
         trafficSubmitBtn.classList.remove('loading');
-        trafficSubmitBtn.textContent = '🚦 Report Traffic to @BlrCityPolice';
+        trafficSubmitBtn.textContent = '🚦 Report';
         trafficSubmitBtn.disabled = true;
     }
 
