@@ -82,9 +82,8 @@ export async function submitTraffic() {
     const trafficCategory = document.getElementById("trafficCategory")?.value || "other";
     const trafficDesc = document.getElementById("trafficDesc")?.value.trim() || "";
 
-    // Blur faces for privacy protection
-    showStatus("🔍 Detecting and blurring faces for privacy...", "info");
-    const imageToSubmit = await blurFacesInImage(window.currentImageFile);
+    // Image is already blurred from upload
+    const imageToSubmit = window.currentImageFile;
 
     // Find traffic PS, ward, and corporation for this location
     const [
@@ -227,7 +226,7 @@ function attachRetryHandler() {
                     submitBtn.classList.remove('loading');
                 }
 
-                updateTweetButtonState();
+                updateSubmitButtonState();
             });
         }
     }, 100);

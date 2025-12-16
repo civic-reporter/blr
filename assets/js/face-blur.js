@@ -59,12 +59,12 @@ export async function blurFacesInImage(imageFile) {
         // Create image element
         const img = await createImageFromFile(imageFile);
 
-        // Detect faces with more sensitive settings
+        // Detect faces with very sensitive settings to catch more faces
         const detections = await faceapi.detectAllFaces(
             img,
             new faceapi.TinyFaceDetectorOptions({
-                inputSize: 512,        // Larger input for better detection
-                scoreThreshold: 0.3    // Lower threshold = more sensitive
+                inputSize: 608,        // Maximum size for best detection
+                scoreThreshold: 0.2    // Very low threshold = very sensitive
             })
         );
 
@@ -73,7 +73,7 @@ export async function blurFacesInImage(imageFile) {
             return imageFile;
         }
 
-        console.log(`🔍 Detected ${detections.length} face(s), applying blur...`);
+        console.log(`🔍 Detected ${detections.length} face(s), blurring facial features...`);
 
         // Create canvas and blur faces
         const canvas = document.createElement('canvas');
@@ -84,23 +84,27 @@ export async function blurFacesInImage(imageFile) {
         // Draw original image
         ctx.drawImage(img, 0, 0);
 
-        // Apply blur to each detected face
+        // Apply blur only to facial features (eyes area) for each detected face
         detections.forEach(detection => {
             const box = detection.box;
-            // Expand box slightly for better coverage
-            const padding = 20;
-            const x = Math.max(0, box.x - padding);
-            const y = Math.max(0, box.y - padding);
-            const width = Math.min(canvas.width - x, box.width + padding * 2);
-            const height = Math.min(canvas.height - y, box.height + padding * 2);
 
-            // Extract face region
+            // Only blur the upper-middle portion where eyes are located
+            // This preserves helmet/no-helmet visibility while protecting identity
+            const eyeRegionHeight = box.height * 0.4; // Upper 40% of face (eyes/forehead area)
+            const eyeRegionY = box.y + box.height * 0.15; // Start slightly below top
+
+            const x = Math.max(0, box.x);
+            const y = Math.max(0, eyeRegionY);
+            const width = Math.min(canvas.width - x, box.width);
+            const height = Math.min(canvas.height - y, eyeRegionHeight);
+
+            // Extract eye region only
             const faceData = ctx.getImageData(x, y, width, height);
 
-            // Apply strong blur
-            blurImageData(faceData, 15);
+            // Apply strong blur to eyes area
+            blurImageData(faceData, 20);
 
-            // Put blurred face back
+            // Put blurred region back
             ctx.putImageData(faceData, x, y);
         });
 
