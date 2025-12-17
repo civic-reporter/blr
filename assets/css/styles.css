@@ -638,8 +638,10 @@ body:not(:has(.page-header)) .theme-toggle-btn {
 }
 
 @media (max-width: 768px) {
-    body:not(:has(.page-header)) .theme-toggle-btn {
-        top: 70px;
+    .theme-toggle-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
     }
 }
 
@@ -683,9 +685,10 @@ body:not(:has(.page-header)) .language-toggle-btn {
 }
 
 @media (max-width: 768px) {
-    body:not(:has(.page-header)) .language-toggle-btn {
-        top: 70px;
-        right: 60px;
+    .language-toggle-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 10px;
     }
 }
 
@@ -753,6 +756,12 @@ body:not(:has(.page-header)) .language-toggle-btn {
     justify-content: center;
     gap: 1rem;
     margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        margin-top: 3rem;
+    }
 }
 
 .logo i {
