@@ -2,8 +2,8 @@
 export const translations = {
     en: {
         // Home page (index.html)
-        homeTitle: "Sahāya hasta",
-        homeSubtitle: "Namma Bengaluru, Namma Dhwani",
+        homeTitle: "Nāgarika Dhvani",
+        homeSubtitle: "Namma Bengaluru, Namma Dhvani",
         gpsPhotos: "📸 GPS Photos",
         instantTweets: "⚡ Instant Tweets",
         wardMapping: "🗺️ Ward Mapping",
@@ -98,7 +98,7 @@ export const translations = {
     kn: {
         // ಕನ್ನಡ - Kannada translations
         // Home page
-        homeTitle: "ಸಹಾಯ ಹಸ್ತ",
+        homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
         homeSubtitle: "ನಮ್ಮ ಬೆಂಗಳೂರು, ನಮ್ಮ ಧ್ವನಿ",
         gpsPhotos: "📸 GPS ಫೋಟೋ",
         instantTweets: "⚡ ತಾತ್ಕ್ಷಣಿಕ ಪೋಸ್ಟ್",
