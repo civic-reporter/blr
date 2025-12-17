@@ -2,7 +2,7 @@
 export const translations = {
     en: {
         // Home page (index.html)
-        homeTitle: "Civic Reporter",
+        homeTitle: "Sahāya hasta",
         homeSubtitle: "Namma Bengaluru, Namma Dhwani",
         gpsPhotos: "📸 GPS Photos",
         instantTweets: "⚡ Instant Tweets",
@@ -17,7 +17,7 @@ export const translations = {
         gpsAutoDetect: "GPS Auto-detect",
         directToAuthorities: "Direct to authorities",
         builtForCitizens: "Built for Bengaluru citizens 🇮🇳",
-        footerText: "© 2025 Civic Reporter. Made with ❤️ for Bengaluru",
+        footerText: "© 2025 Zen Citizen. Made with ❤️ for Bengaluru",
 
         // Civic Page (blr-civic-index.html)
         civicReporterTitle: "🏛️ Civic Reporter - Bengaluru",
@@ -98,7 +98,7 @@ export const translations = {
     kn: {
         // ಕನ್ನಡ - Kannada translations
         // Home page
-        homeTitle: "ಝೆನ್ ನಾಗರಿಕ",
+        homeTitle: "ಸಹಾಯ ಹಸ್ತ",
         homeSubtitle: "ನಮ್ಮ ಬೆಂಗಳೂರು, ನಮ್ಮ ಧ್ವನಿ",
         gpsPhotos: "📸 GPS ಫೋಟೋ",
         instantTweets: "⚡ ತಾತ್ಕ್ಷಣಿಕ ಪೋಸ್ಟ್",
@@ -113,7 +113,7 @@ export const translations = {
         gpsAutoDetect: "GPS ಸ್ವಯಂಚಾಲಿತ ಕಂಡುಹಿಡಿಯುವಿಕೆ",
         directToAuthorities: "ಅಧಿಕಾರಿಗಳಿಗೆ ನೇರವಾಗಿ",
         builtForCitizens: "ಬೆಂಗಳೂರು ನಾಗರಿಕಗಳಿಗಾಗಿ ನಿರ್ಮಿತ 🇮🇳",
-        footerText: "© 2025 ಝೆನ್ ನಾಗರಿಕ. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
+        footerText: "© 2025 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
 
         // Civic Page
         civicReporterTitle: "🏛️ ನಾಗರಿಕ ವರದಿ - ಬೆಂಗಳೂರು",
