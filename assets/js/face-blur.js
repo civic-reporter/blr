@@ -59,21 +59,48 @@ export async function blurFacesInImage(imageFile) {
         // Create image element
         const img = await createImageFromFile(imageFile);
 
-        // Detect faces with very sensitive settings to catch more faces
-        const detections = await faceapi.detectAllFaces(
+        // Multi-pass detection with different settings to catch more faces
+        const allDetections = [];
+
+        // Pass 1: High sensitivity with max size
+        const detections1 = await faceapi.detectAllFaces(
             img,
             new faceapi.TinyFaceDetectorOptions({
-                inputSize: 608,        // Maximum size for best detection
-                scoreThreshold: 0.2    // Very low threshold = very sensitive
+                inputSize: 608,
+                scoreThreshold: 0.1   // High sensitivity but balanced
             })
         );
+        allDetections.push(...detections1);
 
-        if (!detections || detections.length === 0) {
+        // Pass 2: Medium size for smaller/distant faces
+        const detections2 = await faceapi.detectAllFaces(
+            img,
+            new faceapi.TinyFaceDetectorOptions({
+                inputSize: 416,
+                scoreThreshold: 0.1
+            })
+        );
+        allDetections.push(...detections2);
+
+        // Pass 3: Smaller size for very tiny faces
+        const detections3 = await faceapi.detectAllFaces(
+            img,
+            new faceapi.TinyFaceDetectorOptions({
+                inputSize: 224,
+                scoreThreshold: 0.15
+            })
+        );
+        allDetections.push(...detections3);
+
+        // Remove duplicate detections (faces detected in multiple passes)
+        const uniqueDetections = removeDuplicateDetections(allDetections);
+
+        if (!uniqueDetections || uniqueDetections.length === 0) {
             console.log('✅ No faces detected');
             return imageFile;
         }
 
-        console.log(`🔍 Detected ${detections.length} face(s), blurring facial features...`);
+        console.log(`🔍 Detected ${uniqueDetections.length} face(s) across multiple passes, blurring facial features...`);
 
         // Create canvas and blur faces
         const canvas = document.createElement('canvas');
@@ -85,7 +112,7 @@ export async function blurFacesInImage(imageFile) {
         ctx.drawImage(img, 0, 0);
 
         // Apply blur only to facial features (eyes area) for each detected face
-        detections.forEach(detection => {
+        uniqueDetections.forEach(detection => {
             const box = detection.box;
 
             // Only blur the upper-middle portion where eyes are located
@@ -113,7 +140,7 @@ export async function blurFacesInImage(imageFile) {
             canvas.toBlob(resolve, 'image/jpeg', 0.85);
         });
 
-        console.log(`✅ Blurred ${detections.length} face(s)`);
+        console.log(`✅ Blurred ${uniqueDetections.length} face(s)`);
         return blurredBlob;
 
     } catch (e) {
@@ -121,6 +148,49 @@ export async function blurFacesInImage(imageFile) {
         // Return original image if blur fails
         return imageFile;
     }
+}
+
+function removeDuplicateDetections(detections) {
+    const unique = [];
+
+    for (const detection of detections) {
+        const box = detection.box;
+        let isDuplicate = false;
+
+        // Check if this face overlaps significantly with any already added face
+        for (const existing of unique) {
+            const existingBox = existing.box;
+            const overlap = calculateOverlap(box, existingBox);
+
+            // If overlap > 50%, consider it a duplicate
+            if (overlap > 0.5) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate) {
+            unique.push(detection);
+        }
+    }
+
+    return unique;
+}
+
+function calculateOverlap(box1, box2) {
+    const x1 = Math.max(box1.x, box2.x);
+    const y1 = Math.max(box1.y, box2.y);
+    const x2 = Math.min(box1.x + box1.width, box2.x + box2.width);
+    const y2 = Math.min(box1.y + box1.height, box2.y + box2.height);
+
+    if (x2 < x1 || y2 < y1) return 0;
+
+    const intersectionArea = (x2 - x1) * (y2 - y1);
+    const box1Area = box1.width * box1.height;
+    const box2Area = box2.width * box2.height;
+    const unionArea = box1Area + box2Area - intersectionArea;
+
+    return intersectionArea / unionArea;
 }
 
 function createImageFromFile(file) {
