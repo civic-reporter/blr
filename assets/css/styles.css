@@ -637,6 +637,12 @@ body:not(:has(.page-header)) .theme-toggle-btn {
     top: 16px;
 }
 
+@media (max-width: 768px) {
+    body:not(:has(.page-header)) .theme-toggle-btn {
+        top: 70px;
+    }
+}
+
 /* Language Toggle Button */
 .language-toggle-btn {
     position: fixed;
@@ -674,6 +680,13 @@ body:not(:has(.page-header)) .theme-toggle-btn {
 body:not(:has(.page-header)) .language-toggle-btn {
     top: 16px;
     right: 60px;
+}
+
+@media (max-width: 768px) {
+    body:not(:has(.page-header)) .language-toggle-btn {
+        top: 70px;
+        right: 60px;
+    }
 }
 
 @media (max-width: 480px) {
