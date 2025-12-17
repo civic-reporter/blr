@@ -752,6 +752,7 @@ body:not(:has(.page-header)) .language-toggle-btn {
     font-weight: 700;
     margin: 0;
     color: var(--x-text);
+    white-space: nowrap;
 }
 
 .tagline p {
