@@ -24,6 +24,16 @@ export async function handleImageUpload(file) {
 
         // ✅ GPS FIRST
         await extractGPSFromExif(e.target.result);
+
+        // ✅ Validate GPS against actual GBA polygon boundaries
+        if (window.currentGPS && isValidNumber(window.currentGPS.lat) && isValidNumber(window.currentGPS.lon)) {
+            const valid = await validateLocationForCoords(window.currentGPS);
+            if (!valid) {
+                window.currentGPS = null;
+                showStatus("❌ Photo GPS is outside GBA boundary. Use map to select location.", "error");
+            }
+        }
+
         // ✅ FORCE MAP + MARKER
         showLocation();  // Triggers auto-marker from ui.js
         updateTweetButtonState();
