@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>How to Use - Nāgarika Dhvani</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+    <!-- Floating theme toggle -->
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon" style="display:none;"></i>
+    </button>
+
+    <!-- Language toggle -->
+    <a href="how-to-kn.html" class="language-toggle-btn" style="text-decoration: none; color: inherit;"
+        title="Switch to Kannada">
+        ಕನ್ನಡ
+    </a>
+
+    <div class="container" style="max-width: 800px; margin: 2rem auto;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-landmark" style="font-size: 2rem;"></i>
+                <h1>Nāgarika Dhvani</h1>
+            </a>
+        </div>
+
+        <h2>📖 How to Use</h2>
+        <p><em>Quick guide to reporting civic and traffic issues</em></p>
+
+        <h3>🏛️ Reporting a Civic Issue</h3>
+        <ol>
+            <li>Navigate to <strong>Civic Issues</strong> from the home page</li>
+            <li>Click <strong>"📸 Mobile Camera"</strong> (on mobile) or <strong>"⬆️ Upload Photo"</strong></li>
+            <li>Allow GPS detection or manually set location on map</li>
+            <li>Confirm that issue is seen on the photo</li>
+            <li>Select issue category (pothole, drainage, etc.)</li>
+            <li>Add optional details</li>
+            <li>Review and click <strong>"🚨 Post Issue via @zenc_civic"</strong></li>
+        </ol>
+
+        <div style="background: var(--x-bg-secondary); padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+            <p><strong>✅ Tips for Civic Reporting:</strong></p>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                <li>Take clear photos showing the issue</li>
+                <li>Ensure your GPS is enabled for accurate location</li>
+                <li>Select the most relevant issue category</li>
+                <li>Reports must be within Greater Bengaluru Authority (GBA) limits</li>
+            </ul>
+        </div>
+
+        <h3>🚦 Reporting a Traffic Issue</h3>
+        <ol>
+            <li>Navigate to <strong>Traffic Issues</strong> from the home page</li>
+            <li>Click <strong>"📸 Mobile Camera"</strong> (on mobile) or <strong>"⬆️ Upload Photo"</strong></li>
+            <li>Allow GPS detection or manually set location on map</li>
+            <li>Confirm that issue is seen on the photo</li>
+            <li>Select traffic violation type</li>
+            <li>Add location details (optional)</li>
+            <li>Confirm and click <strong>"🚦 Report"</strong> to post to Bengaluru Traffic Police</li>
+        </ol>
+
+        <div style="background: var(--x-bg-secondary); padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+            <p><strong>⚠️ Important Notes for Traffic Reporting:</strong></p>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                <li>Faces are automatically blurred for privacy protection</li>
+                <li>Only report genuine traffic violations</li>
+                <li>Photos must clearly show the violation</li>
+                <li>Reports must be within Bengaluru city limits</li>
+            </ul>
+        </div>
+
+        <h3>🗺️ Using the Map</h3>
+        <p>If your photo doesn't have GPS data or you need to adjust the location:</p>
+        <ol>
+            <li>Look for the map that appears after uploading your photo</li>
+            <li>Click on the map to place a marker at the exact location</li>
+            <li>Or use the search bar to find a location by address</li>
+            <li>Drag the marker to fine-tune the position</li>
+            <li>The location must be within GBA/Bengaluru boundaries</li>
+        </ol>
+
+        <h3>❓ Need Help?</h3>
+        <p>If you encounter any issues or have questions:</p>
+        <ul>
+            <li>Check that you're within Bengaluru city limits</li>
+            <li>Ensure your photo clearly shows the issue</li>
+            <li>Make sure you've selected an issue category</li>
+            <li>Verify that your location is set correctly on the map</li>
+        </ul>
+
+        <div
+            style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--x-border); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+            <a href="index.html" style="text-decoration: none;">
+                <button class="upload-btn" style="width: auto; min-width: 200px;">
+                    <i class="fas fa-home"></i> Back to Home
+                </button>
+            </a>
+            <a href="blr-civic-index.html" style="text-decoration: none;">
+                <button class="upload-btn" style="width: auto; min-width: 200px;">
+                    <i class="fas fa-flag"></i> Report Civic Issue
+                </button>
+            </a>
+            <a href="blr-traffic-index.html" style="text-decoration: none;">
+                <button class="upload-btn" style="width: auto; min-width: 200px;">
+                    <i class="fas fa-traffic-light"></i> Report Traffic Issue
+                </button>
+            </a>
+        </div>
+
+        <div class="app-footer" style="margin-top: 2rem;">
+            <small>© 2025 Zen Citizen. Made with ❤️ for Bengaluru</small>
+        </div>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+
+        function initTheme() {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? "dark" : "light");
+            html.setAttribute("data-theme", initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            } else {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        initTheme();
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById("themeToggle");
+            if (!btn) return;
+
+            btn.addEventListener("click", () => {
+                const current = html.getAttribute("data-theme") || "light";
+                const next = current === "light" ? "dark" : "light";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+                updateThemeToggle(next);
+            });
+        });
+    </script>
+
+    <script type="module" src="assets/web/config.js"></script>
+    <script type="module" src="assets/js/language-switcher.js"></script>
+</body>
+
+</html>
