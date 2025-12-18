@@ -1,10 +1,13 @@
-import { CONFIG } from './config.js';
+import { getConfig } from './config.js';
+
+let CONFIG = null;
 
 export function isValidNumber(x) {
     return typeof x === "number" && Number.isFinite(x);
 }
 
-export function isInGBA(lat, lon) {
+export async function isInGBA(lat, lon) {
+    if (!CONFIG) CONFIG = await getConfig();
     return CONFIG.GBA_BBOX.south <= lat && lat <= CONFIG.GBA_BBOX.north &&
         CONFIG.GBA_BBOX.west <= lon && CONFIG.GBA_BBOX.east;
 }

@@ -1,5 +1,7 @@
-import { CONFIG } from './config.js';
+import { getConfig } from './config.js';
 import { findTrafficPSForLocation } from './traffic-validation.js';
+
+let CONFIG = null;
 import { findCorpForCurrentGPS } from './validation.js';
 import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing } from './utils.js';
@@ -10,6 +12,7 @@ let wardPolygons = null;
 async function loadWardPolygons() {
     if (wardPolygons !== null) return wardPolygons;
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const res = await fetch(CONFIG.WARD_KML_URL);
         if (!res.ok) return wardPolygons = [];
         const kmlText = await res.text();
@@ -116,6 +119,7 @@ export async function submitTraffic() {
     let wasSuccess = false;
 
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const res = await fetch(CONFIG.TRAFFIC_API_URL, { method: "POST", body: formData });
         const raw = await res.text();
         let data;

@@ -1,5 +1,7 @@
-import { CONFIG } from './config.js';
+import { getConfig } from './config.js';
 import { pointInRing, isValidNumber, loadGeoLayers } from './utils.js';
+
+let CONFIG = null;
 
 let trafficPSPolygons = null;
 
@@ -7,6 +9,7 @@ export async function loadTrafficPSPolygons() {
     if (trafficPSPolygons) return trafficPSPolygons;
 
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const feats = await loadGeoLayers(CONFIG.TRAFFIC_KML_URL);
         trafficPSPolygons = feats.map(f => {
             const p = f.props || {};

@@ -1,5 +1,7 @@
-import { CONFIG } from './config.js';
+import { getConfig } from './config.js';
 import { pointInRing, isValidNumber, loadGeoLayers } from './utils.js';
+
+let CONFIG = null;
 
 let corpPolygons = null;
 let constPolygons = null;
@@ -23,6 +25,7 @@ function corpHandleForName(name) {
 
 export async function loadCorpPolygons() {
     if (corpPolygons) return corpPolygons;
+    if (!CONFIG) CONFIG = await getConfig();
     console.log('🔄 Loading corp polygons from:', CONFIG.MAP_KML_URL);
     const feats = await loadGeoLayers(CONFIG.MAP_KML_URL);
     console.log('✅ Loaded', feats.length, 'corp polygon features');
