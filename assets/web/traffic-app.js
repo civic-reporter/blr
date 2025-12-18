@@ -1,4 +1,5 @@
 // Traffic Reporter App - mirrors civic-app.js structure
+console.log('📦 traffic-app.js loading...');
 import { cacheUIElements, showUploadOptions, updateSubmitButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
@@ -6,12 +7,18 @@ import { submitTraffic } from './traffic-submission.js';
 import { resetApp } from './reset.js';
 import { blurFacesInImage } from '../js/face-blur.js';
 
+console.log('✅ traffic-app.js imports loaded');
+
 // Global state for traffic reports
 window.currentImageFile = null;
 window.currentGPS = null;
 window.isTrafficFlow = true; // Flag to differentiate from civic flow
 
-document.addEventListener("DOMContentLoaded", () => {
+console.log('📋 Document ready state:', document.readyState);
+
+// Function to initialize the app
+function initApp() {
+    console.log('🚀 Traffic app initializing...');
     cacheUIElements();
 
     // Traffic-specific: confirm checkbox listener
@@ -21,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("✅ Traffic: Checkbox listener added");
     }
 
-    // Clear error message when issue type is selected
+
     const trafficCategory = document.getElementById("trafficCategory");
     if (trafficCategory) {
         trafficCategory.addEventListener("change", () => {
@@ -33,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Wire buttons
     document.getElementById("cameraBtn")?.addEventListener("click", () =>
         document.getElementById("cameraInput").click());
     document.getElementById("uploadBtn")?.addEventListener("click", () =>
@@ -44,12 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cameraInput")?.addEventListener("change", e =>
         handleTrafficCameraCapture(e.target.files[0]));
 
-    // Traffic submit button (different ID from civic)
     document.getElementById("trafficSubmit")?.addEventListener("click", submitTraffic);
     document.getElementById("submitAnotherBtn")?.addEventListener("click", resetApp);
     document.getElementById("changeImageBtn")?.addEventListener("click", resetApp);
 
-    // Drop zone
     const dropZone = document.getElementById("dropZone");
     if (dropZone) {
         dropZone.addEventListener("dragover", e => {
@@ -64,9 +68,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    console.log('🗺️ Calling initMap()...');
     initMap();
+    console.log('📤 Calling showUploadOptions()...');
     showUploadOptions();
-});
+    console.log('✅ Traffic app initialization complete');
+}
+
+if (document.readyState === 'loading') {
+    console.log('⏳ Waiting for DOMContentLoaded...');
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    console.log('✅ DOM already loaded, initializing immediately');
+    initApp();
+}
 
 // Traffic-specific image handlers with face blurring
 async function handleTrafficImageUpload(file) {

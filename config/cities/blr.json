@@ -1,0 +1,86 @@
+{
+    "cityId": "blr",
+    "cityName": "Bengaluru",
+    "cityNameLocal": "ಬೆಂಗಳೂರು",
+    "tagline": "Bengaluru's fastest civic reporting platform",
+    "taglineLocal": "ಬೆಂಗಳೂರಿನ ವೇಗದ ನಾಗರಿಕ ವರದಿ ವೇದಿಕೆ",
+    "boundaries": {
+        "bbox": {
+            "south": 12.82,
+            "north": 13.20,
+            "west": 77.40,
+            "east": 77.85
+        },
+        "mapKml": "data/cities/blr/map.kml",
+        "constKml": "data/cities/blr/const.kml",
+        "wardKml": "data/cities/blr/wards.kml",
+        "trafficKml": "data/cities/blr/traffic.kml"
+    },
+    "pages": {
+        "civic": "cities/blr/civic.html",
+        "traffic": "cities/blr/traffic.html"
+    },
+    "apis": {
+        "civicApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
+        "trafficApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
+        "googleMapsKey": "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0"
+    },
+    "socialMedia": {
+        "defaultHandle": "@BBMPCOMM",
+        "mlaHandles": {
+            "Yeshwanthpur": "STSomashekarMLA",
+            "Yelahanka": "SRVishwanathBJP",
+            "Vijayanagara": "MLAHRGaviyappa",
+            "Shivajinagar": "ArshadRizwan",
+            "Shantinagar": "mlanaharis",
+            "Sarvagnanagar": "thekjgeorge",
+            "Rajarajeshwarinagar": "MunirathnaMLA",
+            "Rajajinagar": "nimmasuresh",
+            "Pulakeshinagar": "",
+            "Padmanabhanagar": "RAshokaBJP",
+            "Malleshwaram": "drashwathcn",
+            "Mahalakshmi Layout": "GopalaiahK",
+            "Mahadevapura": "MALimbavali",
+            "Krishnarajapuram": "BABasavaraja",
+            "Jayanagar": "CKRBJP",
+            "Hoskote": "SBG4Hosakote",
+            "Hebbal": "byrathi_suresh",
+            "Govindaraja Nagar": "Priyakrishna_K",
+            "Gandhinagar": "dineshgrao",
+            "Dasarahalli": "munirajusbjp",
+            "Chickpet": "BGUdayBJP",
+            "Chamrajpet": "BZZameerAhmedK",
+            "C. V. Raman Nagar": "SRaghuMLA",
+            "Byatarayanapura": "KrishnaByreGowda",
+            "Bommanahalli": "MSatishreddy75",
+            "Bengaluru South": "tejasvi_surya",
+            "Basavanagudi": "ashokbtripathi"
+        }
+    },
+    "issueCategories": {
+        "civic": [
+            "potholes",
+            "drainage",
+            "streetlights",
+            "garbage",
+            "water",
+            "parks",
+            "roads",
+            "other"
+        ],
+        "traffic": [
+            "signal",
+            "jams",
+            "noParking",
+            "drivingWithMobile",
+            "noHelmet"
+        ]
+    },
+    "localization": {
+        "defaultLanguage": "en",
+        "availableLanguages": [
+            "en",
+            "kn"
+        ]
+    }
+}

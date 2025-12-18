@@ -23,7 +23,9 @@ function corpHandleForName(name) {
 
 export async function loadCorpPolygons() {
     if (corpPolygons) return corpPolygons;
+    console.log('🔄 Loading corp polygons from:', CONFIG.MAP_KML_URL);
     const feats = await loadGeoLayers(CONFIG.MAP_KML_URL);
+    console.log('✅ Loaded', feats.length, 'corp polygon features');
     corpPolygons = feats.map(f => {
         const p = f.props || {};
         const corpName = (p.NewCorp || p.corp || p.CORP || p.name || "").toString();
@@ -33,7 +35,6 @@ export async function loadCorpPolygons() {
 }
 
 export async function validateLocationForCoords(testGPS) {
-    // ✅ FIXED: Now has isValidNumber
     if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
     try {
         const polys = await loadCorpPolygons();

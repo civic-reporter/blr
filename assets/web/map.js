@@ -7,9 +7,13 @@ let mapInstance, markerInstance;
 let mapInitialized = false;
 
 export function initMap() {
-    if (mapInitialized) return;
+    console.log('🗺️ Initializing map...');
+    if (mapInitialized) {
+        console.log('⚠️ Map already initialized, skipping');
+        return;
+    }
 
-    // ✅ GLOBAL MAP EXPOSURE
+    console.log('📍 Creating Leaflet map instance');
     window.map = L.map("map").setView([12.9716, 77.5946], 12);
     mapInstance = window.map;
 
@@ -21,7 +25,6 @@ export function initMap() {
     window.map.on("click", handleMapClick);
     mapInitialized = true;
 
-    // ✅ EXPORT + GLOBALIZE placeMarker
     window.placeMarker = placeMarker;
     console.log("🗺️ Map + search ready - placeMarker GLOBAL ✅");
 }
@@ -47,12 +50,10 @@ function setupSearch() {
         mapNode.parentNode.insertBefore(wrapper, mapNode);
     }
 
-    // Initialize Google Places Autocomplete when API is ready
     initGoogleAutocomplete(searchInput);
 }
 
 function initGoogleAutocomplete(searchInput) {
-    // Wait for Google Maps API to be loaded
     const checkGoogle = setInterval(() => {
         if (typeof google !== 'undefined' && google.maps && google.maps.places) {
             clearInterval(checkGoogle);
@@ -94,7 +95,6 @@ function setupGoogleAutocomplete(searchInput) {
             showStatus(`✅ ${place.name || place.formatted_address}`, 'success');
             setTimeout(updateTweetButtonState, 50);
         } else {
-            // Clear GPS and remove marker for invalid location
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.currentGPS = null;
             showStatus('❌ Outside GBA boundary', 'error');
@@ -123,7 +123,6 @@ export async function handleMapClick(e) {
     updateTweetButtonState();
 }
 
-// ✅ EXPORT placeMarker
 export function placeMarker() {
     console.log("📍 Placing marker at:", window.currentGPS?.lat?.toFixed(4), window.currentGPS?.lon?.toFixed(4));
 

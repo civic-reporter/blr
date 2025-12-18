@@ -3,7 +3,6 @@ import { findCorpForCurrentGPS } from './validation.js';
 import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing, loadGeoLayers } from './utils.js';
 
-// Local polygon caches (no window globals, no validation.js conflicts)
 let wardPolygons = null;
 let constPolygons = null;
 

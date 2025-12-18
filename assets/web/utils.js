@@ -1,4 +1,3 @@
-// Utility functions
 import { CONFIG } from './config.js';
 
 export function isValidNumber(x) {
@@ -42,8 +41,13 @@ export async function compressImage(file) {
 // Load polygon features from either GeoJSON or KML, returning a unified shape.
 // Output: Array of { ring: Array<[lon, lat]>, props: Record<string, string|number> }
 export async function loadGeoLayers(url) {
+    console.log('📍 Loading geo layer from:', url);
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to load: ${url}`);
+    if (!res.ok) {
+        console.error('❌ Failed to load geo layer:', url, 'Status:', res.status);
+        throw new Error(`Failed to load: ${url} (${res.status})`);
+    }
+    console.log('✅ Geo layer loaded successfully:', url);
     const contentType = (res.headers.get('content-type') || '').toLowerCase();
 
     // Prefer JSON path by extension or content-type
@@ -69,14 +73,12 @@ export async function loadGeoLayers(url) {
         return out;
     }
 
-    // KML fallback
     const kmlText = await res.text();
     const parser = new DOMParser();
     const xml = parser.parseFromString(kmlText, 'application/xml');
     const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
     const out = [];
     for (const pm of placemarks) {
-        // Extract SimpleData into a props object
         const props = {};
         const simple = pm.getElementsByTagName('SimpleData');
         for (const sd of simple) {

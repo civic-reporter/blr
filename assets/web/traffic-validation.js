@@ -1,4 +1,3 @@
-// Traffic PS Validation - loads traffic police station boundaries from blr-traffic.kml
 import { CONFIG } from './config.js';
 import { pointInRing, isValidNumber, loadGeoLayers } from './utils.js';
 
@@ -11,7 +10,6 @@ export async function loadTrafficPSPolygons() {
         const feats = await loadGeoLayers(CONFIG.TRAFFIC_KML_URL);
         trafficPSPolygons = feats.map(f => {
             const p = f.props || {};
-            // Extract traffic PS name and code from properties
             const trafficPS = (p.Traffic_PS || p.traffic_ps || p.name || "").toString();
             const psName = (p.PS_BOUNDName || p.ps_boundname || "").toString();
             const psCode = (p.PS_BOUNDCode || p.ps_boundcode || "").toString();

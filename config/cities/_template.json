@@ -1,0 +1,66 @@
+{
+    "cityId": "city-name",
+    "cityName": "City Name",
+    "cityNameLocal": "Local Language Name",
+    "tagline": "City's civic reporting platform",
+    "taglineLocal": "Local language tagline",
+    "boundaries": {
+        "bbox": {
+            "south": 0.0,
+            "north": 0.0,
+            "west": 0.0,
+            "east": 0.0
+        },
+        "mapKml": "data/cities/city-name/map.kml",
+        "constKml": "data/cities/city-name/constituencies.kml",
+        "wardKml": "data/cities/city-name/wards.kml",
+        "trafficKml": "data/cities/city-name/traffic.kml"
+    },
+    "pages": {
+        "civic": "cities/city-name/civic.html",
+        "traffic": "cities/city-name/traffic.html"
+    },
+    "apis": {
+        "civicApi": "https://your-api-gateway.com/city-civic",
+        "trafficApi": "https://your-api-gateway.com/city-traffic",
+        "googleMapsKey": "YOUR_GOOGLE_API_KEY"
+    },
+    "socialMedia": {
+        "defaultHandle": "@CityOfficialHandle",
+        "mlaHandles": {
+            "Constituency1": "@MLAHandle1",
+            "Constituency2": "@MLAHandle2"
+        }
+    },
+    "issueCategories": {
+        "civic": [
+            "potholes",
+            "drainage",
+            "streetlights",
+            "garbage",
+            "water",
+            "parks",
+            "roads",
+            "other"
+        ],
+        "traffic": [
+            "signal",
+            "jams",
+            "noParking",
+            "drivingWithMobile",
+            "noHelmet"
+        ]
+    },
+    "localization": {
+        "defaultLanguage": "en",
+        "availableLanguages": [
+            "en"
+        ],
+        "translations": {
+            "en": {
+                "homeTitle": "Nāgarika Dhvani",
+                "homeSubtitle": "City's fastest civic reporting platform"
+            }
+        }
+    }
+}

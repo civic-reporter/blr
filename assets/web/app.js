@@ -1,25 +1,27 @@
-// Main app - COMPLETE
-import { cacheUIElements, showUploadOptions, updateTweetButtonState } from './ui.js';  // ✅ FIXED IMPORT
+console.log('📦 app.js loading...');
+import { cacheUIElements, showUploadOptions, updateTweetButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
 import { shareToGBA } from './twitter.js';
 import { resetApp } from './reset.js';
 
-// Global state
+console.log('✅ app.js imports loaded');
+
 window.currentImageFile = null;
 window.currentGPS = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+console.log('📋 Document ready state:', document.readyState);
+
+function initApp() {
+    console.log('🚀 Civic app initializing...');
     cacheUIElements();
 
-    // ✅ CHECKBOX LISTENER - NOW WORKS
     const checkbox = document.getElementById("confirmImageCheck");
     if (checkbox) {
         checkbox.addEventListener("change", updateTweetButtonState);
         console.log("✅ Checkbox listener added");
     }
 
-    // Clear error message when issue type is selected
     const issueType = document.getElementById("issueType");
     if (issueType) {
         issueType.addEventListener("change", () => {
@@ -31,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Wire ALL buttons + drop
     document.getElementById("cameraBtn")?.addEventListener("click", () =>
         document.getElementById("cameraInput").click());
     document.getElementById("uploadBtn")?.addEventListener("click", () =>
@@ -45,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("submitAnotherBtn")?.addEventListener("click", resetApp);
     document.getElementById("changeImageBtn")?.addEventListener("click", resetApp);
 
-    // Drop zone
     const dropZone = document.getElementById("dropZone");
     if (dropZone) {
         dropZone.addEventListener("dragover", e => {
@@ -58,6 +58,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    console.log('🗺️ Calling initMap()...');
     initMap();
+    console.log('📤 Calling showUploadOptions()...');
     showUploadOptions();
-});
+    console.log('✅ Civic app initialization complete');
+}
+
+if (document.readyState === 'loading') {
+    console.log('⏳ Waiting for DOMContentLoaded...');
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    console.log('✅ DOM already loaded, initializing immediately');
+    initApp();
+}

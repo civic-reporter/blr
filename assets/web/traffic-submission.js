@@ -1,4 +1,3 @@
-// Traffic-specific submission logic
 import { CONFIG } from './config.js';
 import { findTrafficPSForLocation } from './traffic-validation.js';
 import { findCorpForCurrentGPS } from './validation.js';
@@ -6,7 +5,6 @@ import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js'
 import { isValidNumber, isInGBA, pointInRing } from './utils.js';
 import { blurFacesInImage } from '../js/face-blur.js';
 
-// Import ward/constituency loaders from twitter.js module (reuse civic logic)
 let wardPolygons = null;
 
 async function loadWardPolygons() {
@@ -65,14 +63,13 @@ export async function submitTraffic() {
         return;
     }
 
-    // Validate issue type selection
+
     const trafficCategory = document.getElementById("trafficCategory")?.value;
     if (!trafficCategory) {
         showStatus("❌ Please select a traffic issue type.", "error");
         return;
     }
 
-    // Disable submit button during submission
     const submitBtn = document.getElementById("trafficSubmit");
     if (submitBtn) {
         submitBtn.disabled = true;
@@ -119,7 +116,6 @@ export async function submitTraffic() {
     let wasSuccess = false;
 
     try {
-        // POST to traffic API endpoint
         const res = await fetch(CONFIG.TRAFFIC_API_URL, { method: "POST", body: formData });
         const raw = await res.text();
         let data;
@@ -133,7 +129,6 @@ export async function submitTraffic() {
             wasSuccess = true;
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // Hide form and map
             ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
