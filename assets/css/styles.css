@@ -1061,6 +1061,80 @@ body:not(:has(.page-header)) .language-toggle-btn {
     opacity: 0.9;
 }
 
+/* Mobile-responsive success screen */
+@media (max-width: 768px) {
+    .success-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .success-card {
+        padding: 2rem 1.25rem;
+        border-radius: 16px;
+        max-width: 100%;
+    }
+
+    .success-icon-large {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .success-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .success-message {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .success-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .success-btn {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .success-footer {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        font-size: 0.875rem;
+    }
+
+    .tweet-link-box {
+        padding: 0.875rem;
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .success-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .success-icon-large {
+        font-size: 3rem;
+    }
+
+    .success-title {
+        font-size: 1.25rem;
+    }
+
+    .success-message {
+        font-size: 0.95rem;
+    }
+
+    .success-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
 @media (max-width: 768px) {
     .page-header {
         padding: 0.75rem 1rem;
