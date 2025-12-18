@@ -1,6 +1,6 @@
-# Civic Reporter — BLR
+# Nāgarika Dhvani — BLR
 
-Static front-end webpage for the Civic Reporter project. Built with plain HTML, CSS and JavaScript and intended for static hosting (GitHub Pages, Netlify, Vercel, S3, etc.).
+Static front-end webpage for the Nāgarika Dhvani project. Built with plain HTML, CSS and JavaScript and intended for static hosting (GitHub Pages, Netlify, Vercel, S3, etc.).
 
 Status
 - Static client-side site. No server-side components included in this repository.
@@ -75,5 +75,5 @@ License
 This project is licensed under the MIT License. See LICENSE for full text.
 
 Maintainers / Contact
-- Maintainers: Civic Reporter contributors (generic)
+- Maintainers: Nāgarika Dhvani contributors (generic)
 - For questions or support, open an issue in this repository.
