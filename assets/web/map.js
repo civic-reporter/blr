@@ -1,10 +1,11 @@
-import { CONFIG } from './config.js';
+import { configPromise, getConfig } from './config.js';
 import { pointInRing, isValidNumber } from './utils.js';
 import { showStatus, updateTweetButtonState, ensureLocationVisible } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
 let mapInstance, markerInstance;
 let mapInitialized = false;
+let CONFIG = null;
 
 export function initMap() {
     console.log('🗺️ Initializing map...');
@@ -13,9 +14,13 @@ export function initMap() {
         return;
     }
 
-    console.log('📍 Creating Leaflet map instance');
+    console.log('📍 Creating Leaflet map instance (config loading in background)');
     window.map = L.map("map").setView([12.9716, 77.5946], 12);
     mapInstance = window.map;
+
+    configPromise.then(async () => {
+        CONFIG = await getConfig();
+    });
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors"
@@ -62,7 +67,9 @@ function initGoogleAutocomplete(searchInput) {
     }, 100);
 }
 
-function setupGoogleAutocomplete(searchInput) {
+async function setupGoogleAutocomplete(searchInput) {
+    if (!CONFIG) CONFIG = await getConfig();
+
     const autocomplete = new google.maps.places.Autocomplete(searchInput, {
         bounds: new google.maps.LatLngBounds(
             new google.maps.LatLng(CONFIG.GBA_BBOX.south, CONFIG.GBA_BBOX.west),

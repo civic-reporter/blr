@@ -1,5 +1,8 @@
-import { CONFIG, MLA_HANDLES } from './config.js';
+import { getConfig, getMlaHandles } from './config.js';
 import { findCorpForCurrentGPS } from './validation.js';
+
+let CONFIG = null;
+let MLA_HANDLES = null;
 import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing, loadGeoLayers } from './utils.js';
 
@@ -9,6 +12,7 @@ let constPolygons = null;
 async function loadWardPolygons() {
     if (wardPolygons !== null) return wardPolygons;
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const feats = await loadGeoLayers(CONFIG.WARD_KML_URL);
         wardPolygons = feats.map(f => {
             const p = f.props || {};
@@ -38,6 +42,7 @@ async function findWardForCurrentGPS() {
 async function loadConstituencyPolygons() {
     if (constPolygons !== null) return constPolygons;
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const feats = await loadGeoLayers(CONFIG.CONST_KML_URL);
         constPolygons = feats.map(f => {
             const p = f.props || {};
@@ -53,6 +58,7 @@ async function loadConstituencyPolygons() {
 
 async function findConstituencyForCurrentGPS() {
     if (!window.currentGPS) return { acName: "", mlaHandle: "" };
+    if (!MLA_HANDLES) MLA_HANDLES = await getMlaHandles();
     const polys = await loadConstituencyPolygons();
     const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
     for (const p of polys) {
@@ -119,6 +125,7 @@ export async function shareToGBA() {
     let wasSuccess = false;
 
     try {
+        if (!CONFIG) CONFIG = await getConfig();
         const res = await fetch(CONFIG.API_GATEWAY_URL, { method: "POST", body: formData });
         const raw = await res.text();
         let data;
