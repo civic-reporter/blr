@@ -100,6 +100,31 @@ body {
     transform: scale(1.02);
 }
 
+.blur-status {
+    text-align: center;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem auto 1rem;
+    background: var(--x-bg-secondary);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--x-text-primary);
+    max-width: 400px;
+    border: 1px solid var(--x-border);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 #map {
     height: 260px;
     border-radius: 16px;
