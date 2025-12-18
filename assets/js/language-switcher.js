@@ -86,12 +86,16 @@ export function setPageLanguage(lang) {
     // Update privacy and how-to page links based on language
     const privacyLink = document.getElementById('privacyLink');
     if (privacyLink) {
-        privacyLink.href = lang === 'kn' ? 'privacy-kn.html' : 'privacy.html';
+        const currentHref = privacyLink.getAttribute('href');
+        const prefix = currentHref.includes('../../') ? '../../' : '';
+        privacyLink.href = prefix + (lang === 'kn' ? 'privacy-kn.html' : 'privacy.html');
     }
 
     const howToLink = document.getElementById('howToLink');
     if (howToLink) {
-        howToLink.href = lang === 'kn' ? 'how-to-kn.html' : 'how-to.html';
+        const currentHref = howToLink.getAttribute('href');
+        const prefix = currentHref.includes('../../') ? '../../' : '';
+        howToLink.href = prefix + (lang === 'kn' ? 'how-to-kn.html' : 'how-to.html');
     }
 
     // Dispatch custom event for pages that need dynamic translation
