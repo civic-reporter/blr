@@ -1,4 +1,4 @@
-import { configPromise, getConfig } from './config.js';
+import { getConfig } from './config.js';
 import { pointInRing, isValidNumber } from './utils.js';
 import { showStatus, updateTweetButtonState, ensureLocationVisible } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
@@ -27,14 +27,15 @@ export function initMap() {
         return;
     }
 
-    console.log('📍 Creating Leaflet map instance (config loading in background)');
+    console.log('📍 Creating Leaflet map instance immediately');
     window.map = L.map("map").setView([12.9716, 77.5946], 12);
     mapInstance = window.map;
 
-    configPromise.then(async () => {
-        CONFIG = await getConfig();
+    // Load Google Maps API in background when config is ready
+    getConfig().then(config => {
+        CONFIG = config;
         loadGoogleMapsAPI(CONFIG.GOOGLE_MAPS_API_KEY);
-    });
+    }).catch(err => console.warn('Config load failed:', err));
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors"

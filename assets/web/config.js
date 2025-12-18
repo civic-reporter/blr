@@ -1,53 +1,63 @@
 import cityConfig from '../../config/city-config.js';
 
-console.log('⏳ Starting config initialization...');
-
 let CONFIG = null;
 let MLA_HANDLES = null;
+let configPromise = null;
 
-const configPromise = cityConfig.loadConfig()
-    .then(() => {
-        console.log('✅ City config loaded successfully');
-        const config = cityConfig.getConfig();
-        const apis = cityConfig.getAPIs();
-        const boundaries = cityConfig.getBoundaryFiles();
-        const basePath = cityConfig.getBasePath();
+function startConfigLoad() {
+    if (configPromise) return configPromise;
 
-        CONFIG = {
-            API_GATEWAY_URL: apis.civicApi,
-            TRAFFIC_API_URL: apis.trafficApi,
-            GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
+    console.log('⏳ Starting config initialization...');
+    configPromise = cityConfig.loadConfig()
+        .then(() => {
+            console.log('✅ City config loaded successfully');
+            const config = cityConfig.getConfig();
+            const apis = cityConfig.getAPIs();
+            const boundaries = cityConfig.getBoundaryFiles();
+            const basePath = cityConfig.getBasePath();
 
-            MAP_KML_URL: basePath + boundaries.mapKml,
-            CONST_KML_URL: basePath + boundaries.constKml,
-            WARD_KML_URL: basePath + boundaries.wardKml,
-            TRAFFIC_KML_URL: basePath + boundaries.trafficKml,
+            CONFIG = {
+                API_GATEWAY_URL: apis.civicApi,
+                TRAFFIC_API_URL: apis.trafficApi,
+                GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
 
-            GBA_BBOX: cityConfig.getBBox()
-        };
+                MAP_KML_URL: basePath + boundaries.mapKml,
+                CONST_KML_URL: basePath + boundaries.constKml,
+                WARD_KML_URL: basePath + boundaries.wardKml,
+                TRAFFIC_KML_URL: basePath + boundaries.trafficKml,
 
-        MLA_HANDLES = config.socialMedia.mlaHandles;
+                GBA_BBOX: cityConfig.getBBox()
+            };
 
-        console.log('✅ CONFIG initialized:');
-        console.log('  MAP_KML_URL:', CONFIG.MAP_KML_URL);
-        console.log('  WARD_KML_URL:', CONFIG.WARD_KML_URL);
-        console.log('  CONST_KML_URL:', CONFIG.CONST_KML_URL);
-        console.log('  TRAFFIC_KML_URL:', CONFIG.TRAFFIC_KML_URL);
+            MLA_HANDLES = config.socialMedia.mlaHandles;
 
-        return CONFIG;
-    })
-    .catch(error => {
-        console.error('❌ Failed to load city config:', error);
-        throw error;
-    });
+            console.log('✅ CONFIG initialized:');
+            console.log('  MAP_KML_URL:', CONFIG.MAP_KML_URL);
+            console.log('  WARD_KML_URL:', CONFIG.WARD_KML_URL);
+            console.log('  CONST_KML_URL:', CONFIG.CONST_KML_URL);
+            console.log('  TRAFFIC_KML_URL:', CONFIG.TRAFFIC_KML_URL);
+
+            return CONFIG;
+        })
+        .catch(error => {
+            console.error('❌ Failed to load city config:', error);
+            throw error;
+        });
+
+    return configPromise;
+}
 
 export async function getConfig() {
-    await configPromise;
+    if (!CONFIG) {
+        await startConfigLoad();
+    }
     return CONFIG;
 }
 
 export async function getMlaHandles() {
-    await configPromise;
+    if (!MLA_HANDLES) {
+        await startConfigLoad();
+    }
     return MLA_HANDLES;
 }
 
