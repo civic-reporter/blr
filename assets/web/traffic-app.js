@@ -100,26 +100,23 @@ async function blurAndUpdatePreview() {
     const preview = document.getElementById("preview");
     if (!preview) return;
 
-    // Show blurring status
-    const statusDiv = document.getElementById("status");
-    if (statusDiv) {
-        statusDiv.textContent = "🔍 Blurring faces for privacy...";
-        statusDiv.className = "status info";
-        statusDiv.style.display = "block";
+    const blurStatusDiv = document.getElementById("blurStatus");
+    if (blurStatusDiv) {
+        blurStatusDiv.textContent = "🔍 Blurring faces for privacy...";
+        blurStatusDiv.className = "blur-status";
+        blurStatusDiv.style.display = "block";
     }
 
-    // Blur faces
     const blurredBlob = await blurFacesInImage(window.currentImageFile);
     window.currentImageFile = blurredBlob;
 
-    // Update preview with blurred image
     const blurredUrl = URL.createObjectURL(blurredBlob);
     preview.src = blurredUrl;
 
-    // Clear status after a moment
-    setTimeout(() => {
-        if (statusDiv && statusDiv.textContent.includes("Blurring")) {
-            statusDiv.style.display = "none";
-        }
-    }, 2000);
+    if (blurStatusDiv) {
+        blurStatusDiv.textContent = "✅ Privacy protection applied";
+        setTimeout(() => {
+            blurStatusDiv.style.display = "none";
+        }, 2000);
+    }
 }
