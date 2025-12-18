@@ -20,7 +20,7 @@ export const translations = {
         footerText: "© 2025 Zen Citizen. Made with ❤️ for Bengaluru",
 
         // Civic Page (blr-civic-index.html)
-        civicReporterTitle: "🏛️ Civic Reporter - Bengaluru",
+        civicReporterTitle: "🏛️ Nāgarika Dhvani - Bengaluru",
         civicReporterDesc: "Report potholes, drainage, streetlights to Greater Bengaluru Authority",
         uploadInstructions: "Click (mobile only) or upload a photo (GPS is auto-detected). If GPS is missing, choose the location on the map.",
         mobileCamera: "Mobile Camera",
