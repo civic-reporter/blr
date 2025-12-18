@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- SAME CSS/JS as civic -->
-    <link rel="stylesheet" href="assets/css/leaflet.css" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <script src="assets/js/piexif.min.js"></script>
-    <script src="assets/js/leaflet.js"></script>
+    <link rel="stylesheet" href="../../assets/css/leaflet.css" />
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <script src="../../assets/js/piexif.min.js"></script>
+    <script src="../../assets/js/leaflet.js"></script>
 
     <!-- Google Maps Places API -->
     <script async defer
@@ -27,7 +27,7 @@
     <!-- Navigation Header -->
     <header class="page-header">
         <div class="nav-left">
-            <a href="index.html" class="nav-home" data-i18n-title="backToHome">
+            <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
                 <i class="fas fa-home"></i>
                 <span data-i18n="homeTitle">Nāgarika Dhvani</span>
             </a>
@@ -191,7 +191,7 @@
 
         window.addEventListener("DOMContentLoaded", () => {
             // Initialize language switcher
-            import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+            import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
                 initLanguageSwitcher();
             });
 
@@ -209,14 +209,14 @@
     </script>
 
     <!-- TRAFFIC APP -->
-    <script type="module" src="assets/web/traffic-app.js"></script>
+    <script type="module" src="../../assets/web/traffic-app.js"></script>
 
     <!-- Navigation setup -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const switchBtn = document.getElementById('switchPageBtn');
             if (switchBtn) {
-                switchBtn.href = 'blr-civic-index.html';
+                switchBtn.href = 'civic.html';
                 switchBtn.title = 'Switch to Civic Reporter';
             }
         });

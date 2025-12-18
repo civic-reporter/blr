@@ -28,7 +28,6 @@ export function resetApp() {
     const confirmCheck = document.getElementById('confirmImageCheck');
     if (confirmCheck) confirmCheck.checked = false;
 
-    // 3. Reset search + map (HIDE until needed)
     const searchInput = document.getElementById('gbaSearch');
     const suggBox = document.getElementById('gbaSearchSuggestions');
     const searchWrapper = document.getElementById('gbaSearchWrapper');
@@ -42,7 +41,7 @@ export function resetApp() {
     if (searchWrapper) searchWrapper.style.display = 'none';
     if (mapEl) mapEl.style.display = 'none';
 
-    // 4. Reset buttons (support both civic and traffic)
+
     const tweetBtn = document.getElementById('tweetBtn');
     const trafficSubmitBtn = document.getElementById('trafficSubmit');
 

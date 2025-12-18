@@ -1,57 +1,41 @@
-// Configuration - Civic Reporter (Civic + Traffic)
+import cityConfig from '../../config/city-config.js';
+
+console.log('⏳ Starting config initialization...');
+
+try {
+    await cityConfig.loadConfig();
+    console.log('✅ City config loaded successfully');
+} catch (error) {
+    console.error('❌ Failed to load city config:', error);
+    throw error;
+}
+
+const config = cityConfig.getConfig();
+const apis = cityConfig.getAPIs();
+const boundaries = cityConfig.getBoundaryFiles();
+const basePath = cityConfig.getBasePath();
+
+console.log('⏳ Building CONFIG object...');
+
 export const CONFIG = {
-    // Civic API
-    API_GATEWAY_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
+    API_GATEWAY_URL: apis.civicApi,
+    TRAFFIC_API_URL: apis.trafficApi,
+    GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
 
-    // Traffic API (update this with your traffic API endpoint)
-    TRAFFIC_API_URL: "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
+    MAP_KML_URL: basePath + boundaries.mapKml,
+    CONST_KML_URL: basePath + boundaries.constKml,
+    WARD_KML_URL: basePath + boundaries.wardKml,
+    TRAFFIC_KML_URL: basePath + boundaries.trafficKml,
 
-    // Google Places API
-    GOOGLE_MAPS_API_KEY: "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0",
-
-    // Civic jurisdiction data
-    MAP_KML_URL: "assets/data/map.kml",
-    CONST_KML_URL: "assets/data/blr_const.kml",
-    WARD_KML_URL: "assets/data/wards.kml",
-
-    // Traffic jurisdiction data
-    TRAFFIC_KML_URL: "assets/data/blr-traffic.kml",
-
-    // Geographic boundary
-    GBA_BBOX: {
-        south: 12.82, north: 13.20,
-        west: 77.40, east: 77.85
-    }
+    GBA_BBOX: cityConfig.getBBox()
 };
 
-export const MLA_HANDLES = {
-    "Yeshwanthpur": "STSomashekarMLA",
-    "Yelahanka": "SRVishwanathBJP",
-    "Vijayanagara": "MLAHRGaviyappa",
-    "Shivajinagar": "ArshadRizwan",
-    "Shantinagar": "mlanaharis",
-    "Sarvagnanagar": "thekjgeorge",
-    "Rajarajeshwarinagar": "MunirathnaMLA",
-    "Rajajinagar": "nimmasuresh",
-    "Pulakeshinagar": "",
-    "Padmanabhanagar": "RAshokaBJP",
-    "Malleshwaram": "drashwathcn",
-    "Mahalakshmi Layout": "GopalaiahK",
-    "Mahadevapura": "MALimbavali",
-    "Krishnarajapuram": "BABasavaraja",
-    "Jayanagar": "CKRBJP",
-    "Hoskote": "SBG4Hosakote",
-    "Hebbal": "byrathi_suresh",
-    "Govindaraja Nagar": "Priyakrishna_K",
-    "Gandhinagar": "dineshgrao",
-    "Dasarahalli": "munirajusbjp",
-    "Chickpet": "BGUdayBJP",
-    "Chamrajpet": "BZZameerAhmedK",
-    "C. V. Raman Nagar": "SRaghuMLA",
-    "Byatarayanapura": "krishnabgowda",
-    "Bommanahalli": "msrbommanahalli",
-    "Basavanagudi": "Ravi_LA",
-    "Vijayanagar": "mkrishnappa_MLA",
-    "BTM Layout": "RLR_BTM",
-    "Anekal (SC)": "MLAShivanna"
-};
+console.log('✅ CONFIG initialized:');
+console.log('  MAP_KML_URL:', CONFIG.MAP_KML_URL);
+console.log('  WARD_KML_URL:', CONFIG.WARD_KML_URL);
+console.log('  CONST_KML_URL:', CONFIG.CONST_KML_URL);
+console.log('  TRAFFIC_KML_URL:', CONFIG.TRAFFIC_KML_URL);
+
+export const MLA_HANDLES = config.socialMedia.mlaHandles;
+
+export { cityConfig };
