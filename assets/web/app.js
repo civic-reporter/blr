@@ -5,7 +5,7 @@ import { handleImageUpload, handleCameraCapture } from './image.js';
 import { shareToGBA } from './twitter.js';
 import { resetApp } from './reset.js';
 import { initEmailModule, isValidEmail } from './email-authorities.js';
-import { updateCivicEmailRecipients, displaySuccessLocationInfo } from './civic-email.js';
+import { updateCivicEmailRecipients, displaySuccessLocationInfo, prepareCivicEmailData } from './civic-email.js';
 
 console.log('✅ app.js imports loaded');
 
@@ -106,8 +106,10 @@ function initApp() {
     // Make functions available globally for gps.js, map.js, and twitter.js
     window.updateCivicEmailRecipients = updateCivicEmailRecipients;
     window.displaySuccessLocationInfo = displaySuccessLocationInfo;
+    window.prepareCivicEmailData = prepareCivicEmailData;
     console.log('📧 window.updateCivicEmailRecipients assigned:', typeof window.updateCivicEmailRecipients);
     console.log('📍 window.displaySuccessLocationInfo assigned:', typeof window.displaySuccessLocationInfo);
+    console.log('📧 window.prepareCivicEmailData assigned:', typeof window.prepareCivicEmailData);
 
     console.log('✅ Civic app initialization complete');
 }
