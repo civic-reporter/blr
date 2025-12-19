@@ -3,9 +3,10 @@ console.log('📦 traffic-app.js loading...');
 import { cacheUIElements, showUploadOptions, updateSubmitButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
-import { submitTraffic } from './traffic-submission.js';
+import { submitTraffic, updateEmailRecipients } from './traffic-submission.js';
 import { resetApp } from './reset.js';
 import { blurFacesInImage } from '../js/face-blur.js';
+import { initEmailModule } from './email-authorities.js';
 
 console.log('✅ traffic-app.js imports loaded');
 
@@ -21,6 +22,15 @@ function initApp() {
     console.log('🚀 Traffic app initializing...');
     cacheUIElements();
 
+    // Initialize email module
+    initEmailModule().then(success => {
+        if (success) {
+            console.log('✅ Email module initialized');
+        } else {
+            console.log('⚠️ Email module not available');
+        }
+    });
+
     // Traffic-specific: confirm checkbox listener
     const checkbox = document.getElementById("confirmImageCheck");
     if (checkbox) {
@@ -28,6 +38,31 @@ function initApp() {
         console.log("✅ Traffic: Checkbox listener added");
     }
 
+    // Email checkbox listeners
+    const emailCheckbox = document.getElementById("emailAuthoritiesCheck");
+    if (emailCheckbox) {
+        emailCheckbox.addEventListener("change", () => {
+            updateEmailRecipients();
+        });
+        console.log("✅ Email checkbox listener added");
+    }
+
+    const ccCheckbox = document.getElementById("ccMeCheck");
+    const userEmailInput = document.getElementById("userEmailInput");
+    if (ccCheckbox && userEmailInput) {
+        ccCheckbox.addEventListener("change", () => {
+            if (ccCheckbox.checked) {
+                userEmailInput.style.display = 'block';
+                userEmailInput.focus();
+            } else {
+                userEmailInput.style.display = 'none';
+                userEmailInput.value = '';
+                const validationMsg = document.getElementById('emailValidationMsg');
+                if (validationMsg) validationMsg.style.display = 'none';
+            }
+        });
+        console.log("✅ CC checkbox listener added");
+    }
 
     const trafficCategory = document.getElementById("trafficCategory");
     if (trafficCategory) {
@@ -72,6 +107,12 @@ function initApp() {
     initMap();
     console.log('📤 Calling showUploadOptions()...');
     showUploadOptions();
+
+    // Make updateEmailRecipients available globally for gps.js
+    window.updateEmailRecipients = updateEmailRecipients;
+    console.log('📧 window.updateEmailRecipients assigned:', typeof window.updateEmailRecipients);
+    console.log('📧 window.isTrafficFlow:', window.isTrafficFlow);
+
     console.log('✅ Traffic app initialization complete');
 }
 

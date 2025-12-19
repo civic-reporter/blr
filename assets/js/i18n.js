@@ -20,7 +20,7 @@ export const translations = {
         footerText: "© 2025 Zen Citizen. Made with ❤️ for Bengaluru",
 
         // Civic Page (blr-civic-index.html)
-        civicReporterTitle: "🏛️ Nāgarika Dhvani - Bengaluru",
+        civicReporterTitle: "🏛️ Nāgarika Dhvani - Civic",
         civicReporterDesc: "Report potholes, drainage, streetlights to Greater Bengaluru Authority",
         uploadInstructions: "Click (mobile only) or upload a photo (GPS is auto-detected). If GPS is missing, choose the location on the map.",
         mobileCamera: "Mobile Camera",
@@ -51,7 +51,7 @@ export const translations = {
         successThankYou: "Thank you for making Bengaluru better!",
 
         // Traffic Page (blr-traffic-index.html)
-        trafficReporterTitle: "🚦 Traffic Reporter – Bengaluru",
+        trafficReporterTitle: "🚦 Nāgarika Dhvani - Traffic",
         trafficReporterDesc: "Report traffic signals, jams, parking to Bengaluru Traffic Authorities",
         photoCorrectTraffic: "Photo correct for traffic report?",
         confirmPhotoTraffic: "I confirm photo shows traffic issue clearly.",
@@ -72,6 +72,12 @@ export const translations = {
         trafficReportedSuccess: "Traffic Issue Reported!",
         trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to @BlrCityPolice",
         submitAnotherReport: "Submit Another Report",
+
+        // Email options
+        emailAuthorities: "📧 Would you like to email the authorities as well?",
+        emailWillBeSentTo: "Notifications will be sent to the following addresses:",
+        ccMe: "Would you like to receive a copy of this email?",
+        yourEmail: "your.email@example.com",
 
         // Common UI Elements
         toggleLanguage: "ಕನ್ನಡ",
@@ -152,7 +158,7 @@ export const translations = {
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
 
         // Traffic Page
-        trafficReporterTitle: "🚦 ಟ್ರಾಫಿಕ್ ವರದಿ – ಬೆಂಗಳೂರು",
+        trafficReporterTitle: "🚦 ನಾಗರಿಕ ಧ್ವನಿ - ಟ್ರಾಫಿಕ್",
         trafficReporterDesc: "ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್, ನಿಜಮ್ಮೆ, ಪಾರ್ಕಿಂಗ್ ಅನ್ನು ಬೆಂಗಳೂರು ಟ್ರಾಫಿಕ್ ಅಧಿಕಾರಿಗಳಿಗೆ ವರದಿ ಮಾಡಿ",
         photoCorrectTraffic: "ಟ್ರಾಫಿಕ್ ವರದಿಗೆ ಫೋಟೋ ಸರಿಯೆ?",
         confirmPhotoTraffic: "ಫೋಟೋ ಟ್ರಾಫಿಕ್ ಸಮಸ್ಯೆಯನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ತೋರಿಸುತ್ತದೆ ಎಂದು ನಾನು ಖಾತರಿ ನೀಡುತ್ತೇನೆ.",
@@ -172,6 +178,12 @@ export const translations = {
         reportTraffic: "🚦 ವರದಿ ಮಾಡಿ",
         trafficReportedSuccess: "ಟ್ರಾಫಿಕ್ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!",
         trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @BlrCityPolice ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+
+        // Email options
+        emailAuthorities: "📧 ನೀವು ಅಧಿಕಾರಿಗಳಿಗೆ ಇಮೇಲ್ ಕಳುಹಿಸಲು ಬಯಸುತ್ತೀರಾ?",
+        emailWillBeSentTo: "ಈ ವಿಳಾಸಗಳಿಗೆ ಸೂಚನೆಗಳನ್ನು ಕಳುಹಿಸಲಾಗುತ್ತದೆ:",
+        ccMe: "ನೀವು ಈ ಇಮೇಲ್‌ನ ಪ್ರತಿಯನ್ನು ಸ್ವೀಕರಿಸಲು ಬಯಸುತ್ತೀರಾ?",
+        yourEmail: "your.email@example.com",
         submitAnotherReport: "ಮತ್ತೊಂದು ವರದಿ ಸಲ್ಲಿಸಿ",
 
         // Common UI Elements

@@ -393,6 +393,110 @@ h2 {
     accent-color: var(--x-accent);
 }
 
+/* Email authorities styling */
+.email-option {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: var(--x-bg-secondary);
+    border: 1px solid var(--x-border);
+    border-radius: var(--radius);
+}
+
+.email-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.email-check input {
+    transform: scale(1.1);
+    accent-color: var(--x-accent);
+}
+
+.email-details {
+    margin-top: 0.75rem;
+}
+
+.email-recipients {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--x-bg-primary);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+}
+
+.email-recipients small {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--x-text-secondary);
+    font-weight: 500;
+}
+
+.email-recipients ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.email-recipients li {
+    padding: 0.25rem 0;
+    color: var(--x-text-primary);
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.85rem;
+}
+
+.user-email-section {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: var(--x-bg-primary);
+    border-radius: var(--radius);
+    border: 1px dashed var(--x-border);
+}
+
+.email-check-cc {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.email-check-cc input {
+    transform: scale(1.1);
+    accent-color: var(--x-accent);
+}
+
+.email-input {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--x-border);
+    border-radius: var(--radius);
+    background: var(--x-bg-primary);
+    color: var(--x-text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: var(--x-accent);
+}
+
+.email-input::placeholder {
+    color: var(--x-text-secondary);
+}
+
+.validation-msg {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--x-error);
+}
+
 .app-footer {
     margin-top: 1.5rem;
     text-align: center;
