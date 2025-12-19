@@ -148,7 +148,7 @@ export async function submitTraffic() {
             location: trafficDesc || "Location on map",
             wardNo: wardNo,
             wardName: wardName,
-            trafficPS: psName,
+            trafficPS: trafficPS,
             coordinates: {
                 lat: window.currentGPS.lat.toFixed(6),
                 lon: window.currentGPS.lon.toFixed(6)
@@ -171,8 +171,16 @@ export async function submitTraffic() {
 
     try {
         if (!CONFIG) CONFIG = await getConfig();
+        console.log('🚀 Submitting to:', CONFIG.TRAFFIC_API_URL);
+        console.log('📧 Email fields in form:', {
+            sendEmail: formData.get('sendEmail'),
+            emailRecipients: formData.get('emailRecipients'),
+            emailSubject: formData.get('emailSubject')
+        });
         const res = await fetch(CONFIG.TRAFFIC_API_URL, { method: "POST", body: formData });
+        console.log('📡 Response status:', res.status);
         const raw = await res.text();
+        console.log('📡 Response body:', raw.slice(0, 500));
         let data;
         try {
             data = JSON.parse(raw);
