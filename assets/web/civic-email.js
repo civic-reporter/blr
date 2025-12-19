@@ -39,9 +39,6 @@ export async function updateCivicEmailRecipients() {
     if (window.currentGPS && isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
         emailOption.style.display = 'block';
 
-        // Update ward and corporation info display
-        await updateWardCorpDisplay();
-
         if (emailCheckbox && emailCheckbox.checked) {
             if (emailDetails) emailDetails.style.display = 'block';
 
@@ -62,46 +59,6 @@ export async function updateCivicEmailRecipients() {
     } else {
         emailOption.style.display = 'none';
     }
-}
-
-// Display ward and corporation information
-async function updateWardCorpDisplay() {
-    const wardCorpDiv = document.getElementById('wardCorpInfo');
-    if (!wardCorpDiv) return;
-
-    if (!window.currentGPS || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
-        wardCorpDiv.style.display = 'none';
-        return;
-    }
-
-    const [{ wardNo, wardName }, { corpName }] = await Promise.all([
-        findWardForCurrentGPS(),
-        findCorpForCurrentGPS()
-    ]);
-
-    if (!wardNo && !corpName) {
-        wardCorpDiv.style.display = 'none';
-        return;
-    }
-
-    let html = '<div class="location-context">';
-
-    if (wardNo || wardName) {
-        html += '<p><strong>📍 Ward:</strong> ';
-        if (wardNo) html += `#${wardNo}`;
-        if (wardNo && wardName) html += ' - ';
-        if (wardName) html += wardName;
-        html += '</p>';
-    }
-
-    if (corpName) {
-        html += `<p><strong>🏛️ Corporation:</strong> ${corpName}</p>`;
-    }
-
-    html += '</div>';
-
-    wardCorpDiv.innerHTML = html;
-    wardCorpDiv.style.display = 'block';
 }
 
 // Display ward and corporation info on success screen

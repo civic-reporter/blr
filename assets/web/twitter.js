@@ -91,6 +91,39 @@ export async function shareToGBA() {
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
 
+    // Add email data if email option is enabled
+    const emailCheckbox = document.getElementById('emailAuthoritiesCheck');
+    const shouldEmail = emailCheckbox && emailCheckbox.checked;
+
+    if (shouldEmail && window.prepareCivicEmailData) {
+        const ccCheckbox = document.getElementById('ccMeCheck');
+        const userEmailInput = document.getElementById('userEmailInput');
+        const userEmail = (ccCheckbox && ccCheckbox.checked && userEmailInput) ? userEmailInput.value.trim() : '';
+
+        const reportData = {
+            issueType: issueType,
+            description: desc,
+            wardNo: wardNo,
+            wardName: wardName,
+            corpName: corpName,
+            constituency: acName,
+            coordinates: {
+                lat: window.currentGPS.lat.toFixed(6),
+                lon: window.currentGPS.lon.toFixed(6)
+            },
+            timestamp: new Date().toLocaleString()
+        };
+
+        const emailData = window.prepareCivicEmailData(reportData, userEmail);
+        if (emailData && emailData.to && emailData.to.length > 0) {
+            formData.append("emailRecipients", JSON.stringify(emailData.to));
+            if (userEmail) {
+                formData.append("userEmail", userEmail);
+            }
+            console.log('📧 Added email data to submission:', emailData.to);
+        }
+    }
+
     let wasSuccess = false;
 
     try {
