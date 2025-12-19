@@ -394,57 +394,47 @@ export async function displayTrafficSuccessInfo() {
     console.log('🎯 successLocationInfo div found:', !!successInfoDiv);
 
     if (successInfoDiv && (wardNo || corpName)) {
-        let html = '';
+        let html = '<div style="margin: 1rem 0; padding: 1rem; background: var(--info-bg, #e3f2fd); border-radius: 8px; border: 1px solid var(--info-border, #2196f3);">';
 
         if (wardNo && wardName) {
-            html += `<div><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
+            html += `<div style="margin-bottom: 0.5rem;"><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
         }
 
         if (corpName) {
-            html += `<div><strong>🏛️ Corporation:</strong> ${corpName}</div>`;
+            html += `<div style="margin-bottom: 0.5rem;"><strong>🏛️ Corporation:</strong> ${corpName}</div>`;
         }
 
         if (trafficPS) {
-            html += `<div><strong>🚔 Traffic PS:</strong> ${trafficPS}</div>`;
+            html += `<div style="margin-bottom: 0.5rem;"><strong>🚔 Traffic PS:</strong> ${trafficPS}</div>`;
         }
 
         // Add Google Maps link
         const lat = window.currentGPS.lat;
         const lon = window.currentGPS.lon;
         const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-        html += `<div><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color); text-decoration: none;"><strong>🗺️ View on Google Maps</strong></a></div>`;
+        html += `<div style="margin-top: 0.75rem;"><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color); text-decoration: none;"><strong>🗺️ View on Google Maps</strong></a></div>`;
 
-        successInfoDiv.innerHTML = html;
-        successInfoDiv.style.display = 'block';
-    }
+        // Add PS contact info if available
+        if (psName) {
+            const contactInfo = getTrafficPSContactInfo(psName);
+            console.log('🎯 PS contact info:', contactInfo);
 
-    // Display PS contact info
-    const successPSDiv = document.getElementById('successPSContactInfo');
-    console.log('🎯 successPSContactInfo div found:', !!successPSDiv, 'psName:', psName);
-
-    if (successPSDiv && psName) {
-        const contactInfo = getTrafficPSContactInfo(psName);
-        console.log('🎯 PS contact info:', contactInfo);
-
-        if (contactInfo && (contactInfo.mobile || contactInfo.landline)) {
-            let html = '<div class="ps-contact-message">';
-            html += `<p><strong>For urgent issues, please reach out directly to ${psName}:</strong></p>`;
-
-            if (contactInfo.mobile || contactInfo.landline) {
-                html += '<div class="ps-contact-numbers">';
+            if (contactInfo && (contactInfo.mobile || contactInfo.landline)) {
+                html += `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--info-border, #2196f3);"><strong>For urgent issues, contact ${psName}:</strong></div>`;
+                html += '<div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">';
                 if (contactInfo.mobile) {
-                    html += `<a href="tel:${contactInfo.mobile}" class="ps-contact-link">📱 ${contactInfo.mobile}</a>`;
+                    html += `<a href="tel:${contactInfo.mobile}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; background: var(--primary-color, #2196f3); color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">📱 ${contactInfo.mobile}</a>`;
                 }
                 if (contactInfo.landline) {
-                    html += `<a href="tel:${contactInfo.landline}" class="ps-contact-link">☎️ ${contactInfo.landline}</a>`;
+                    html += `<a href="tel:${contactInfo.landline}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; background: var(--primary-color, #2196f3); color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">☎️ ${contactInfo.landline}</a>`;
                 }
                 html += '</div>';
             }
-
-            html += '</div>';
-
-            successPSDiv.innerHTML = html;
-            successPSDiv.style.display = 'block';
         }
+
+        html += '</div>';
+
+        successInfoDiv.innerHTML = html;
+        successInfoDiv.style.display = 'block';
     }
 }
