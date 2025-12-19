@@ -144,9 +144,11 @@ export async function handleMapClick(e) {
     showStatus(`✅ Clicked: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
     updateTweetButtonState();
 
-    // Update email recipients for traffic flow
+    // Update email recipients based on flow type
     if (window.isTrafficFlow && window.updateEmailRecipients) {
         setTimeout(() => window.updateEmailRecipients(), 100);
+    } else if (window.isCivicFlow && window.updateCivicEmailRecipients) {
+        setTimeout(() => window.updateCivicEmailRecipients(), 100);
     }
 }
 
@@ -178,9 +180,11 @@ export function placeMarker() {
             showStatus(`✅ Dragged: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
             updateTweetButtonState();
 
-            // Update email recipients when marker is dragged (traffic flow)
+            // Update email recipients when marker is dragged
             if (window.isTrafficFlow && window.updateEmailRecipients) {
                 setTimeout(() => window.updateEmailRecipients(), 100);
+            } else if (window.isCivicFlow && window.updateCivicEmailRecipients) {
+                setTimeout(() => window.updateCivicEmailRecipients(), 100);
             }
         } else {
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);

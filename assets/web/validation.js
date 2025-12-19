@@ -59,3 +59,48 @@ export async function findCorpForCurrentGPS() {
     }
     return { corpName: "", corpHandle: "" };
 }
+
+export async function loadWardPolygons() {
+    if (wardPolygons !== null) return wardPolygons;
+    try {
+        if (!CONFIG) CONFIG = await getConfig();
+        const res = await fetch(CONFIG.WARD_KML_URL);
+        if (!res.ok) return wardPolygons = [];
+        const kmlText = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(kmlText, "application/xml");
+        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+        wardPolygons = placemarks.map(pm => {
+            const simpleData = pm.getElementsByTagName("SimpleData");
+            let wardNo = "", wardName = "";
+            for (const sd of simpleData) {
+                const nameAttr = sd.getAttribute("name");
+                if (nameAttr === "ward_id") wardNo = sd.textContent.trim();
+                else if (nameAttr === "ward_name") wardName = sd.textContent.trim();
+            }
+            const coordsNode = pm.getElementsByTagName("coordinates")[0];
+            if (!coordsNode) return null;
+            const ring = coordsNode.textContent.trim()
+                .split(/\s+/)
+                .map(pair => pair.split(",").map(Number))
+                .map(([lon, lat]) => [lon, lat]);
+            return { wardNo, wardName, ring };
+        }).filter(Boolean);
+        return wardPolygons;
+    } catch (e) {
+        console.warn("Ward polygons failed:", e);
+        return wardPolygons = [];
+    }
+}
+
+export async function findWardForCurrentGPS() {
+    if (!window.currentGPS) return { wardNo: "", wardName: "" };
+    const polys = await loadWardPolygons();
+    const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
+    for (const p of polys) {
+        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
+            return { wardNo: p.wardNo, wardName: p.wardName };
+        }
+    }
+    return { wardNo: "", wardName: "" };
+}

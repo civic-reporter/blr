@@ -58,11 +58,59 @@ function getTrafficPSEmails(psName) {
 }
 
 /**
+ * Get contact information for a specific traffic police station
+ * @param {string} psName - Police station name
+ * @returns {Object|null} Object containing emails, mobile, and landline, or null if not found
+ */
+export function getTrafficPSContactInfo(psName) {
+    console.log('🔍 getTrafficPSContactInfo called with:', psName);
+    console.log('🔍 emailAuthoritiesConfig loaded:', !!emailAuthoritiesConfig);
+
+    if (!emailAuthoritiesConfig || !psName) {
+        console.log('🔍 No config or psName, returning null');
+        return null;
+    }
+
+    // Try different name variations to match
+    const namesToTry = [
+        psName,
+        psName.replace(' PS', ' Traffic PS'),  // "Whitefield PS" -> "Whitefield Traffic PS"
+        psName.replace('Traffic PS', 'PS'),     // "Whitefield Traffic PS" -> "Whitefield PS"
+        psName + ' Traffic PS',                 // Add if missing
+        psName.replace(/\s+PS$/, '') + ' Traffic PS'  // Clean and add
+    ];
+
+    console.log('🔍 Trying name variations:', namesToTry);
+
+    let psData = null;
+    let matchedName = null;
+
+    for (const name of namesToTry) {
+        if (emailAuthoritiesConfig.trafficPSEmails[name]) {
+            psData = emailAuthoritiesConfig.trafficPSEmails[name];
+            matchedName = name;
+            break;
+        }
+    }
+
+    console.log('🔍 PS data found:', !!psData, 'using name:', matchedName);
+
+    if (!psData) return null;
+
+    return {
+        emails: psData.emails || [],
+        mobile: psData.mobile || null,
+        landline: psData.landline || null
+    };
+}
+
+/**
  * Get all relevant email addresses based on ward and traffic PS
  * @param {Object} locationData - Object containing wardNo and trafficPS
+ * @param {string} flowType - 'civic' or 'traffic'
  * @returns {Array<string>} Array of unique email addresses
  */
-export function getRelevantEmails(locationData = {}) {
+export function getRelevantEmails(locationData = {}, flowType = 'traffic') {
     const { wardNo, trafficPS } = locationData;
     const emails = new Set();
 
@@ -71,7 +119,12 @@ export function getRelevantEmails(locationData = {}) {
         return [];
     }
 
-    const settings = emailAuthoritiesConfig.emailSettings || {};
+    let settings = emailAuthoritiesConfig.emailSettings || {};
+
+    // Support new format with separate civic/traffic settings
+    if (settings[flowType]) {
+        settings = settings[flowType];
+    }
 
     // Add ward emails if enabled
     if (settings.includeWardEmail && wardNo) {
@@ -86,9 +139,18 @@ export function getRelevantEmails(locationData = {}) {
     // Add default emails if enabled
     if (settings.includeDefaultEmail) {
         const defaultEmails = emailAuthoritiesConfig.defaultEmails || {};
-        Object.values(defaultEmails).forEach(emailList => {
-            emailList.forEach(email => emails.add(email));
-        });
+
+        // For traffic flow, use trafficControl; for civic, use GBAemail
+        if (flowType === 'traffic' && defaultEmails.trafficControl) {
+            defaultEmails.trafficControl.forEach(email => emails.add(email));
+        } else if (flowType === 'civic' && defaultEmails.GBAemail) {
+            defaultEmails.GBAemail.forEach(email => emails.add(email));
+        } else {
+            // Legacy: include all defaults
+            Object.values(defaultEmails).forEach(emailList => {
+                emailList.forEach(email => emails.add(email));
+            });
+        }
     }
 
     return Array.from(emails);
@@ -96,12 +158,20 @@ export function getRelevantEmails(locationData = {}) {
 
 /**
  * Format email subject
- * @param {string} category - Traffic issue category
+ * @param {string} category - Issue category
  * @param {string} location - Location description
+ * @param {string} flowType - 'civic' or 'traffic'
  * @returns {string} Formatted subject line
  */
-export function formatEmailSubject(category, location) {
-    const prefix = emailAuthoritiesConfig?.emailSettings?.subjectPrefix || '[Traffic Report]';
+export function formatEmailSubject(category, location, flowType = 'traffic') {
+    let settings = emailAuthoritiesConfig?.emailSettings || {};
+
+    // Support new format with separate civic/traffic settings
+    if (settings[flowType]) {
+        settings = settings[flowType];
+    }
+
+    const prefix = settings.subjectPrefix || (flowType === 'civic' ? '[Civic Report]' : '[Traffic Report]');
     const categoryText = category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return `${prefix} ${categoryText} - ${location}`;
 }
@@ -146,10 +216,22 @@ export function formatEmailBody(reportData) {
 
 /**
  * Check if email feature is enabled
+ * @param {string} flowType - 'civic' or 'traffic'
  * @returns {boolean}
  */
-export function isEmailEnabled() {
-    return emailAuthoritiesConfig?.emailSettings?.enabled === true;
+export function isEmailEnabled(flowType = 'traffic') {
+    if (!emailAuthoritiesConfig) return false;
+
+    const settings = emailAuthoritiesConfig.emailSettings;
+    if (!settings) return false;
+
+    // New format with separate civic/traffic settings
+    if (settings[flowType]) {
+        return settings[flowType].enabled === true;
+    }
+
+    // Legacy format (backward compatibility)
+    return settings.enabled === true;
 }
 
 /**
@@ -178,18 +260,20 @@ export async function initEmailModule() {
 /**
  * Prepare email data for backend
  * @param {Object} reportData - Report data
- * @param {Object} options - Additional options (userEmail for CC)
+ * @param {Object} options - Additional options (userEmail for CC, flowType)
  * @returns {Object|null} Email data ready to send or null if email disabled
  */
 export function prepareEmailData(reportData, options = {}) {
-    if (!isEmailEnabled()) {
+    const flowType = options.flowType || 'traffic';
+
+    if (!isEmailEnabled(flowType)) {
         return null;
     }
 
     const emails = getRelevantEmails({
         wardNo: reportData.wardNo,
         trafficPS: reportData.trafficPS
-    });
+    }, flowType);
 
     if (emails.length === 0) {
         console.warn('No relevant emails found for location');
@@ -198,10 +282,10 @@ export function prepareEmailData(reportData, options = {}) {
 
     const emailData = {
         to: emails,
-        subject: formatEmailSubject(reportData.category, reportData.location),
+        subject: formatEmailSubject(reportData.category, reportData.location, flowType),
         body: formatEmailBody(reportData),
         attachments: reportData.imageData ? [{
-            filename: 'traffic-issue.jpg',
+            filename: flowType === 'civic' ? 'civic-issue.jpg' : 'traffic-issue.jpg',
             data: reportData.imageData,
             contentType: 'image/jpeg'
         }] : []

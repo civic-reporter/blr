@@ -2,58 +2,11 @@ import { getConfig } from './config.js';
 import { findTrafficPSForLocation } from './traffic-validation.js';
 
 let CONFIG = null;
-import { findCorpForCurrentGPS } from './validation.js';
+import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
 import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing } from './utils.js';
 import { blurFacesInImage } from '../js/face-blur.js';
-import { initEmailModule, prepareEmailData, isEmailEnabled, getRelevantEmails, isValidEmail } from './email-authorities.js';
-
-let wardPolygons = null;
-
-async function loadWardPolygons() {
-    if (wardPolygons !== null) return wardPolygons;
-    try {
-        if (!CONFIG) CONFIG = await getConfig();
-        const res = await fetch(CONFIG.WARD_KML_URL);
-        if (!res.ok) return wardPolygons = [];
-        const kmlText = await res.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(kmlText, "application/xml");
-        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
-        wardPolygons = placemarks.map(pm => {
-            const simpleData = pm.getElementsByTagName("SimpleData");
-            let wardNo = "", wardName = "";
-            for (const sd of simpleData) {
-                const nameAttr = sd.getAttribute("name");
-                if (nameAttr === "ward_id") wardNo = sd.textContent.trim();
-                else if (nameAttr === "ward_name") wardName = sd.textContent.trim();
-            }
-            const coordsNode = pm.getElementsByTagName("coordinates")[0];
-            if (!coordsNode) return null;
-            const ring = coordsNode.textContent.trim()
-                .split(/\s+/)
-                .map(pair => pair.split(",").map(Number))
-                .map(([lon, lat]) => [lon, lat]);
-            return { wardNo, wardName, ring };
-        }).filter(Boolean);
-        return wardPolygons;
-    } catch (e) {
-        console.warn("Ward polygons failed:", e);
-        return wardPolygons = [];
-    }
-}
-
-async function findWardForCurrentGPS() {
-    if (!window.currentGPS) return { wardNo: "", wardName: "" };
-    const polys = await loadWardPolygons();
-    const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
-    for (const p of polys) {
-        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            return { wardNo: p.wardNo, wardName: p.wardName };
-        }
-    }
-    return { wardNo: "", wardName: "" };
-}
+import { initEmailModule, prepareEmailData, isEmailEnabled, getRelevantEmails, isValidEmail, getTrafficPSContactInfo } from './email-authorities.js';
 
 export async function submitTraffic() {
     // Validate location
@@ -141,7 +94,7 @@ export async function submitTraffic() {
     formData.append("sendEmail", shouldEmail ? "true" : "false");
 
     // If email is requested, add email data
-    if (shouldEmail && isEmailEnabled()) {
+    if (shouldEmail && isEmailEnabled('traffic')) {
         const reportData = {
             category: trafficCategory,
             description: trafficDesc,
@@ -156,7 +109,7 @@ export async function submitTraffic() {
             timestamp: new Date().toLocaleString()
         };
 
-        const emailData = prepareEmailData(reportData, { userEmail: userEmail });
+        const emailData = prepareEmailData(reportData, { userEmail: userEmail, flowType: 'traffic' });
         if (emailData) {
             formData.append("emailRecipients", JSON.stringify(emailData.to));
             formData.append("emailSubject", emailData.subject);
@@ -171,16 +124,8 @@ export async function submitTraffic() {
 
     try {
         if (!CONFIG) CONFIG = await getConfig();
-        console.log('🚀 Submitting to:', CONFIG.TRAFFIC_API_URL);
-        console.log('📧 Email fields in form:', {
-            sendEmail: formData.get('sendEmail'),
-            emailRecipients: formData.get('emailRecipients'),
-            emailSubject: formData.get('emailSubject')
-        });
         const res = await fetch(CONFIG.TRAFFIC_API_URL, { method: "POST", body: formData });
-        console.log('📡 Response status:', res.status);
         const raw = await res.text();
-        console.log('📡 Response body:', raw.slice(0, 500));
         let data;
         try {
             data = JSON.parse(raw);
@@ -221,6 +166,9 @@ export async function submitTraffic() {
 
             showStatus("", "");
             showSuccessScreen();
+
+            // Display location and PS info on success screen
+            displayTrafficSuccessInfo();
 
             // Display tweet link if available
             if (url && document.getElementById("tweetLinkContainer")) {
@@ -310,15 +258,17 @@ export async function updateEmailRecipients() {
         emailOption: !!emailOption,
         emailDetails: !!emailDetails,
         hasGPS: !!window.currentGPS,
-        isEnabled: isEmailEnabled()
+        isEnabled: isEmailEnabled('traffic')
     });
+
+    // Note: PS contact info is only shown on success page, not during form filling
 
     if (!emailOption) {
         console.warn('❌ emailOption element not found');
         return;
     }
 
-    if (!isEmailEnabled()) {
+    if (!isEmailEnabled('traffic')) {
         console.log('📧 Email feature disabled in config');
         emailOption.style.display = 'none';
         return;
@@ -326,23 +276,16 @@ export async function updateEmailRecipients() {
 
     // Show email option if we have a valid location
     if (window.currentGPS && isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
-        console.log('✅ Showing email option');
-        // Always show the email option container to prevent button jumping
         emailOption.style.display = 'block';
 
-        // Show/hide email details when checkbox is checked
         if (emailCheckbox && emailCheckbox.checked) {
             if (emailDetails) emailDetails.style.display = 'block';
 
             if (emailRecipients && emailList) {
-                const [{ trafficPS, psName }, { wardNo, wardName }] = await Promise.all([
-                    findTrafficPSForLocation(),
-                    findWardForCurrentGPS()
-                ]);
+                const { wardNo, wardName } = await findWardForCurrentGPS();
+                const { trafficPS } = await findTrafficPSForLocation();
 
-                console.log('📧 Location data:', { trafficPS, psName, wardNo, wardName });
                 const emails = getRelevantEmails({ wardNo, trafficPS: trafficPS });
-                console.log('📧 Found emails:', emails);
 
                 if (emails.length > 0) {
                     emailList.innerHTML = emails.map(email => `<li>📧 ${email}</li>`).join('');
@@ -355,5 +298,137 @@ export async function updateEmailRecipients() {
         }
     } else {
         emailOption.style.display = 'none';
+    }
+}
+
+// Display police station contact information with ward and corporation
+async function updatePSContactDisplay(psName) {
+    console.log('🚔 updatePSContactDisplay called with psName:', psName);
+
+    const psContactDiv = document.getElementById('psContactInfo');
+    console.log('🚔 psContactDiv found:', !!psContactDiv);
+
+    if (!psContactDiv) return;
+
+    // Get ward and corporation info
+    const [{ wardNo, wardName }, { corpName }] = await Promise.all([
+        findWardForCurrentGPS(),
+        findCorpForCurrentGPS()
+    ]);
+
+    if (!psName && !wardNo && !corpName) {
+        console.log('🚔 No location data, hiding contact info');
+        psContactDiv.style.display = 'none';
+        return;
+    }
+
+    let html = '';
+
+    // Add ward and corporation info
+    if (wardNo || wardName || corpName) {
+        html += '<div class="location-context">';
+        if (wardNo || wardName) {
+            html += '<p><strong>📍 Ward:</strong> ';
+            if (wardNo) html += `#${wardNo}`;
+            if (wardNo && wardName) html += ' - ';
+            if (wardName) html += wardName;
+            html += '</p>';
+        }
+        if (corpName) {
+            html += `<p><strong>🏛️ Corporation:</strong> ${corpName}</p>`;
+        }
+        html += '</div>';
+    }
+
+    // Add PS contact info
+    if (psName) {
+        const contactInfo = getTrafficPSContactInfo(psName);
+        console.log('🚔 Contact info retrieved:', contactInfo);
+
+        if (contactInfo && (contactInfo.mobile || contactInfo.landline)) {
+            html += '<div class="ps-contact-message">';
+            html += `<p><strong>For urgent issues, please reach out directly to ${psName}:</strong></p>`;
+
+            html += '<div class="ps-contact-numbers">';
+            if (contactInfo.mobile) {
+                html += `<a href="tel:${contactInfo.mobile}" class="ps-contact-link">📱 ${contactInfo.mobile}</a>`;
+            }
+            if (contactInfo.landline) {
+                html += `<a href="tel:${contactInfo.landline}" class="ps-contact-link">☎️ ${contactInfo.landline}</a>`;
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+    }
+
+    psContactDiv.innerHTML = html;
+    psContactDiv.style.display = html ? 'block' : 'none';
+    console.log('🚔 PS contact info displayed with ward/corp');
+}
+
+// Display ward, corporation and PS info on traffic success screen
+export async function displayTrafficSuccessInfo() {
+    if (!window.currentGPS || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
+        return;
+    }
+
+    const [{ trafficPS, psName }, { wardNo, wardName }, { corpName }] = await Promise.all([
+        findTrafficPSForLocation(),
+        findWardForCurrentGPS(),
+        findCorpForCurrentGPS()
+    ]);
+
+    // Display location info (ward and corporation)
+    const successInfoDiv = document.getElementById('successLocationInfo');
+    if (successInfoDiv && (wardNo || corpName)) {
+        let html = '';
+
+        if (wardNo && wardName) {
+            html += `<div><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
+        }
+
+        if (corpName) {
+            html += `<div><strong>🏛️ Corporation:</strong> ${corpName}</div>`;
+        }
+
+        if (trafficPS) {
+            html += `<div><strong>🚔 Traffic PS:</strong> ${trafficPS}</div>`;
+        }
+
+        // Add Google Maps link
+        const lat = window.currentGPS.lat;
+        const lon = window.currentGPS.lon;
+        const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+        html += `<div><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color); text-decoration: none;"><strong>🗺️ View on Google Maps</strong></a></div>`;
+
+        successInfoDiv.innerHTML = html;
+        successInfoDiv.style.display = 'block';
+    }
+
+    // Display PS contact info
+    const successPSDiv = document.getElementById('successPSContactInfo');
+    if (successPSDiv && psName) {
+        const contactInfo = getTrafficPSContactInfo(psName);
+
+        if (contactInfo && (contactInfo.mobile || contactInfo.landline)) {
+            let html = '<div class="ps-contact-message">';
+            html += `<p><strong>For urgent issues, please reach out directly to ${psName}:</strong></p>`;
+
+            if (contactInfo.mobile || contactInfo.landline) {
+                html += '<div class="ps-contact-numbers">';
+                if (contactInfo.mobile) {
+                    html += `<a href="tel:${contactInfo.mobile}" class="ps-contact-link">📱 ${contactInfo.mobile}</a>`;
+                }
+                if (contactInfo.landline) {
+                    html += `<a href="tel:${contactInfo.landline}" class="ps-contact-link">☎️ ${contactInfo.landline}</a>`;
+                }
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            successPSDiv.innerHTML = html;
+            successPSDiv.style.display = 'block';
+        }
     }
 }
