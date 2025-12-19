@@ -314,7 +314,7 @@ While in sandbox mode, you can only send to verified emails.
 
 **Verify Test Recipient:**
 1. Go to **SES** → **Verified identities**
-2. Add your test email (e.g., `anupgnair@msn.com`)
+2. Add your test email (e.g., `nherenow7@gmail.com`)
 3. Verify it via the email link
 
 **Test Email Sending:**
@@ -322,7 +322,7 @@ While in sandbox mode, you can only send to verified emails.
 # Test via AWS CLI
 aws ses send-email \
   --from traffic@yourdomain.com \
-  --destination ToAddresses=anupgnair@msn.com \
+  --destination ToAddresses=nherenow7@gmail.com \
   --message Subject={Data="Test Email"},Body={Text={Data="This is a test"}}
 ```
 
@@ -339,7 +339,7 @@ aws ses send-email \
   "headers": {
     "content-type": "multipart/form-data; boundary=----WebKitFormBoundary"
   },
-  "body": "------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"category\"\r\n\r\nTraffic Signal Issue\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"lat\"\r\n\r\n12.9716\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"lon\"\r\n\r\n77.5946\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"sendEmail\"\r\n\r\ntrue\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailRecipients\"\r\n\r\n[\"anupgnair@msn.com\"]\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailSubject\"\r\n\r\nTest Traffic Report\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailBody\"\r\n\r\nThis is a test report\r\n------WebKitFormBoundary--",
+  "body": "------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"category\"\r\n\r\nTraffic Signal Issue\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"lat\"\r\n\r\n12.9716\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"lon\"\r\n\r\n77.5946\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"sendEmail\"\r\n\r\ntrue\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailRecipients\"\r\n\r\n[\"nherenow7@gmail.com\"]\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailSubject\"\r\n\r\nTest Traffic Report\r\n------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"emailBody\"\r\n\r\nThis is a test report\r\n------WebKitFormBoundary--",
   "isBase64Encoded": false
 }
 ```

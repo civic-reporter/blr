@@ -3,19 +3,19 @@
         "1": {
             "wardName": "Yelahanaka",
             "emails": [
-                "anupgnair@msn.com"
+                "nherenow7@gmail.com"
             ]
         },
         "2": {
             "wardName": "Jala Hobli",
             "emails": [
-                "anupgnair@msn.com"
+                "nherenow7@gmail.com"
             ]
         },
         "3": {
             "wardName": "Vidyaranyapura",
             "emails": [
-                "anupgnair@msn.com"
+                "nherenow7@gmail.com"
             ]
         }
     },
@@ -386,15 +386,15 @@
     },
     "defaultEmails": {
         "trafficControl": [
-            "anupgnair@msn.com"
+            "nherenow7@gmail.com"
         ],
         "GBAemail": [
-            "anupgnair@msn.com"
+            "nherenow7@gmail.com"
         ]
     },
     "emailSettings": {
         "civic": {
-            "enabled": true,
+            "enabled": false,
             "maxRecipientsPerEmail": 5,
             "includeWardEmail": false,
             "includeTrafficPSEmail": false,
@@ -402,26 +402,26 @@
             "subjectPrefix": "[ZC Civic Report]"
         },
         "traffic": {
-            "enabled": true,
+            "enabled": false,
             "maxRecipientsPerEmail": 5,
             "includeWardEmail": false,
             "includeTrafficPSEmail": false,
-            "includeDefaultEmail": true,
+            "includeDefaultEmail": false,
             "subjectPrefix": "[ZC Traffic Report]"
         }
     },
     "submissionSettings": {
         "civic": {
-            "enableTweet": false,
-            "requireTweet": false,
-            "enableEmail": true,
-            "requireEmail": true
+            "enableTweet": true,
+            "requireTweet": true,
+            "enableEmail": false,
+            "requireEmail": false
         },
         "traffic": {
-            "enableTweet": false,
-            "requireTweet": false,
-            "enableEmail": true,
-            "requireEmail": true
+            "enableTweet": true,
+            "requireTweet": true,
+            "enableEmail": false,
+            "requireEmail": false
         }
     }
 }
