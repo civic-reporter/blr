@@ -448,16 +448,39 @@ h2 {
 /* Success Screen Location Info */
 .success-location-info {
     margin: 1rem 0;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 1.5rem;
+    background: var(--x-bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--x-border);
+    box-shadow: var(--shadow);
+    font-size: 0.95rem;
     text-align: left;
+    transition: all 0.3s ease;
+}
+
+.success-location-info:hover {
+    box-shadow: var(--shadow-hover);
 }
 
 .success-location-info div {
     line-height: 1.8;
     margin: 0.25rem 0;
+    color: var(--x-text-primary);
+}
+
+.success-location-info strong {
+    color: var(--x-text-primary);
+    font-weight: 600;
+}
+
+.success-location-info a {
+    color: var(--x-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.success-location-info a:hover {
+    text-decoration: underline;
 }
 
 /* Email authorities styling */
@@ -666,11 +689,39 @@ h2 {
 }
 
 .tweet-link-box {
-    background: var(--x-bg-secondary);
+    background: var(--x-bg-card);
     border: 1px solid var(--x-border);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.5rem;
     margin: 2rem 0;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.tweet-link-box:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.tweet-link-box h3 {
+    color: var(--x-text-primary);
+    margin-top: 0;
+    font-weight: 600;
+}
+
+.tweet-link-box p {
+    color: var(--x-text-primary);
+    line-height: 1.6;
+}
+
+.tweet-link-box a {
+    color: var(--x-accent);
+    text-decoration: none;
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.tweet-link-box a:hover {
+    text-decoration: underline;
 }
 
 .success-actions {
