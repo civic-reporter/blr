@@ -55,6 +55,12 @@ export async function extractGPSFromExif(dataUrl) {
                     console.log('📧 GPS confirmed, currentGPS:', window.currentGPS);
                     window.updateEmailRecipients();
                 }, 200);
+            } else if (window.isCivicFlow && window.updateCivicEmailRecipients) {
+                console.log('📧 Scheduling updateCivicEmailRecipients from GPS');
+                setTimeout(() => {
+                    console.log('📧 GPS confirmed for civic, currentGPS:', window.currentGPS);
+                    window.updateCivicEmailRecipients();
+                }, 200);
             }
 
             return { lat, lon };

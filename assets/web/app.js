@@ -4,11 +4,14 @@ import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
 import { shareToGBA } from './twitter.js';
 import { resetApp } from './reset.js';
+import { initEmailModule, isValidEmail } from './email-authorities.js';
+import { updateCivicEmailRecipients, displaySuccessLocationInfo } from './civic-email.js';
 
 console.log('✅ app.js imports loaded');
 
 window.currentImageFile = null;
 window.currentGPS = null;
+window.isCivicFlow = true; // Flag to differentiate from traffic flow
 
 console.log('📋 Document ready state:', document.readyState);
 
@@ -16,10 +19,47 @@ function initApp() {
     console.log('🚀 Civic app initializing...');
     cacheUIElements();
 
+    // Initialize email module
+    initEmailModule().then(success => {
+        if (success) {
+            console.log('✅ Email module initialized');
+        } else {
+            console.log('⚠️ Email module not available');
+        }
+    });
+
     const checkbox = document.getElementById("confirmImageCheck");
     if (checkbox) {
         checkbox.addEventListener("change", updateTweetButtonState);
         console.log("✅ Checkbox listener added");
+    }
+
+    // Email checkbox listeners
+    const emailCheckbox = document.getElementById("emailAuthoritiesCheck");
+    if (emailCheckbox) {
+        emailCheckbox.addEventListener("change", () => {
+            if (window.updateCivicEmailRecipients) {
+                window.updateCivicEmailRecipients();
+            }
+        });
+        console.log("✅ Email checkbox listener added");
+    }
+
+    const ccCheckbox = document.getElementById("ccMeCheck");
+    const userEmailInput = document.getElementById("userEmailInput");
+    if (ccCheckbox && userEmailInput) {
+        ccCheckbox.addEventListener("change", () => {
+            if (ccCheckbox.checked) {
+                userEmailInput.style.display = 'block';
+                userEmailInput.focus();
+            } else {
+                userEmailInput.style.display = 'none';
+                userEmailInput.value = '';
+                const validationMsg = document.getElementById('emailValidationMsg');
+                if (validationMsg) validationMsg.style.display = 'none';
+            }
+        });
+        console.log("✅ CC checkbox listener added");
     }
 
     const issueType = document.getElementById("issueType");
@@ -62,6 +102,13 @@ function initApp() {
     initMap();
     console.log('📤 Calling showUploadOptions()...');
     showUploadOptions();
+
+    // Make functions available globally for gps.js, map.js, and twitter.js
+    window.updateCivicEmailRecipients = updateCivicEmailRecipients;
+    window.displaySuccessLocationInfo = displaySuccessLocationInfo;
+    console.log('📧 window.updateCivicEmailRecipients assigned:', typeof window.updateCivicEmailRecipients);
+    console.log('📍 window.displaySuccessLocationInfo assigned:', typeof window.displaySuccessLocationInfo);
+
     console.log('✅ Civic app initialization complete');
 }
 

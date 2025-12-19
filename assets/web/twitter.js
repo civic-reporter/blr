@@ -1,43 +1,12 @@
 import { getConfig, getMlaHandles } from './config.js';
-import { findCorpForCurrentGPS } from './validation.js';
+import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
 
 let CONFIG = null;
 let MLA_HANDLES = null;
 import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing, loadGeoLayers } from './utils.js';
 
-let wardPolygons = null;
 let constPolygons = null;
-
-async function loadWardPolygons() {
-    if (wardPolygons !== null) return wardPolygons;
-    try {
-        if (!CONFIG) CONFIG = await getConfig();
-        const feats = await loadGeoLayers(CONFIG.WARD_KML_URL);
-        wardPolygons = feats.map(f => {
-            const p = f.props || {};
-            const wardNo = (p.ward_id || p.WARD_ID || p.wardNo || "").toString();
-            const wardName = (p.ward_name || p.WARD_NAME || p.name || "").toString();
-            return { wardNo, wardName, ring: f.ring };
-        }).filter(Boolean);
-        return wardPolygons;
-    } catch (e) {
-        console.warn("Ward polygons failed:", e);
-        return wardPolygons = [];
-    }
-}
-
-async function findWardForCurrentGPS() {
-    if (!window.currentGPS) return { wardNo: "", wardName: "" };
-    const polys = await loadWardPolygons();
-    const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
-    for (const p of polys) {
-        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            return { wardNo: p.wardNo, wardName: p.wardName };
-        }
-    }
-    return { wardNo: "", wardName: "" };
-}
 
 async function loadConstituencyPolygons() {
     if (constPolygons !== null) return constPolygons;
@@ -163,6 +132,11 @@ export async function shareToGBA() {
 
             showStatus("", "");
             showSuccessScreen();
+
+            // Display location info on success screen
+            if (window.displaySuccessLocationInfo) {
+                window.displaySuccessLocationInfo();
+            }
 
             if (url && document.getElementById("tweetLinkContainer")) {
                 document.getElementById("tweetLinkContainer").innerHTML = `

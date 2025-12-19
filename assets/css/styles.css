@@ -393,6 +393,73 @@ h2 {
     accent-color: var(--x-accent);
 }
 
+/* Police Station Contact Info Styling */
+.ps-contact-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--info-bg, #e3f2fd);
+    border-radius: 8px;
+    border: 1px solid var(--info-border, #2196f3);
+}
+
+.ps-contact-message {
+    font-size: 0.95rem;
+}
+
+.ps-contact-message p {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.ps-contact-numbers {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.ps-contact-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--primary-color, #2196f3);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.ps-contact-link:hover {
+    background: var(--primary-dark, #1976d2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ward and Corporation Info Styling */
+.ward-corp-info {
+    margin: 0.5rem 0;
+}
+
+.ward-corp-info div {
+    line-height: 1.6;
+}
+
+/* Success Screen Location Info */
+.success-location-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.success-location-info div {
+    line-height: 1.8;
+    margin: 0.25rem 0;
+}
+
 /* Email authorities styling */
 .email-option {
     margin: 1rem 0;

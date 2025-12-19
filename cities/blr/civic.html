@@ -113,6 +113,47 @@
             only)</strong>.</small>
       </div>
 
+      <!-- Helpline Information (hidden during form, shown on success) -->
+      <div class="ps-contact-info" style="display:none;">
+        <div id="wardCorpInfo" class="ward-corp-info" style="display:none;"></div>
+        <div class="ps-contact-message">
+          <p><strong>For urgent civic issues, please also call the official helpline:</strong></p>
+          <div class="ps-contact-numbers">
+            <a href="tel:1533" class="ps-contact-link">☎️ 1533</a>
+          </div>
+          <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+            Call to officially register your complaint with authorities
+          </small>
+        </div>
+      </div>
+
+      <!-- Email authorities option -->
+      <div id="emailOption" style="display:none;" class="email-option">
+        <label class="email-check">
+          <input type="checkbox" id="emailAuthoritiesCheck" />
+          <span data-i18n="emailAuthorities">
+            📧 Would you like to email the authorities as well?
+          </span>
+        </label>
+
+        <div id="emailDetails" style="display:none;" class="email-details">
+          <div id="emailRecipients" class="email-recipients">
+            <small data-i18n="emailWillBeSentTo">Notifications will be sent to the following addresses:</small>
+            <ul id="emailList"></ul>
+          </div>
+
+          <div class="user-email-section">
+            <label class="email-check-cc">
+              <input type="checkbox" id="ccMeCheck" />
+              <span data-i18n="ccMe">Would you like to receive a copy of this email?</span>
+            </label>
+            <input type="email" id="userEmailInput" class="email-input" placeholder="your.email@example.com"
+              data-i18n-placeholder="yourEmail" style="display:none;" maxlength="100" />
+            <small id="emailValidationMsg" class="validation-msg" style="display:none;"></small>
+          </div>
+        </div>
+      </div>
+
       <button id="tweetBtn" disabled data-i18n="postIssue">
         🚨 Post Issue via @zenc_civic
       </button>
@@ -132,6 +173,22 @@
 
         <!-- Tweet URL + copy button -->
         <div id="tweetLinkContainer" class="tweet-link-box"></div>
+
+        <!-- Location Info on Success Screen -->
+        <div id="successLocationInfo" class="success-location-info" style="display:none;"></div>
+
+        <!-- Helpline Info on Success Screen -->
+        <div class="ps-contact-info" style="margin: 1.5rem 0;">
+          <div class="ps-contact-message">
+            <p><strong>For urgent civic issues, please also call the official helpline:</strong></p>
+            <div class="ps-contact-numbers">
+              <a href="tel:1533" class="ps-contact-link">☎️ 1533</a>
+            </div>
+            <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+              Call to officially register your complaint with authorities
+            </small>
+          </div>
+        </div>
 
         <div class="success-actions">
           <button id="submitAnotherBtn" class="success-btn primary">

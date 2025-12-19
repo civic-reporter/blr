@@ -20,251 +20,394 @@
         }
     },
     "trafficPSEmails": {
-        "Cubbon Park Traffic PS": {
+        "Mahadevapura Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "mahadepura@ksp.gov.in"
+            ],
+            "mobile": "9449296253",
+            "landline": "080-22943389"
         },
-        "Halasurgate Traffic PS": {
+        "Whitefield Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "High Grounds Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Sadashivanagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Ashokanagara Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Wilsongarden Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Halasur Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "K.R. Puram Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Shivajinagar Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Pulakeshinagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Banaswadi Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Kadugondana Halli Traffic PS (K.G Halli)": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Adugodi Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
+                "whitefieldtrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801831",
+            "landline": "080-22943706"
         },
         "H.A.L Airport Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "airporttrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801817",
+            "landline": "080-22942678"
         },
-        "Madiwala Traffic PS": {
+        "K.R. Puram Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "krpuramtrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801818",
+            "landline": "080-22942927"
         },
-        "Mico layout Traffic PS": {
+        "Kadugondana Halli Traffic PS (K.G Halli)": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "kghallitrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801584",
+            "landline": "080-22942969"
         },
-        "Electronic City Traffic PS": {
+        "Banaswadi Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "bwaditrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801819",
+            "landline": "080-22942217"
         },
-        "Whitefield Traffic  PS": {
+        "Pulakeshinagar Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "ftowntrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801820",
+            "landline": "080-22942924"
         },
-        "Hulimavu Traffic PS": {
+        "Halasur Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "H.S.R.Layout Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Chikkapete Traffic ps": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Upparpet Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "City Market Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Magadi Road Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Vijayanagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Byatarayanapura Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Kamakshipalya Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Kengeri Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Malleshwarm  Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Rajaji Nagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Yeshwanthapura Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Peenya  Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Jalahalli PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "V.V. Puram Traffic  PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Jayanagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Basavanagudi  Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Banashankari Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Kumaraswamy Layout Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "R.T. Nagar Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Chikkajala Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Devanahalli Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Hebbal Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Yelahanka Traffic PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Chikkabanavara PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
-        },
-        "Hennur PS": {
-            "emails": [
-                "anupgnair@msn.com"
-            ]
+                "halasoortrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801815",
+            "landline": "080-22942659"
         },
         "Jeevan Bheemanagar Traffic PS": {
             "emails": [
-                "anupgnair@msn.com"
-            ]
+                "inagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801816",
+            "landline": "080-22942658"
+        },
+        "Shivajinagar Traffic PS": {
+            "emails": [
+                "ftowntrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801821",
+            "landline": "080-22942920"
+        },
+        "Sheshadripuram Traffic PS": {
+            "emails": [
+                "sspuramtraffic@gmail.com"
+            ],
+            "mobile": "9480801138",
+            "landline": "080-22943774"
+        },
+        "Sadashivanagar Traffic PS": {
+            "emails": [
+                "ssnagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801830",
+            "landline": "080-22942804"
+        },
+        "Wilsongarden Traffic PS": {
+            "emails": [
+                "wgardentrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801826",
+            "landline": "080-22943120"
+        },
+        "High Grounds Traffic PS": {
+            "emails": [
+                "hgroundtrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801827",
+            "landline": "080-22942916"
+        },
+        "Halasurgate Traffic PS": {
+            "emails": [
+                "hgatetrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801829",
+            "landline": "080-22942660"
+        },
+        "Cubbon Park Traffic PS": {
+            "emails": [
+                "cparktrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801828",
+            "landline": "080-22942675"
+        },
+        "Ashokanagara Traffic PS": {
+            "emails": [
+                "anagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801823",
+            "landline": "080-22943122"
+        },
+        "Kamakshipalya Traffic PS": {
+            "emails": [
+                "kmpalyatrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801921",
+            "landline": "080-22943009"
+        },
+        "Vijayanagar Traffic PS": {
+            "emails": [
+                "vjnagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801920",
+            "landline": "080-22942809"
+        },
+        "Magadi Road Traffic PS": {
+            "emails": [
+                "mroadtrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801918",
+            "landline": "080-22942672"
+        },
+        "Jnanabharathi Traffic PS": {
+            "emails": [
+                "jnanabharathitrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801137",
+            "landline": "080-22942271"
+        },
+        "Kengeri Traffic PS": {
+            "emails": [
+                "kengeritrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9480806021",
+            "landline": "080-22943013"
+        },
+        "Byatarayanapura Traffic PS": {
+            "emails": [
+                "bypuratrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801919",
+            "landline": "080-22942657"
+        },
+        "City Market Traffic PS": {
+            "emails": [
+                "citymarkettrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801917",
+            "landline": "080-22943006"
+        },
+        "Upparpet Traffic PS": {
+            "emails": [
+                "upettrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801915",
+            "landline": "080-22942665"
+        },
+        "Chikkapete Traffic ps": {
+            "emails": [
+                "chickpettrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801916",
+            "landline": "080-22942664"
+        },
+        "Hennur PS": {
+            "emails": [
+                "hennurtrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9449295596",
+            "landline": "080-22943732"
+        },
+        "Devanahalli Traffic PS": {
+            "emails": [
+                "bialtrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801074",
+            "landline": "080-27681100"
+        },
+        "Chikkajala Traffic PS": {
+            "emails": [
+                "chikkajalatrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801934",
+            "landline": "080-22943186"
+        },
+        "Yelahanka Traffic PS": {
+            "emails": [
+                "ylktrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801933",
+            "landline": "080-22943024"
+        },
+        "R.T. Nagar Traffic PS": {
+            "emails": [
+                "rtnagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801932",
+            "landline": "080-22943813"
+        },
+        "Hebbal Traffic PS": {
+            "emails": [
+                "hebbaltrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801931",
+            "landline": "080-22943023"
+        },
+        "Sanjaynagar Traffic PS": {
+            "emails": [
+                "sanjaynagartrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801134",
+            "landline": "080-22943035"
+        },
+        "Chikkabanavara PS": {
+            "emails": [
+                "cbanavartrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801134",
+            "landline": "080-22943516"
+        },
+        "Jalahalli PS": {
+            "emails": [
+                "jalahallitrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801558",
+            "landline": "080-22943020"
+        },
+        "Peenya Traffic PS": {
+            "emails": [
+                "peenyatrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801923",
+            "landline": "080-22942674"
+        },
+        "Yeshwanthapura Traffic PS": {
+            "emails": [
+                "yspuratrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801925",
+            "landline": "080-22942661"
+        },
+        "Rajaji Nagar Traffic PS": {
+            "emails": [
+                "rnagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801924",
+            "landline": "080-22942807"
+        },
+        "H.S.R.Layout Traffic PS": {
+            "emails": [
+                "hsrlyttrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801426",
+            "landline": "080-25747574"
+        },
+        "Electronic City Traffic PS": {
+            "emails": [
+                "electroniccitytrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801832",
+            "landline": "080-22943718"
+        },
+        "Bellanduru Traffic PS": {
+            "emails": [
+                "bellandurutrfbcp@ksp.gov.in"
+            ],
+            "mobile": "9449296666",
+            "landline": "080-22943513"
+        },
+        "Hulimavu Traffic PS": {
+            "emails": [
+                "hulimavutrfeastbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801553",
+            "landline": "080-22943470"
+        },
+        "Mico layout Traffic PS": {
+            "emails": [
+                "micolyttrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801825",
+            "landline": "080-22943118"
+        },
+        "Adugodi Traffic PS": {
+            "emails": [
+                "adugoditrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801822",
+            "landline": "080-22943125"
+        },
+        "Madiwala Traffic PS": {
+            "emails": [
+                "madivalatrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9741908957",
+            "landline": "080-22942805"
+        },
+        "J P Nagar Traffic PS": {
+            "emails": [
+                "jpnagartrafficps@ksp.gov.in"
+            ],
+            "mobile": "9480801136",
+            "landline": "080-22943192"
+        },
+        "Thalagattapura Traffic PS": {
+            "emails": [
+                "tgpuratrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9449296259",
+            "landline": "080-22942862"
+        },
+        "Kumaraswamy Layout Traffic PS": {
+            "emails": [
+                "kslyttrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801930",
+            "landline": "080-22943109"
+        },
+        "Jayanagar Traffic PS": {
+            "emails": [
+                "jnagartrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801927",
+            "landline": "080-22942669"
+        },
+        "Banashankari Traffic PS": {
+            "emails": [
+                "bsktrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "7760412526",
+            "landline": "080-22943108"
+        },
+        "Basavanagudi Traffic PS": {
+            "emails": [
+                "bguditrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "8022942668",
+            "landline": "080-22942668"
+        },
+        "V.V. Puram Traffic PS": {
+            "emails": [
+                "cmpettrafficbcp@ksp.gov.in"
+            ],
+            "mobile": "9480801926"
         }
     },
     "defaultEmails": {
         "trafficControl": [
             "anupgnair@msn.com"
         ],
-        "bbmpGeneral": [
+        "GBAemail": [
             "anupgnair@msn.com"
         ]
     },
     "emailSettings": {
-        "enabled": true,
-        "maxRecipientsPerEmail": 5,
-        "includeWardEmail": false,
-        "includeTrafficPSEmail": true,
-        "includeDefaultEmail": false,
-        "subjectPrefix": "[Traffic Report]"
+        "civic": {
+            "enabled": true,
+            "maxRecipientsPerEmail": 5,
+            "includeWardEmail": false,
+            "includeTrafficPSEmail": false,
+            "includeDefaultEmail": true,
+            "subjectPrefix": "[ZC Civic Report]"
+        },
+        "traffic": {
+            "enabled": false,
+            "maxRecipientsPerEmail": 5,
+            "includeWardEmail": false,
+            "includeTrafficPSEmail": false,
+            "includeDefaultEmail": true,
+            "subjectPrefix": "[ZC Traffic Report]"
+        }
     }
 }
