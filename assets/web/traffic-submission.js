@@ -285,7 +285,7 @@ export async function updateEmailRecipients() {
                 const { wardNo, wardName } = await findWardForCurrentGPS();
                 const { trafficPS } = await findTrafficPSForLocation();
 
-                const emails = getRelevantEmails({ wardNo, trafficPS: trafficPS });
+                const emails = getRelevantEmails({ wardNo, trafficPS: trafficPS }, 'traffic');
 
                 if (emails.length > 0) {
                     emailList.innerHTML = emails.map(email => `<li>📧 ${email}</li>`).join('');

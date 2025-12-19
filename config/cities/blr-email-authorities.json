@@ -402,7 +402,7 @@
             "subjectPrefix": "[ZC Civic Report]"
         },
         "traffic": {
-            "enabled": false,
+            "enabled": true,
             "maxRecipientsPerEmail": 5,
             "includeWardEmail": false,
             "includeTrafficPSEmail": false,
