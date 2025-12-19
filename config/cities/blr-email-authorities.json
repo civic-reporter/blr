@@ -409,5 +409,19 @@
             "includeDefaultEmail": true,
             "subjectPrefix": "[ZC Traffic Report]"
         }
+    },
+    "submissionSettings": {
+        "civic": {
+            "enableTweet": false,
+            "requireTweet": false,
+            "enableEmail": true,
+            "requireEmail": true
+        },
+        "traffic": {
+            "enableTweet": false,
+            "requireTweet": false,
+            "enableEmail": true,
+            "requireEmail": true
+        }
     }
 }
