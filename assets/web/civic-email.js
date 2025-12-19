@@ -81,24 +81,27 @@ export async function displaySuccessLocationInfo() {
         return;
     }
 
-    let html = '';
+    let html = '<div style="margin: 1rem 0; padding: 1rem; background: var(--info-bg, #e3f2fd); border-radius: 8px; border: 1px solid var(--info-border, #2196f3);">';
 
     if (wardNo && wardName) {
-        html += `<div><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
+        html += `<div style="margin-bottom: 0.5rem;"><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
     }
 
     if (corpName) {
-        html += `<div><strong>🏛️ Corporation:</strong> ${corpName}</div>`;
+        html += `<div style="margin-bottom: 0.5rem;"><strong>🏛️ Corporation:</strong> ${corpName}</div>`;
     }
 
     // Add Google Maps link
     const lat = window.currentGPS.lat;
     const lon = window.currentGPS.lon;
     const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-    html += `<div><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color); text-decoration: none;"><strong>🗺️ View on Google Maps</strong></a></div>`;
+    html += `<div style="margin-top: 0.75rem;"><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color); text-decoration: none;"><strong>🗺️ View on Google Maps</strong></a></div>`;
 
     // Add helpline info
-    html += `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);"><strong>For urgent civic issues, call:</strong> <a href="tel:1533" style="color: var(--primary-color); text-decoration: none;">☎️ 1533</a></div>`;
+    html += `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--info-border, #2196f3);"><strong>For urgent civic issues, call:</strong> <a href="tel:1533" style="color: var(--primary-color); text-decoration: none; margin-left: 0.5rem;">☎️ 1533</a></div>`;
+    html += '<small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">Call to officially register your complaint with authorities</small>';
+
+    html += '</div>';
 
     successInfoDiv.innerHTML = html;
     successInfoDiv.style.display = 'block';
