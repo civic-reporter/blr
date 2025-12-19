@@ -137,6 +137,9 @@ export async function submitTraffic() {
             wasSuccess = true;
             const url = data.tweetUrl || data.tweet_url || "";
 
+            // Save GPS data before clearing for success screen display
+            const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
+
             ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
@@ -166,6 +169,9 @@ export async function submitTraffic() {
 
             showStatus("", "");
             showSuccessScreen();
+
+            // Restore GPS temporarily for success screen display
+            window.currentGPS = savedGPS;
 
             // Display location and PS info on success screen
             displayTrafficSuccessInfo();
