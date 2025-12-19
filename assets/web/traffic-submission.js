@@ -368,7 +368,10 @@ async function updatePSContactDisplay(psName) {
 
 // Display ward, corporation and PS info on traffic success screen
 export async function displayTrafficSuccessInfo() {
+    console.log('🎯 displayTrafficSuccessInfo called');
+
     if (!window.currentGPS || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
+        console.log('⚠️ No GPS or not in GBA');
         return;
     }
 
@@ -378,8 +381,12 @@ export async function displayTrafficSuccessInfo() {
         findCorpForCurrentGPS()
     ]);
 
+    console.log('🎯 Success info data:', { trafficPS, psName, wardNo, wardName, corpName });
+
     // Display location info (ward and corporation)
     const successInfoDiv = document.getElementById('successLocationInfo');
+    console.log('🎯 successLocationInfo div found:', !!successInfoDiv);
+
     if (successInfoDiv && (wardNo || corpName)) {
         let html = '';
 
@@ -407,8 +414,11 @@ export async function displayTrafficSuccessInfo() {
 
     // Display PS contact info
     const successPSDiv = document.getElementById('successPSContactInfo');
+    console.log('🎯 successPSContactInfo div found:', !!successPSDiv, 'psName:', psName);
+
     if (successPSDiv && psName) {
         const contactInfo = getTrafficPSContactInfo(psName);
+        console.log('🎯 PS contact info:', contactInfo);
 
         if (contactInfo && (contactInfo.mobile || contactInfo.landline)) {
             let html = '<div class="ps-contact-message">';

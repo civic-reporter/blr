@@ -280,9 +280,13 @@ export function prepareEmailData(reportData, options = {}) {
         return null;
     }
 
+    // Use category for traffic, issueType for civic
+    const category = reportData.category || reportData.issueType || 'Issue';
+    const location = reportData.location || reportData.description || 'Location on map';
+
     const emailData = {
         to: emails,
-        subject: formatEmailSubject(reportData.category, reportData.location, flowType),
+        subject: formatEmailSubject(category, location, flowType),
         body: formatEmailBody(reportData),
         attachments: reportData.imageData ? [{
             filename: flowType === 'civic' ? 'civic-issue.jpg' : 'traffic-issue.jpg',
