@@ -47,6 +47,16 @@ export async function extractGPSFromExif(dataUrl) {
             }
 
             showLocation();
+
+            // Update email recipients after GPS is confirmed (with delay to ensure GPS is set)
+            if (window.isTrafficFlow && window.updateEmailRecipients) {
+                console.log('📧 Scheduling updateEmailRecipients from GPS');
+                setTimeout(() => {
+                    console.log('📧 GPS confirmed, currentGPS:', window.currentGPS);
+                    window.updateEmailRecipients();
+                }, 200);
+            }
+
             return { lat, lon };
         }
     } catch (e) {

@@ -143,6 +143,11 @@ export async function handleMapClick(e) {
     ensureLocationVisible();
     showStatus(`✅ Clicked: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
     updateTweetButtonState();
+
+    // Update email recipients for traffic flow
+    if (window.isTrafficFlow && window.updateEmailRecipients) {
+        setTimeout(() => window.updateEmailRecipients(), 100);
+    }
 }
 
 export function placeMarker() {
@@ -172,6 +177,11 @@ export function placeMarker() {
             updateGpsDisplay();
             showStatus(`✅ Dragged: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
             updateTweetButtonState();
+
+            // Update email recipients when marker is dragged (traffic flow)
+            if (window.isTrafficFlow && window.updateEmailRecipients) {
+                setTimeout(() => window.updateEmailRecipients(), 100);
+            }
         } else {
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
             showStatus("❌ Outside GBA jurisdiction", "error");

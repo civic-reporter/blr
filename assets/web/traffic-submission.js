@@ -6,6 +6,7 @@ import { findCorpForCurrentGPS } from './validation.js';
 import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing } from './utils.js';
 import { blurFacesInImage } from '../js/face-blur.js';
+import { initEmailModule, prepareEmailData, isEmailEnabled, getRelevantEmails, isValidEmail } from './email-authorities.js';
 
 let wardPolygons = null;
 
@@ -91,6 +92,28 @@ export async function submitTraffic() {
     // Image is already blurred from upload
     const imageToSubmit = window.currentImageFile;
 
+    // Check if user wants to email authorities
+    const emailCheckbox = document.getElementById("emailAuthoritiesCheck");
+    const shouldEmail = emailCheckbox && emailCheckbox.checked;
+
+    // Check if user wants CC
+    const ccCheckbox = document.getElementById("ccMeCheck");
+    const userEmailInput = document.getElementById("userEmailInput");
+    const userEmail = (ccCheckbox && ccCheckbox.checked && userEmailInput) ? userEmailInput.value.trim() : "";
+
+    // Validate user email if CC is requested
+    if (shouldEmail && ccCheckbox && ccCheckbox.checked) {
+        if (!userEmail || !isValidEmail(userEmail)) {
+            showStatus("❌ Please enter a valid email address for CC.", "error");
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "🚦 Report";
+                submitBtn.classList.remove("loading");
+            }
+            return;
+        }
+    }
+
     // Find traffic PS, ward, and corporation for this location
     const [
         { trafficPS, psName },
@@ -115,6 +138,34 @@ export async function submitTraffic() {
     formData.append("wardName", wardName || "");
     formData.append("corpName", corpName || "");
     formData.append("corpHandle", corpHandle || "");
+    formData.append("sendEmail", shouldEmail ? "true" : "false");
+
+    // If email is requested, add email data
+    if (shouldEmail && isEmailEnabled()) {
+        const reportData = {
+            category: trafficCategory,
+            description: trafficDesc,
+            location: trafficDesc || "Location on map",
+            wardNo: wardNo,
+            wardName: wardName,
+            trafficPS: psName,
+            coordinates: {
+                lat: window.currentGPS.lat.toFixed(6),
+                lon: window.currentGPS.lon.toFixed(6)
+            },
+            timestamp: new Date().toLocaleString()
+        };
+
+        const emailData = prepareEmailData(reportData, { userEmail: userEmail });
+        if (emailData) {
+            formData.append("emailRecipients", JSON.stringify(emailData.to));
+            formData.append("emailSubject", emailData.subject);
+            formData.append("emailBody", emailData.body);
+            if (emailData.cc && emailData.cc.length > 0) {
+                formData.append("emailCC", JSON.stringify(emailData.cc));
+            }
+        }
+    }
 
     let wasSuccess = false;
 
@@ -235,4 +286,66 @@ function attachRetryHandler() {
             });
         }
     }, 100);
+}
+
+// Update email recipients list based on current location
+export async function updateEmailRecipients() {
+    console.log('📧 updateEmailRecipients called');
+
+    const emailOption = document.getElementById('emailOption');
+    const emailDetails = document.getElementById('emailDetails');
+    const emailRecipients = document.getElementById('emailRecipients');
+    const emailList = document.getElementById('emailList');
+    const emailCheckbox = document.getElementById('emailAuthoritiesCheck');
+
+    console.log('📧 Email elements:', {
+        emailOption: !!emailOption,
+        emailDetails: !!emailDetails,
+        hasGPS: !!window.currentGPS,
+        isEnabled: isEmailEnabled()
+    });
+
+    if (!emailOption) {
+        console.warn('❌ emailOption element not found');
+        return;
+    }
+
+    if (!isEmailEnabled()) {
+        console.log('📧 Email feature disabled in config');
+        emailOption.style.display = 'none';
+        return;
+    }
+
+    // Show email option if we have a valid location
+    if (window.currentGPS && isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
+        console.log('✅ Showing email option');
+        // Always show the email option container to prevent button jumping
+        emailOption.style.display = 'block';
+
+        // Show/hide email details when checkbox is checked
+        if (emailCheckbox && emailCheckbox.checked) {
+            if (emailDetails) emailDetails.style.display = 'block';
+
+            if (emailRecipients && emailList) {
+                const [{ trafficPS, psName }, { wardNo, wardName }] = await Promise.all([
+                    findTrafficPSForLocation(),
+                    findWardForCurrentGPS()
+                ]);
+
+                console.log('📧 Location data:', { trafficPS, psName, wardNo, wardName });
+                const emails = getRelevantEmails({ wardNo, trafficPS: trafficPS });
+                console.log('📧 Found emails:', emails);
+
+                if (emails.length > 0) {
+                    emailList.innerHTML = emails.map(email => `<li>📧 ${email}</li>`).join('');
+                } else {
+                    emailList.innerHTML = '<li>⚠️ No email addresses configured for this location</li>';
+                }
+            }
+        } else {
+            if (emailDetails) emailDetails.style.display = 'none';
+        }
+    } else {
+        emailOption.style.display = 'none';
+    }
 }

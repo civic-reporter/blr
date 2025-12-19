@@ -62,6 +62,9 @@ export function showSuccessScreen() {
 
 // ✅ SINGLE showLocation - WITH AUTO-MARKER
 export function showLocation() {
+    console.log("🎯🎯🎯 showLocation() CALLED 🎯🎯🎯");
+    console.log("isTrafficFlow:", window.isTrafficFlow);
+
     if (locationInfo) locationInfo.style.display = "block";
     const mapRestr = document.getElementById("mapRestrictionMsg");
     if (mapRestr) mapRestr.style.display = "block";
