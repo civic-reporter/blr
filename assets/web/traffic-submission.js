@@ -34,7 +34,7 @@ export async function submitTraffic() {
         submitBtn.classList.add("loading");
     }
 
-    showStatus("📤 Reporting traffic issue to @BlrCityPolice...", "info");
+    showStatus("📤 Reporting traffic issue to Bengaluru Traffic Police...", "info");
 
     // Allow UI to update
     await new Promise(resolve => requestAnimationFrame(resolve));

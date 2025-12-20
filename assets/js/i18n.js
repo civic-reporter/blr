@@ -45,8 +45,8 @@ export const translations = {
         dragMarkerInstruction: "🔧 Drag marker or click map to adjust location (within GBA area only).",
         postIssue: "🚨 Post Issue via @zenc_civic",
         resetBtn: "🔁 Reset",
-        issuePostedSuccess: "Issue Posted Successfully!",
-        issuePostedDesc: "Your report has been tweeted to GBA via @zenc_civic",
+        issuePostedSuccess: "Civic Issue Reported!",
+        issuePostedDesc: "Your civic issue has been posted successfully via @zenc_civic",
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
 
@@ -70,7 +70,7 @@ export const translations = {
         dragMarkerTraffic: "🔧 Drag marker or click map to set exact location.",
         reportTraffic: "🚦 Report",
         trafficReportedSuccess: "Traffic Issue Reported!",
-        trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to @BlrCityPolice",
+        trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to Bengaluru Traffic Police",
         submitAnotherReport: "Submit Another Report",
 
         // Email options
@@ -148,8 +148,8 @@ export const translations = {
         dragMarkerInstruction: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ಸ್ಥಳವನ್ನು ಸರಿಸುವಿಕೆಗೆ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ (GBA ಪ್ರದೇಶದೊಳಗೆ ಮಾತ್ರ).",
         postIssue: "🚨 @zenc_civic ಮೂಲಕ ಸಮಸ್ಯೆ ಪೋಸ್ಟ್ ಮಾಡಿ",
         resetBtn: "🔁 ಮರುಹೊಂದಿಸಿ",
-        issuePostedSuccess: "ಸಮಸ್ಯೆ ಯಶಸ್ವಿಯಾಗಿ ಪೋಸ್ಟ್ ಆಗಿದೆ!",
-        issuePostedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @zenc_civic ಮೂಲಕ GBA ಗೆ ಟ್ವೀಟ್ ಮಾಡಲಾಗಿದೆ",
+        issuePostedSuccess: "ನಾಗರಿಕ ಸಮಸ್ಯೆಯನ್ನು ವರದಿ ಮಾಡಲಾಗಿದೆ!",
+        issuePostedDesc: "ನಿಮ್ಮ ನಾಗರಿಕ ಸಮಸ್ಯೆಯನ್ನು @zenc_civic ಮೂಲಕ ಯಶಸ್ವಿಯಾಗಿ ಪೋಸ್ಟ್ ಮಾಡಲಾಗಿದೆ",
         submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
         issuePostedSuccess: "ಸಮಸ್ಯೆ ಯಶಸ್ವಿಯಾಗಿ ಪೋಸ್ಟ್ ಆಗಿದೆ!",
@@ -177,7 +177,7 @@ export const translations = {
         dragMarkerTraffic: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ನಿಖರ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಲು.",
         reportTraffic: "🚦 ವರದಿ ಮಾಡಿ",
         trafficReportedSuccess: "ಟ್ರಾಫಿಕ್ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!",
-        trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @BlrCityPolice ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+        trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು ಬೆಂಗಳೂರು ಟ್ರಾಫಿಕ್ ಪೋಲೀಸ್ ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
 
         // Email options
         emailAuthorities: "📧 ನೀವು ಅಧಿಕಾರಿಗಳಿಗೆ ಇಮೇಲ್ ಕಳುಹಿಸಲು ಬಯಸುತ್ತೀರಾ?",
