@@ -70,7 +70,7 @@ export const translations = {
         dragMarkerTraffic: "🔧 Drag marker or click map to set exact location.",
         reportTraffic: "🚦 Report",
         trafficReportedSuccess: "Traffic Issue Reported!",
-        trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to @BlrCityPolice",
+        trafficReportedDesc: "Your traffic report has been posted via @zenc_civic to Bengaluru Traffic Police",
         submitAnotherReport: "Submit Another Report",
 
         // Email options
@@ -177,7 +177,7 @@ export const translations = {
         dragMarkerTraffic: "🔧 ಮಾರ್ಕರ್ ಅನ್ನು ಎಳೆಯಿರಿ ಅಥವಾ ನಕ್ಷೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ನಿಖರ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಲು.",
         reportTraffic: "🚦 ವರದಿ ಮಾಡಿ",
         trafficReportedSuccess: "ಟ್ರಾಫಿಕ್ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!",
-        trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು @BlrCityPolice ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+        trafficReportedDesc: "ನಿಮ್ಮ ವರದಿಯನ್ನು ಬೆಂಗಳೂರು ಟ್ರಾಫಿಕ್ ಪೋಲೀಸ್ ಮೂಲಕ ಸಲ್ಲಿಸಲಾಗಿದೆ",
 
         // Email options
         emailAuthorities: "📧 ನೀವು ಅಧಿಕಾರಿಗಳಿಗೆ ಇಮೇಲ್ ಕಳುಹಿಸಲು ಬಯಸುತ್ತೀರಾ?",
