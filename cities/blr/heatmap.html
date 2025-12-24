@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ Heat Map Analytics - Bengaluru Issues</title>
+
+    <!-- Modern fonts + icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="../../assets/css/leaflet.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <style>
+        /* Override global body styles for full-width layout */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: none !important;
+            background: var(--x-bg-primary);
+            color: var(--x-text-primary);
+        }
+
+        .heatmap-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .heatmap-content {
+            padding: 10px;
+            max-width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--x-bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            padding: 8px 12px;
+            background: var(--x-button-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--x-button-primary-hover);
+        }
+
+        .page-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--x-text-primary);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: var(--x-text-secondary);
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+
+        .controls-panel {
+            background: var(--x-bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            z-index: 5;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-panel h2 {
+            color: var(--x-text-primary);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--x-text-primary);
+            font-size: 14px;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 8px 12px;
+            border: 1px solid var(--x-border);
+            border-radius: 4px;
+            font-size: 14px;
+            background: var(--x-bg-primary);
+            color: var(--x-text-primary);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--x-button-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--x-button-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--x-bg-tertiary);
+            color: var(--x-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--x-border);
+        }
+
+        .map-container {
+            background: var(--x-bg-secondary);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 600px;
+            max-height: 70vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .status-message {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-message.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+        }
+
+        .status-message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+
+        .status-message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+        }
+
+        .stats-panel {
+            background: var(--x-bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            z-index: 5;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-panel h2 {
+            color: var(--x-text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            padding: 15px;
+            background: var(--x-bg-tertiary);
+            border-radius: 4px;
+            border-left: 4px solid var(--x-button-primary);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--x-button-primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--x-text-secondary);
+            margin-top: 5px;
+        }
+
+        .legend {
+            background: var(--x-bg-secondary);
+            padding: 15px;
+            border-radius: 4px;
+            position: relative;
+            z-index: 5;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: var(--x-text-primary);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            button {
+                flex: 0 1 auto;
+                min-width: fit-content;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating theme toggle -->
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon" style="display:none;"></i>
+    </button>
+
+    <div class="heatmap-container">
+        <div class="heatmap-content">
+            <header class="page-header">
+                <div class="nav-left">
+                    <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
+                        <i class="fas fa-home"></i>
+                        <span data-i18n="homeTitle">Nāgarika Dhvani</span>
+                    </a>
+                </div>
+                <div class="nav-right">
+                    <a href="../../cities/blr/civic.html" class="nav-switch-btn" data-i18n-title="switchToCivic">
+                        <i class="fas fa-building"></i>
+                        <span id="switchLabelCivic" data-i18n="switchToCivic">Report Civic Issue</span>
+                    </a>
+                    <a href="../../cities/blr/traffic.html" class="nav-switch-btn" data-i18n-title="switchToTraffic">
+                        <i class="fas fa-traffic-light"></i>
+                        <span id="switchLabelTraffic" data-i18n="switchToTraffic">Report Traffic Issue</span>
+                    </a>
+                </div>
+            </header>
+            <div class="page-title" style="margin-top: 24px;">
+                <h1>🗺️ <span data-i18n="heatMapTitle">Heat Map Analytics</span></h1>
+                <p class="subtitle" data-i18n="heatMapSubtitle">Visualize civic and traffic issues across Bengaluru</p>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <div class="controls-panel">
+                <h2 style="margin-top: 0; font-size: 18px;" data-i18n="filters">Filters</h2>
+
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="reportType" data-i18n="reportTypeLabel">Report Type</label>
+                        <select id="reportType">
+                            <option value="both" data-i18n="bothTypes">Both (Civic + Traffic)</option>
+                            <option value="civic" data-i18n="civicIssues">Civic Issues</option>
+                            <option value="traffic" data-i18n="trafficIssues">Traffic Issues</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="startDate" data-i18n="startDateLabel">Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="endDate" data-i18n="endDateLabel">End Date</label>
+                        <input type="date" id="endDate">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="issueType" data-i18n="issueTypeLabel">Issue Type (Optional)</label>
+                        <select id="issueType">
+                            <option value="" data-i18n="allIssueTypes">All Issue Types</option>
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="loadHeatMapBtn">📊 <span data-i18n="loadHeatMapBtn">Load Heat
+                            Map</span></button>
+                    <button class="btn-primary" id="resetFiltersBtn">🔄 <span data-i18n="resetFiltersBtn">Reset
+                            Filters</span></button>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <div class="legend">
+                <h3 data-i18n="intensityLegend">Intensity Legend</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #F44336;"></div>
+                    <span data-i18n="highIntensity">High (10+ reports)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span data-i18n="mediumHighIntensity">Medium-High (5-9 reports)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFC107;"></div>
+                    <span data-i18n="mediumIntensity">Medium (3-4 reports)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span data-i18n="lowIntensity">Low (1-2 reports)</span>
+                </div>
+            </div>
+
+            <div class="stats-panel" id="statsPanel" style="display: none;">
+                <h2 style="margin-top: 0; font-size: 18px;" data-i18n="statistics">Statistics</h2>
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <small data-i18n="footerText">&copy; 2025 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
+                        href="../../how-to.html" style="text-decoration: none; color: var(--x-text-secondary);"
+                        data-i18n="howToLink">How to Use</a></small>
+                <div class="social-links">
+                    <a id="privacyLink" href="../../privacy.html"
+                        style="margin-right: 1rem; text-decoration: none; color: var(--x-text-secondary);">
+                        <i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span>
+                    </a>
+                    <a href="https://twitter.com/zenc_civic" target="_blank" aria-label="X (formerly Twitter)">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Theme toggle script -->
+    <script>
+        const html = document.documentElement;
+
+        function initTheme() {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? "dark" : "light");
+            html.setAttribute("data-theme", initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            } else {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            }
+        }
+
+        // Initialize theme
+        initTheme();
+    </script>
+
+    <!-- Load Leaflet first -->
+    <script src="../../assets/js/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <script type="module">
+        // Wait for Leaflet to be fully loaded
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Initialize language switcher
+            const { initLanguageSwitcher } = await import('../../assets/js/language-switcher.js');
+            initLanguageSwitcher();
+
+            // Theme toggle handler
+            const btn = document.getElementById("themeToggle");
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    const current = html.getAttribute("data-theme") || "light";
+                    const next = current === "light" ? "dark" : "light";
+                    html.setAttribute("data-theme", next);
+                    localStorage.setItem("theme", next);
+                    updateThemeToggle(next);
+                });
+            }
+
+            // Import modules after DOM is ready
+            const { initHeatMap, loadHeatMap, clearHeatMap } = await import('../../assets/web/heatmap.js');
+            const { initMap } = await import('../../assets/web/map.js');
+
+            // Initialize map
+            const map = initMap();
+
+            // Initialize heat map functionality
+            initHeatMap(map);
+
+            // Set default date range (last 30 days)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            document.getElementById('startDate').valueAsDate = startDate;
+            document.getElementById('endDate').valueAsDate = endDate;
+
+            // Populate issue type options
+            populateIssueTypes();
+
+            // Event listeners
+            document.getElementById('loadHeatMapBtn').addEventListener('click', () => {
+                const reportType = document.getElementById('reportType').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const issueType = document.getElementById('issueType').value;
+
+                if (!startDate || !endDate) {
+                    showMessage('Please select both start and end dates', 'error');
+                    return;
+                }
+
+                if (new Date(startDate) > new Date(endDate)) {
+                    showMessage('Start date must be before end date', 'error');
+                    return;
+                }
+
+                loadHeatMap(reportType, startDate, endDate, issueType || null);
+            });
+
+            document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+                document.getElementById('reportType').value = 'both';
+                document.getElementById('issueType').value = '';
+                document.getElementById('startDate').valueAsDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                document.getElementById('endDate').valueAsDate = new Date();
+                clearHeatMap();
+            });
+
+            async function populateIssueTypes() {
+                const issueTypeSelect = document.getElementById('issueType');
+                const reportType = document.getElementById('reportType').value;
+
+                // Import translation function
+                const { t, getCurrentLanguage } = await import('../../assets/js/i18n.js');
+                const currentLang = getCurrentLanguage();
+
+                // Clear existing options
+                issueTypeSelect.innerHTML = '';
+
+                // Add "All" option with translation
+                const allOption = document.createElement('option');
+                allOption.value = '';
+                allOption.textContent = t('allIssueTypes', currentLang);
+                allOption.setAttribute('data-i18n', 'allIssueTypes');
+                issueTypeSelect.appendChild(allOption);
+
+                const commonCivicIssues = [
+                    { value: 'Pothole', key: 'pothole' },
+                    { value: 'Footpath', key: 'footpath' },
+                    { value: 'Drainage issue', key: 'drainageIssue' },
+                    { value: 'Streetlight', key: 'streetlight' },
+                    { value: 'Garbage', key: 'garbage' },
+                    { value: 'Manhole', key: 'manhole' },
+                    { value: 'Road repair', key: 'roadRepair' },
+                    { value: 'Other', key: 'other' }
+                ];
+
+                const commonTrafficIssues = [
+                    { value: '🚦 Traffic Signal Down', key: 'signalDown' },
+                    { value: '🚗 Traffic Jam', key: 'trafficJam' },
+                    { value: '🚗‍ Wrong Parking', key: 'wrongParking' },
+                    { value: '🚫 No Parking Zone Violation', key: 'noParking' },
+                    { value: '📱 Driving with Mobile', key: 'drivingWithMobile' },
+                    { value: '🪖 No Helmet (Rider/Pillion)', key: 'noHelmet' },
+                    { value: '🚧 Missing Speed Breaker', key: 'speedBreaker' },
+                    { value: '🛣️ Diversion Needed', key: 'diversion' },
+                    { value: 'Other traffic issue', key: 'otherTraffic' }
+                ];
+
+                let issues = [];
+                if (reportType === 'civic') {
+                    issues = commonCivicIssues;
+                } else if (reportType === 'traffic') {
+                    issues = commonTrafficIssues;
+                } else {
+                    issues = [...commonCivicIssues, ...commonTrafficIssues];
+                }
+
+                issues.forEach(issue => {
+                    const option = document.createElement('option');
+                    option.value = issue.value;
+                    option.textContent = t(issue.key, currentLang);
+                    option.setAttribute('data-i18n', issue.key);
+                    issueTypeSelect.appendChild(option);
+                });
+            }
+
+            // Listen for report type changes
+            document.getElementById('reportType').addEventListener('change', populateIssueTypes);
+
+            // Listen for language changes to update dropdowns
+            window.addEventListener('languageChanged', populateIssueTypes);
+
+            // Listen for heat map loaded event to show statistics
+            window.addEventListener('heatMapLoaded', (event) => {
+                const data = event.detail;
+                if (data && data.length > 0) {
+                    showStatistics(data);
+                }
+            });
+
+            function showStatistics(heatMapData) {
+                const statsPanel = document.getElementById('statsPanel');
+                const statsGrid = document.getElementById('statsGrid');
+
+                // Calculate statistics
+                const totalReports = heatMapData.reduce((sum, point) => sum + point.intensity, 0);
+                const avgReports = (totalReports / heatMapData.length).toFixed(1);
+
+                // Count unique issue types
+                const issueTypes = new Set();
+                heatMapData.forEach(point => {
+                    if (point.issue_counts) {
+                        Object.keys(point.issue_counts || {}).forEach(type => issueTypes.add(type));
+                    }
+                });
+
+                // Generate statistics HTML
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${totalReports}</div>
+                        <div class="stat-label" data-i18n="totalReports">Total Reports</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${heatMapData.length}</div>
+                        <div class="stat-label">Hotspot Locations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${avgReports}</div>
+                        <div class="stat-label">Avg Reports/Location</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${issueTypes.size}</div>
+                        <div class="stat-label">Issue Types</div>
+                    </div>
+                `;
+
+                statsPanel.style.display = 'block';
+            }
+
+            function showMessage(message, type = 'info') {
+                const messageEl = document.getElementById('statusMessage');
+                messageEl.textContent = message;
+                messageEl.className = 'status-message ' + type;
+                messageEl.style.display = 'block';
+
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -21,6 +21,9 @@
     --radius: 12px;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --x-button-primary: #1d9bf0;
+    --x-button-primary-hover: #1a8cd8;
+    --x-bg-tertiary: #e1e8ed;
 }
 
 [data-theme="light"] {
@@ -30,6 +33,9 @@
     --x-text-primary: #0f1419;
     --x-text-secondary: #536471;
     --x-border: #e1e8ed;
+    --x-button-primary: #1d9bf0;
+    --x-button-primary-hover: #1a8cd8;
+    --x-bg-tertiary: #e1e8ed;
 }
 
 body {
@@ -1223,8 +1229,8 @@ body:not(:has(.page-header)) .language-toggle-btn {
 /* Navigation Header Styles */
 .page-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
     padding: 1rem 1.5rem;
     background: var(--x-bg-secondary);
     border-bottom: 1px solid var(--x-border);

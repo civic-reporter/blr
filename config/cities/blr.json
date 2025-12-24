@@ -23,6 +23,7 @@
     "apis": {
         "civicApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
         "trafficApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
+        "heatmapApi": "https://n54j3iscjk.execute-api.ap-south-1.amazonaws.com/heatmap",
         "googleMapsKey": "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0"
     },
     "socialMedia": {

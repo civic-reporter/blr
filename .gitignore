@@ -28,3 +28,20 @@ yarn-error.log*
 # Temporary files
 *.tmp
 .cache/
+
+# Ignore shell scripts
+*.sh
+
+# Ignore markdown files except README.md
+*.md
+!README.md
+
+# Ignore Python files in lambda except those explicitly allowed
+lambda/*.py
+!lambda/civic-email-lambda.py
+!lambda/s3_logger.py
+
+# Ignore other Python files (customize as needed)
+*.py
+!lambda/civic-email-lambda.py
+!lambda/s3_logger.py
