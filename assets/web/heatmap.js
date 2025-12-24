@@ -30,8 +30,6 @@ export async function fetchHeatMapData(filters = {}) {
     } = filters;
 
     try {
-        showStatus('📊 Loading heat map data...', 'info');
-
         // Build query parameters
         const params = new URLSearchParams();
         params.append('type', type);
@@ -59,12 +57,9 @@ export async function fetchHeatMapData(filters = {}) {
             throw new Error(data.error || 'Failed to fetch heat map data');
         }
 
-        showStatus(`✅ Loaded ${data.count} submissions`, 'success');
-
         return data;
     } catch (error) {
         console.error('❌ Error fetching heat map data:', error);
-        showStatus(`❌ Failed to load heat map: ${error.message}`, 'error');
         throw error;
     }
 }
@@ -302,12 +297,30 @@ export function clearHeatMap() {
  * @param {Object} filters - Filter options
  */
 export async function loadHeatMap(filters = {}) {
+    // Show persistent loading message and disable button
+    const loadBtn = document.getElementById('loadHeatMapBtn');
+    if (loadBtn) loadBtn.disabled = true;
+    showStatus('📊 Loading heatmap...', 'info');
     try {
         const data = await fetchHeatMapData(filters);
         renderHeatMap(data.heat_map_points);
+        // Fit map to GBA bounding box after rendering
+        if (window.map && CONFIG && CONFIG.GBA_BBOX) {
+            const bbox = CONFIG.GBA_BBOX;
+            const bounds = L.latLngBounds(
+                L.latLng(bbox.south, bbox.west),
+                L.latLng(bbox.north, bbox.east)
+            );
+            window.map.fitBounds(bounds, { padding: [20, 20], maxZoom: 13 });
+        }
+        // Hide loading message after rendering
+        showStatus(`✅ Loaded ${data.count} submissions`, 'success');
+        if (loadBtn) loadBtn.disabled = false;
         return data;
     } catch (error) {
         console.error('❌ Failed to load heat map:', error);
+        showStatus(`❌ Failed to load heat map: ${error.message}`, 'error');
+        if (loadBtn) loadBtn.disabled = false;
         throw error;
     }
 }
