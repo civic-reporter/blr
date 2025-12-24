@@ -1,6 +1,7 @@
 // Internationalization (i18n) - English and Kannada translations
 export const translations = {
     en: {
+        heatmap: "Heatmap",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -100,9 +101,32 @@ export const translations = {
         privacyTitle: "Privacy Policy & Terms of Service",
         privacyLastUpdated: "Last updated: December 2025",
         backToHome: "Back to Home",
+
+        // Heat Map page
+        heatMapTitle: "Heat Map Analytics",
+        heatMapSubtitle: "Visualize civic and traffic issues across Bengaluru",
+        filters: "Filters",
+        reportTypeLabel: "Report Type",
+        bothTypes: "Both (Civic + Traffic)",
+        startDateLabel: "Start Date",
+        endDateLabel: "End Date",
+        issueTypeLabel: "Issue Type (Optional)",
+        allIssueTypes: "All Issue Types",
+        loadHeatMapBtn: "Load Heat Map",
+        resetFiltersBtn: "Reset Filters",
+        intensityLegend: "Intensity Legend",
+        highIntensity: "High (10+ reports)",
+        mediumHighIntensity: "Medium-High (5-9 reports)",
+        mediumIntensity: "Medium (3-4 reports)",
+        lowIntensity: "Low (1-2 reports)",
+        statistics: "Statistics",
+        totalReports: "Total Reports",
+        dateRange: "Date Range",
+        topIssue: "Top Issue",
     },
 
     kn: {
+        heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
@@ -205,6 +229,28 @@ export const translations = {
         privacyTitle: "ಗೌಪ್ಯತಾ ನೀತಿ ಮತ್ತು ಸೇವಾ ಶರತುಗಳು",
         privacyLastUpdated: "ಕೊನೆಯ ನವೀಕರಣ: ಡಿಸೆಂಬರ್ 2025",
         backToHome: "ಮನೆಗೆ ಹೋಗಿ",
+
+        // Heat Map page
+        heatMapTitle: "ಹೀಟ್ ಮ್ಯಾಪ್ ಅನಾಲಿಟಿಕ್ಸ್",
+        heatMapSubtitle: "ಬೆಂಗಳೂರಿನಲ್ಲಿ ನಾಗರಿಕ ಮತ್ತು ಟ್ರಾಫಿಕ್ ಸಮಸ್ಯೆಗಳನ್ನು ದೃಶ್ಯೀಕರಿಸಿ",
+        filters: "ಶೋಧಕಗಳು",
+        reportTypeLabel: "ವರದಿ ವಿಧ",
+        bothTypes: "ಎರಡೂ (ನಾಗರಿಕ + ಟ್ರಾಫಿಕ್)",
+        startDateLabel: "ಪ್ರಾರಂಭ ದಿನಾಂಕ",
+        endDateLabel: "ಅಂತ್ಯ ದಿನಾಂಕ",
+        issueTypeLabel: "ಸಮಸ್ಯೆ ವಿಧ (ಐಚ್ಛಿಕ)",
+        allIssueTypes: "ಎಲ್ಲಾ ಸಮಸ್ಯೆ ವಿಧಗಳು",
+        loadHeatMapBtn: "ಹೀಟ್ ಮ್ಯಾಪ್ ಲೋಡ್ ಮಾಡಿ",
+        resetFiltersBtn: "ಶೋಧಕಗಳನ್ನು ಮರುಹೊಂದಿಸಿ",
+        intensityLegend: "ತೀವ್ರತೆ ಲೆಜೆಂಡ್",
+        highIntensity: "ಹೆಚ್ಚು (೧೦+ ವರದಿಗಳು)",
+        mediumHighIntensity: "ಮಧ್ಯಮ-ಹೆಚ್ಚು (೫-೯ ವರದಿಗಳು)",
+        mediumIntensity: "ಮಧ್ಯಮ (೩-೪ ವರದಿಗಳು)",
+        lowIntensity: "ಕಮ್ಮಿ (೧-೨ ವರದಿಗಳು)",
+        statistics: "ಅಂಕಿಅಂಶಗಳು",
+        totalReports: "ಒಟ್ಟು ವರದಿಗಳು",
+        dateRange: "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ",
+        topIssue: "ಪ್ರಮುಖ ಸಮಸ್ಯೆ",
     }
 };
 
