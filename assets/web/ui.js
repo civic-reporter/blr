@@ -23,19 +23,28 @@ export function cacheUIElements() {
 }
 
 export function showStatus(msg, type) {
-    if (!statusDiv) return;
+    // Support both #status (main UI) and #statusMessage (heatmap page)
+    const el = statusDiv || document.getElementById('statusMessage');
+    if (!el) return;
     if (!msg) {
-        statusDiv.style.display = "none";
-        statusDiv.innerHTML = "";
-        statusDiv.classList.remove("status-error", "status-success", "status-info");
+        el.style.display = "none";
+        el.innerHTML = "";
+        el.classList.remove("status-error", "status-success", "status-info");
         return;
     }
-    statusDiv.style.display = "block";
-    statusDiv.innerHTML = msg;
-    statusDiv.classList.remove("status-error", "status-success", "status-info");
-    if (type === "error") statusDiv.classList.add("status-error");
-    else if (type === "success") statusDiv.classList.add("status-success");
-    else statusDiv.classList.add("status-info");
+    el.style.display = "block";
+    el.innerHTML = msg;
+    el.classList.remove("status-error", "status-success", "status-info");
+    if (type === "error") el.classList.add("status-error");
+    else if (type === "success") el.classList.add("status-success");
+    else el.classList.add("status-info");
+    // Auto-hide after 5 seconds on heatmap page
+    if (el.id === 'statusMessage') {
+        clearTimeout(window._heatmapStatusTimeout);
+        window._heatmapStatusTimeout = setTimeout(() => {
+            el.style.display = "none";
+        }, 5000);
+    }
 }
 
 export function showUploadOptions() {
