@@ -394,7 +394,7 @@
     },
     "emailSettings": {
         "civic": {
-            "enabled": false,
+            "enabled": true,
             "maxRecipientsPerEmail": 5,
             "includeWardEmail": false,
             "includeTrafficPSEmail": false,
@@ -402,7 +402,7 @@
             "subjectPrefix": "[ZC Civic Report]"
         },
         "traffic": {
-            "enabled": false,
+            "enabled": true,
             "maxRecipientsPerEmail": 5,
             "includeWardEmail": false,
             "includeTrafficPSEmail": false,
@@ -414,13 +414,13 @@
         "civic": {
             "enableTweet": true,
             "requireTweet": true,
-            "enableEmail": false,
+            "enableEmail": true,
             "requireEmail": false
         },
         "traffic": {
             "enableTweet": true,
             "requireTweet": true,
-            "enableEmail": false,
+            "enableEmail": true,
             "requireEmail": false
         }
     }
