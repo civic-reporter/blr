@@ -14,6 +14,46 @@
             margin-bottom: 2rem;
         }
 
+        .leaderboard-toolbar {
+            display: flex;
+            justify-content: center;
+            margin: 1.25rem 0 2rem;
+        }
+
+        .leaderboard-load-btn {
+            width: auto;
+            min-width: 220px;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .leaderboard-load-btn.loading {
+            opacity: 0.9;
+        }
+
+        .leaderboard-load-btn .spinner {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: leaderboard-spin 0.8s linear infinite;
+        }
+
+        .leaderboard-load-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes leaderboard-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .leaderboard-section h2 {
             font-size: 1.1rem;
             font-weight: 600;
@@ -87,14 +127,23 @@
         <h2>🏆 Civic Issue Leaderboard – Bengaluru</h2>
         <p class="header-text">Top wards, constituencies, and MLAs by reported civic issues</p>
 
+        <div class="leaderboard-toolbar">
+            <button id="loadLeaderboardBtn" class="leaderboard-load-btn" type="button">
+                <span class="spinner" aria-hidden="true"></span>
+                <span class="btn-label">Loading leaderboard...</span>
+            </button>
+        </div>
+
         <div class="leaderboard-section">
-            <h2>MLA Leaderboard</h2>
-            <table id="mla-table">
+            <h2>Ward Leaderboard</h2>
+            <table id="ward-table">
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>MLA Handle</th>
-                        <th>Reports</th>
+                        <th>Ward Name</th>
+                        <th>Corporation</th>
+                        <th>Constituency</th>
+                        <th>Issues</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -107,20 +156,21 @@
                     <tr>
                         <th>Rank</th>
                         <th>Constituency</th>
-                        <th>Reports</th>
+                        <th>Issues</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
         <div class="leaderboard-section">
-            <h2>Ward Leaderboard</h2>
-            <table id="ward-table">
+            <h2>MLA Leaderboard</h2>
+            <table id="mla-table">
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>Ward</th>
-                        <th>Reports</th>
+                        <th>Constituency</th>
+                        <th>MLA X Handle</th>
+                        <th>Issues</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -149,25 +199,7 @@
             });
         });
     </script>
-    <script src="../../assets/js/leaderboard.js"></script>
-    <script>
-        function fetchAndRenderLeaderboardsBlr() {
-            fetch('/lambda/retrieve-logs-lambda?city=blr')
-                .then(res => res.json())
-                .then(data => {
-                    renderLeaderboard('mla-table', data.mla_leaderboard, 'mla_handle');
-                    renderLeaderboard('constituency-table', data.constituency_leaderboard, 'constituency');
-                    renderLeaderboard('ward-table', data.ward_leaderboard, 'ward');
-                })
-                .catch(err => {
-                    document.querySelectorAll('tbody').forEach(tb => {
-                        tb.innerHTML = '<tr><td colspan="3">Failed to load data</td></tr>';
-                    });
-                    console.error('Leaderboard fetch error:', err);
-                });
-        }
-        document.addEventListener('DOMContentLoaded', fetchAndRenderLeaderboardsBlr);
-    </script>
+    <script type="module" src="../../assets/js/leaderboard.js"></script>
 </body>
 
 </html>
