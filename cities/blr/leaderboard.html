@@ -63,6 +63,10 @@
             border-bottom: 2px solid var(--x-border);
         }
 
+        .leaderboard-table-wrap {
+            width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -87,7 +91,29 @@
             background: var(--x-bg-secondary);
         }
 
+        #ward-table th:first-child,
+        #ward-table td:first-child,
+        #ward-table th:last-child,
+        #ward-table td:last-child {
+            white-space: nowrap;
+        }
+
+        #ward-table th:last-child,
+        #ward-table td:last-child {
+            text-align: right;
+            width: 1%;
+        }
+
         @media (max-width: 600px) {
+
+            .leaderboard-table-wrap {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .leaderboard-table-wrap table {
+                min-width: 560px;
+            }
 
             th,
             td {
@@ -136,45 +162,51 @@
 
         <div class="leaderboard-section">
             <h2>Ward Leaderboard</h2>
-            <table id="ward-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Ward Name</th>
-                        <th>Corporation</th>
-                        <th>Constituency</th>
-                        <th>Issues</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="leaderboard-table-wrap">
+                <table id="ward-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Ward Name</th>
+                            <th>Corporation</th>
+                            <th>Constituency</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
         <div class="leaderboard-section">
             <h2>Constituency Leaderboard</h2>
-            <table id="constituency-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Constituency</th>
-                        <th>Issues</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="leaderboard-table-wrap">
+                <table id="constituency-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Constituency</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
         <div class="leaderboard-section">
             <h2>MLA Leaderboard</h2>
-            <table id="mla-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Constituency</th>
-                        <th>MLA X Handle</th>
-                        <th>Issues</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="leaderboard-table-wrap">
+                <table id="mla-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Constituency</th>
+                            <th>MLA X Handle</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
