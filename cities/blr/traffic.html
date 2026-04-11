@@ -4,202 +4,51 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>🚦 Traffic Reporter – @BlrCityPolice</title>
+    <title>Page Unavailable</title>
 
-    <!-- Modern fonts + icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- SAME CSS/JS as civic -->
-    <link rel="stylesheet" href="../../assets/css/leaflet.css" />
     <link rel="stylesheet" href="../../assets/css/styles.css" />
-    <script src="../../assets/js/piexif.min.js"></script>
-    <script src="../../assets/js/leaflet.js"></script>
-
-    <!-- Face detection for privacy protection - load synchronously before modules -->
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
 </head>
 
 <body>
-    <!-- Navigation Header -->
-    <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
-        <div class="nav-left">
-            <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
-                <i class="fas fa-home"></i>
-                <span data-i18n="homeTitle">Nāgarika Dhvani</span>
-            </a>
-        </div>
-        <div class="nav-right">
-            <a id="switchPageBtn" href="blr-civic-index.html" class="nav-switch-btn" data-i18n-title="switchToCivic">
-                <i class="fas fa-exchange-alt"></i>
-                <span id="switchLabel" data-i18n="switchToCivic">Report Civic Issue</span>
-            </a>
-            <a href="heatmap.html" class="nav-switch-btn" data-i18n-title="heatmap" style="margin-left:8px;">
-                <i class="fas fa-chart-area"></i>
-                <span id="switchLabelHeatmap" data-i18n="heatmap">Heatmap</span>
-            </a>
-        </div>
-    </header>
-
-    <!-- Floating theme toggle -->
-    <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" title="Toggle light/dark mode">
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
         <i class="fas fa-sun"></i>
         <i class="fas fa-moon" style="display:none;"></i>
     </button>
 
-    <div class="container">
-        <h2 data-i18n="trafficReporterTitle">🚦 Nāgarika Dhvani - Traffic</h2>
-        <p class="header-text" data-i18n="trafficReporterDesc">Report traffic signals, jams, parking to Bengaluru
-            Traffic Authorities</p>
-
-        <!-- Image Upload Options -->
-        <div id="uploadOptions" class="upload-options">
-            <p class="header-text" data-i18n="uploadInstructions">Click (mobile only) or upload a photo (GPS is
-                auto-detected). If GPS is missing,
-                choose the location on the map.</p>
-            <div class="button-group">
-                <button id="cameraBtn" class="upload-btn camera-btn">
-                    📷 <span data-i18n="mobileCamera">Mobile Camera</span>
-                </button>
-                <button id="uploadBtn" class="upload-btn">
-                    ⬆️ <span data-i18n="uploadPhoto">Upload Photo</span>
-                </button>
+    <div class="container" style="max-width: 760px; margin: 2rem auto;">
+        <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
+            <div class="nav-left">
+                <a href="../../index.html" class="nav-home" title="Back to home">
+                    <i class="fas fa-home"></i>
+                    <span>Nagarika Dhvani</span>
+                </a>
             </div>
-            <!-- Hidden inputs -->
-            <input type="file" id="imageInput" style="display:none" />
-            <input type="file" id="cameraInput" capture="environment" style="display:none" />
-        </div>
+        </header>
 
-        <!-- Image Preview -->
-        <img id="preview" style="display:none;" alt="Traffic issue photo" />
-
-        <!-- Face blur status (appears under image) -->
-        <div id="blurStatus" class="blur-status" style="display:none;"></div>
-
-        <!-- Image confirmation -->
-        <div id="imageConfirm" style="display:none;" class="image-confirm">
-            <p data-i18n="photoCorrectTraffic">Photo correct for traffic report?</p>
-            <button id="changeImageBtn" class="upload-btn">
-                🔁 <span data-i18n="chooseAnotherPhoto">Choose another photo</span>
-            </button>
-            <label class="confirm-check">
-                <input type="checkbox" id="confirmImageCheck" />
-                <span data-i18n="confirmPhotoTraffic">I confirm photo shows traffic issue clearly.</span>
-            </label>
-        </div>
-
-        <!-- Map -->
-        <div id="map"></div>
-
-        <!-- Traffic Form -->
-        <div id="locationInfo" style="display:none;">
-            <div class="info-box traffic-info" id="infoBox">
-                <div><strong data-i18n="locationLabel">📍 Location:</strong> <span id="gpsCoords"></span></div>
-                <div id="mapRestrictionMsg" class="map-message" style="display:none" data-i18n="trafficStayInLimits">
-                    ⚠️ Stay within Bengaluru limits
-                </div>
-                <div class="issue-row">
-                    <select id="trafficCategory" required
-                        data-i18n-options="selectTrafficIssue,signalDown,trafficJam,wrongParking,noParking,drivingWithMobile,noHelmet,speedBreaker,diversion,otherTraffic">
-                        <option value="" data-i18n="selectTrafficIssue">Select traffic issue...</option>
-                        <option value="signal-down" data-i18n="signalDown">🚦 Traffic Signal Down</option>
-                        <option value="traffic-jam" data-i18n="trafficJam">🚗 Traffic Jam</option>
-                        <option value="wrong-parking" data-i18n="wrongParking">🚗‍ Wrong Parking</option>
-                        <option value="no-parking" data-i18n="noParking">🚫 No Parking Zone Violation</option>
-                        <option value="driving-with-mobile" data-i18n="drivingWithMobile">📱 Driving with Mobile
-                        </option>
-                        <option value="no-helmet" data-i18n="noHelmet">🪖 No Helmet (Rider/Pillion)</option>
-                        <option value="speed-breaker" data-i18n="speedBreaker">🚧 Missing Speed Breaker</option>
-                        <option value="diversion" data-i18n="diversion">🛣️ Diversion Needed</option>
-                        <option value="other" data-i18n="otherTraffic">Other traffic issue</option>
-                    </select>
-                    <input id="trafficDesc" data-i18n-placeholder="locationDetails"
-                        placeholder="Location details, road name (optional)" maxlength="120" />
-                </div>
-                <div><strong data-i18n="tweetFrom">𝕏 Tweet from:</strong>
-                    <span class="traffic-handle">@zenc_civic</span>
-                </div>
-                <small data-i18n="dragMarkerTraffic">🔧 Drag marker or click map to set exact location.</small>
-            </div>
-
-            <!-- Email authorities option -->
-            <div id="emailOption" style="display:none;" class="email-option">
-                <label class="email-check">
-                    <input type="checkbox" id="emailAuthoritiesCheck" />
-                    <span data-i18n="emailAuthorities">
-                        📧 Would you like to email the authorities as well?
-                    </span>
-                </label>
-
-                <div id="emailDetails" style="display:none;" class="email-details">
-                    <div id="emailRecipients" class="email-recipients">
-                        <small data-i18n="emailWillBeSentTo">Notifications will be sent to the following
-                            addresses:</small>
-                        <ul id="emailList"></ul>
-                    </div>
-
-                    <div class="user-email-section">
-                        <label class="email-check-cc">
-                            <input type="checkbox" id="ccMeCheck" />
-                            <span data-i18n="ccMe">Would you like to receive a copy of this email?</span>
-                        </label>
-                        <input type="email" id="userEmailInput" class="email-input" placeholder="your.email@example.com"
-                            data-i18n-placeholder="yourEmail" style="display:none;" maxlength="100" />
-                        <small id="emailValidationMsg" class="validation-msg" style="display:none;"></small>
-                    </div>
-                </div>
-            </div>
-
-            <button id="trafficSubmit" class="upload-btn" disabled data-i18n="reportTraffic">
-                🚦 Report
-            </button>
-        </div>
-
-        <!-- Status Messages -->
-        <div id="status"></div>
-
-        <!-- Success Screen -->
-        <div id="successScreen" class="success-container" style="display:none;">
-            <div class="success-card">
-                <div class="success-icon-large">🚦</div>
-                <h2 class="success-title" data-i18n="trafficReportedSuccess">Traffic Issue Reported!</h2>
-                <p class="success-message" data-i18n="trafficReportedDesc">Your traffic report has been posted via
-                    <strong>@zenc_civic</strong> to Bengaluru Traffic Police
-                </p>
-
-                <!-- Tweet URL + copy button -->
-                <div id="tweetLinkContainer" class="tweet-link-box"></div>
-
-                <!-- Location Info on Success Screen -->
-                <div id="successLocationInfo" class="success-location-info" style="display:none;"></div>
-
-                <!-- Police Station Contact Info on Success Screen -->
-                <div id="successPSContactInfo" class="ps-contact-info" style="display:none;"></div>
-
-                <div class="success-actions">
-                    <button id="submitAnotherBtn" class="success-btn primary">
-                        <i class="fas fa-camera"></i>
-                        <span data-i18n="submitAnotherReport">Submit Another Report</span>
-                    </button>
-                </div>
-
-                <div class="success-footer">
-                    <i class="fas fa-check-circle"></i>
-                    <span data-i18n="successThankYou">Thank you for making Bengaluru better!</span>
-                </div>
+        <div class="info-box" style="padding: 24px;">
+            <h2 style="margin-top: 0;">This Page Is Currently Unavailable</h2>
+            <p>
+                This submission flow is temporarily unavailable on this website.
+                Please use civic reporting for currently supported submissions.
+            </p>
+            <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="../../index.html" class="upload-btn"
+                    style="text-decoration: none; width: auto; min-width: 170px; text-align: center;">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="./civic.html" class="upload-btn"
+                    style="text-decoration: none; width: auto; min-width: 210px; text-align: center;">
+                    <i class="fas fa-building"></i> Report Civic Issue
+                </a>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="app-footer">
-            <small>© Zen Citizen · <a id="howToLink" href="../../how-to.html"
-                    style="text-decoration: none; color: var(--x-text-secondary);"><span data-i18n="howToLink">How to
-                        Use</span></a> · <a id="privacyLink" href="../../privacy.html"
-                    style="text-decoration: none; color: var(--x-text-secondary);"><span data-i18n="privacyLink">Privacy
-                        Policy</span></a></small>
+        <div class="app-footer" style="margin-top: 2rem;">
+            <small>© Zen Citizen</small>
         </div>
     </div>
 
-    <!-- SAME THEME SCRIPT as civic -->
     <script>
         const html = document.documentElement;
 
@@ -223,39 +72,14 @@
             }
         }
 
-        // Initialize
         initTheme();
 
-        window.addEventListener("DOMContentLoaded", () => {
-            // Initialize language switcher
-            import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
-                initLanguageSwitcher();
-            });
-
-            const btn = document.getElementById("themeToggle");
-            if (!btn) return;
-
-            btn.addEventListener("click", () => {
-                const current = html.getAttribute("data-theme") || "light";
-                const next = current === "light" ? "dark" : "light";
-                html.setAttribute("data-theme", next);
-                localStorage.setItem("theme", next);
-                updateThemeToggle(next);
-            });
-        });
-    </script>
-
-    <!-- TRAFFIC APP -->
-    <script type="module" src="../../assets/web/traffic-app.js"></script>
-
-    <!-- Navigation setup -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const switchBtn = document.getElementById('switchPageBtn');
-            if (switchBtn) {
-                switchBtn.href = 'civic.html';
-                switchBtn.title = 'Switch to Nāgarika Dhvani';
-            }
+        document.getElementById("themeToggle").addEventListener("click", () => {
+            const current = html.getAttribute("data-theme") || "light";
+            const next = current === "light" ? "dark" : "light";
+            html.setAttribute("data-theme", next);
+            localStorage.setItem("theme", next);
+            updateThemeToggle(next);
         });
     </script>
 </body>

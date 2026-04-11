@@ -15,74 +15,42 @@
     <link rel="stylesheet" href="../../assets/css/leaflet.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <style>
-        /* Override global body styles for full-width layout */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            margin: 0 !important;
-            padding: 0 !important;
-            max-width: none !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            max-width: none;
             background: var(--x-bg-primary);
             color: var(--x-text-primary);
         }
 
         .heatmap-container {
             width: 100%;
-            max-width: 100%;
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
+            padding: 10px;
         }
 
         .heatmap-content {
-            padding: 10px;
-            max-width: 100%;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .page-header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             margin-bottom: 15px;
             padding: 10px;
             background: var(--x-bg-secondary);
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 10;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .back-btn {
-            padding: 8px 12px;
-            background: var(--x-button-primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
-        }
-
-        .back-btn:hover {
-            background: var(--x-button-primary-hover);
         }
 
         .page-title {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
+            margin-bottom: 15px;
         }
 
         h1 {
@@ -101,8 +69,6 @@
             background: var(--x-bg-secondary);
             border-radius: 8px;
             padding: 15px;
-            position: relative;
-            z-index: 5;
             margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -142,21 +108,19 @@
 
         .button-group {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 15px;
-            align-items: center;
         }
 
         button {
             padding: 10px 20px;
-            border: none;
             border-radius: 4px;
             font-size: 14px;
             font-weight: 600;
+            border: none;
             cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
         .btn-primary {
@@ -182,17 +146,14 @@
             border-radius: 8px;
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            height: 600px;
-            max-height: 70vh;
-            position: relative;
-            z-index: 1;
+            height: calc(100vh - 300px);
+            min-height: 500px;
         }
 
         #map {
             height: 100%;
             width: 100%;
             border-radius: 4px;
-            position: relative;
         }
 
         .status-message {
@@ -224,8 +185,6 @@
             background: var(--x-bg-secondary);
             border-radius: 8px;
             padding: 15px;
-            position: relative;
-            z-index: 5;
             margin-top: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -238,11 +197,10 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 15px;
         }
 
         .stat-card {
-            padding: 15px;
+            padding: 1rem;
             background: var(--x-bg-tertiary);
             border-radius: 4px;
             border-left: 4px solid var(--x-button-primary);
@@ -261,13 +219,7 @@
         }
 
         .legend {
-            background: var(--x-bg-secondary);
-            padding: 15px;
-            border-radius: 4px;
-            position: relative;
-            z-index: 5;
             margin-top: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .legend h3 {
@@ -286,7 +238,7 @@
         .legend-color {
             width: 30px;
             height: 20px;
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         @media (max-width: 768px) {
@@ -295,13 +247,11 @@
             }
 
             .button-group {
-                flex-wrap: wrap;
-                justify-content: flex-start;
+                flex-direction: column;
             }
 
             button {
-                flex: 0 1 auto;
-                min-width: fit-content;
+                width: 100%;
             }
         }
     </style>
@@ -328,29 +278,21 @@
                         <i class="fas fa-building"></i>
                         <span id="switchLabelCivic" data-i18n="switchToCivic">Report Civic Issue</span>
                     </a>
-                    <a href="../../cities/blr/traffic.html" class="nav-switch-btn" data-i18n-title="switchToTraffic">
-                        <i class="fas fa-traffic-light"></i>
-                        <span id="switchLabelTraffic" data-i18n="switchToTraffic">Report Traffic Issue</span>
-                    </a>
                 </div>
             </header>
-            <div class="page-title" style="margin-top: 24px;">
+            <div class="page-title">
                 <h1>🗺️ <span data-i18n="heatMapTitle">Heat Map Analytics</span></h1>
-                <p class="subtitle" data-i18n="heatMapSubtitle">Visualize civic and traffic issues across Bengaluru</p>
+                <p class="subtitle" data-i18n="heatMapSubtitle">Visualize civic issues across Bengaluru</p>
             </div>
 
-
-
-            <div class="controls-panel">
+            <section class="controls-panel">
                 <h2 style="margin-top: 0; font-size: 18px;" data-i18n="filters">Filters</h2>
 
                 <div class="controls-grid">
                     <div class="control-group">
                         <label for="reportType" data-i18n="reportTypeLabel">Report Type</label>
                         <select id="reportType">
-                            <option value="both" data-i18n="bothTypes">Both (Civic + Traffic)</option>
                             <option value="civic" data-i18n="civicIssues">Civic Issues</option>
-                            <option value="traffic" data-i18n="trafficIssues">Traffic Issues</option>
                         </select>
                     </div>
 
@@ -368,7 +310,25 @@
                         <label for="issueType" data-i18n="issueTypeLabel">Issue Type (Optional)</label>
                         <select id="issueType">
                             <option value="" data-i18n="allIssueTypes">All Issue Types</option>
-                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="corporationFilter" data-i18n="corporationFilterLabel">Corporation</label>
+                        <select id="corporationFilter">
+                            <option value="" data-i18n="allCorporations">All Corporations</option>
+                            <option value="North">North (BNCC)</option>
+                            <option value="South">South (BSCL)</option>
+                            <option value="East">East (BECC)</option>
+                            <option value="West">West (BWCC)</option>
+                            <option value="Central">Central (BCCC)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="wardFilter" data-i18n="wardFilterLabel">Ward Filter</label>
+                        <select id="wardFilter">
+                            <option value="" data-i18n="allWards">All Wards</option>
                         </select>
                     </div>
                 </div>
@@ -376,17 +336,18 @@
                 <div class="button-group">
                     <button class="btn-primary" id="loadHeatMapBtn">📊 <span data-i18n="loadHeatMapBtn">Load Heat
                             Map</span></button>
-                    <button class="btn-primary" id="resetFiltersBtn">🔄 <span data-i18n="resetFiltersBtn">Reset
+                    <button class="btn-secondary" id="resetFiltersBtn">🔄 <span data-i18n="resetFiltersBtn">Reset
                             Filters</span></button>
                 </div>
-                <div class="status-message" id="statusMessage"></div>
-            </div>
+            </section>
 
-            <div class="map-container">
+            <div class="status-message" id="statusMessage"></div>
+
+            <section class="map-container">
                 <div id="map"></div>
-            </div>
+            </section>
 
-            <div class="legend">
+            <section class="legend controls-panel">
                 <h3 data-i18n="intensityLegend">Intensity Legend</h3>
                 <div class="legend-item">
                     <div class="legend-color" style="background: #F44336;"></div>
@@ -404,20 +365,19 @@
                     <div class="legend-color" style="background: #4CAF50;"></div>
                     <span data-i18n="lowIntensity">Low (1-2 reports)</span>
                 </div>
-            </div>
+            </section>
 
-            <div class="stats-panel" id="statsPanel" style="display: none;">
+            <section class="stats-panel" id="statsPanel" style="display: none;">
                 <h2 style="margin-top: 0; font-size: 18px;" data-i18n="statistics">Statistics</h2>
                 <div class="stats-grid" id="statsGrid">
-                    <!-- Stats will be populated dynamically -->
                 </div>
-            </div>
+            </section>
         </div>
 
         <!-- Footer -->
         <footer class="app-footer">
             <div class="footer-content">
-                <small data-i18n="footerText">&copy; 2025 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
+                <small data-i18n="footerText">&copy; 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
                         href="../../how-to.html" style="text-decoration: none; color: var(--x-text-secondary);"
                         data-i18n="howToLink">How to Use</a></small>
                 <div class="social-links">
@@ -489,6 +449,18 @@
             const { initHeatMap, loadHeatMap, clearHeatMap } = await import('../../assets/web/heatmap.js');
             const { initMap } = await import('../../assets/web/map.js');
 
+            const corporationDisplayMap = {
+                North: { en: 'North (BNCC)', kn: 'ಉತ್ತರ (BNCC)' },
+                South: { en: 'South (BSCL)', kn: 'ದಕ್ಷಿಣ (BSCL)' },
+                East: { en: 'East (BECC)', kn: 'ಪೂರ್ವ (BECC)' },
+                West: { en: 'West (BWCC)', kn: 'ಪಶ್ಚಿಮ (BWCC)' },
+                Central: { en: 'Central (BCCC)', kn: 'ಕೇಂದ್ರ (BCCC)' }
+            };
+
+            let wardBoundaryOptions = [];
+            let corporationBoundaryOptions = new Map();
+            let boundaryHighlightLayer = null;
+
             // Initialize map
             const map = initMap();
 
@@ -504,6 +476,7 @@
 
             // Populate issue type options
             populateIssueTypes();
+            await populateBoundaryFilters();
 
             // Event listeners
             document.getElementById('loadHeatMapBtn').addEventListener('click', () => {
@@ -511,6 +484,10 @@
                 const startDate = document.getElementById('startDate').value;
                 const endDate = document.getElementById('endDate').value;
                 const issueType = document.getElementById('issueType').value;
+                const corporation = document.getElementById('corporationFilter').value;
+                const ward = document.getElementById('wardFilter').value;
+                const viewportBounds = getSelectedViewportBounds();
+                const wardRings = ward ? getSelectedWardRings() : null;
 
                 if (!startDate || !endDate) {
                     showMessage('Please select both start and end dates', 'error');
@@ -522,15 +499,28 @@
                     return;
                 }
 
-                loadHeatMap(reportType, startDate, endDate, issueType || null);
+                loadHeatMap({
+                    type: reportType,
+                    start_date: startDate,
+                    end_date: endDate,
+                    issue_type: issueType || null,
+                    corporation: corporation || null,
+                    ward: ward || null,
+                    viewportBounds,
+                    wardRings
+                });
             });
 
             document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-                document.getElementById('reportType').value = 'both';
+                document.getElementById('reportType').value = 'civic';
                 document.getElementById('issueType').value = '';
+                document.getElementById('corporationFilter').value = '';
+                document.getElementById('wardFilter').value = '';
                 document.getElementById('startDate').valueAsDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
                 document.getElementById('endDate').valueAsDate = new Date();
+                syncWardOptions();
                 clearHeatMap();
+                focusSelectedBoundary();
             });
 
             async function populateIssueTypes() {
@@ -562,25 +552,9 @@
                     { value: 'Other', key: 'other' }
                 ];
 
-                const commonTrafficIssues = [
-                    { value: '🚦 Traffic Signal Down', key: 'signalDown' },
-                    { value: '🚗 Traffic Jam', key: 'trafficJam' },
-                    { value: '🚗‍ Wrong Parking', key: 'wrongParking' },
-                    { value: '🚫 No Parking Zone Violation', key: 'noParking' },
-                    { value: '📱 Driving with Mobile', key: 'drivingWithMobile' },
-                    { value: '🪖 No Helmet (Rider/Pillion)', key: 'noHelmet' },
-                    { value: '🚧 Missing Speed Breaker', key: 'speedBreaker' },
-                    { value: '🛣️ Diversion Needed', key: 'diversion' },
-                    { value: 'Other traffic issue', key: 'otherTraffic' }
-                ];
-
                 let issues = [];
                 if (reportType === 'civic') {
                     issues = commonCivicIssues;
-                } else if (reportType === 'traffic') {
-                    issues = commonTrafficIssues;
-                } else {
-                    issues = [...commonCivicIssues, ...commonTrafficIssues];
                 }
 
                 issues.forEach(issue => {
@@ -592,11 +566,417 @@
                 });
             }
 
-            // Listen for report type changes
             document.getElementById('reportType').addEventListener('change', populateIssueTypes);
+            document.getElementById('corporationFilter').addEventListener('change', () => {
+                syncWardOptions();
+                focusSelectedBoundary();
+            });
 
             // Listen for language changes to update dropdowns
-            window.addEventListener('languageChanged', populateIssueTypes);
+            window.addEventListener('languageChanged', async () => {
+                await populateIssueTypes();
+                await populateBoundaryFilters();
+            });
+
+            async function populateBoundaryFilters() {
+                const corporationSelect = document.getElementById('corporationFilter');
+                const wardSelect = document.getElementById('wardFilter');
+                const selectedCorporation = corporationSelect.value;
+                const selectedWard = wardSelect.value;
+
+                const { t, getCurrentLanguage } = await import('../../assets/js/i18n.js');
+                const currentLang = getCurrentLanguage();
+
+                setCorporationOptions(corporationSelect, currentLang);
+
+                wardSelect.innerHTML = '';
+                const allWardOption = document.createElement('option');
+                allWardOption.value = '';
+                allWardOption.textContent = t('allWards', currentLang);
+                allWardOption.setAttribute('data-i18n', 'allWards');
+                wardSelect.appendChild(allWardOption);
+
+                try {
+                    const response = await fetch('../../data/cities/blr/wards.kml');
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch wards KML: ${response.status}`);
+                    }
+                    const kmlText = await response.text();
+                    const parsedBoundaries = parseWardBoundariesFromKml(kmlText);
+                    corporationBoundaryOptions = parsedBoundaries.corporationOptions;
+                    wardBoundaryOptions = parsedBoundaries.wardOptions;
+
+                    setCorporationOptions(corporationSelect, currentLang, corporationBoundaryOptions);
+
+                    corporationSelect.value = selectedCorporation;
+                    syncWardOptions();
+                    if (selectedWard) {
+                        wardSelect.value = selectedWard;
+                    }
+                } catch (error) {
+                    console.warn('Unable to load boundary options:', error);
+                }
+            }
+
+            function setCorporationOptions(corporationSelect, currentLang, corporationOptions = null) {
+                corporationSelect.innerHTML = '';
+
+                const allCorporationOption = document.createElement('option');
+                allCorporationOption.value = '';
+                allCorporationOption.textContent = currentLang === 'kn' ? 'ಎಲ್ಲಾ ಕಾರ್ಪೊರೇಶನ್‌ಗಳು' : 'All Corporations';
+                allCorporationOption.setAttribute('data-i18n', 'allCorporations');
+                corporationSelect.appendChild(allCorporationOption);
+
+                const corporations = corporationOptions
+                    ? Array.from(corporationOptions.keys())
+                    : Object.keys(corporationDisplayMap);
+
+                corporations.sort().forEach((corporation) => {
+                    const option = document.createElement('option');
+                    option.value = corporation;
+                    option.textContent = currentLang === 'kn'
+                        ? (corporationOptions?.get(corporation)?.displayKn || corporationDisplayMap[corporation]?.kn || corporation)
+                        : (corporationOptions?.get(corporation)?.displayEn || corporationDisplayMap[corporation]?.en || corporation);
+                    corporationSelect.appendChild(option);
+                });
+            }
+
+            function getElementsByLocalName(parent, localName) {
+                return Array.from(parent.getElementsByTagNameNS('*', localName));
+            }
+
+            function parseWardBoundariesFromKml(kmlText) {
+                const corporationOptions = new Map();
+                const wardOptions = [];
+                const placemarkBlocks = kmlText.match(/<Placemark\b[\s\S]*?<\/Placemark>/g) || [];
+
+                placemarkBlocks.forEach((placemarkBlock) => {
+                    const data = {
+                        Corporation: extractSimpleDataValue(placemarkBlock, 'Corporation'),
+                        corporation_kn: extractSimpleDataValue(placemarkBlock, 'corporation_kn'),
+                        ward_id: extractSimpleDataValue(placemarkBlock, 'ward_id'),
+                        ward_name: extractSimpleDataValue(placemarkBlock, 'ward_name'),
+                        ward_name_kn: extractSimpleDataValue(placemarkBlock, 'ward_name_kn'),
+                        Ward_Name: extractSimpleDataValue(placemarkBlock, 'Ward_Name')
+                    };
+
+                    const corporation = data.Corporation || '';
+                    const wardValue = data.Ward_Name || (data.ward_id && data.ward_name ? `${data.ward_id} - ${data.ward_name}` : data.ward_name || '');
+                    if (!corporation || !wardValue) {
+                        return;
+                    }
+
+                    const bounds = getPlacemarkBoundsFromText(placemarkBlock);
+                    if (!corporationOptions.has(corporation)) {
+                        corporationOptions.set(corporation, {
+                            displayEn: corporationDisplayMap[corporation]?.en || corporation,
+                            displayKn: corporationDisplayMap[corporation]?.kn || data.corporation_kn || corporation,
+                            bounds
+                        });
+                    } else if (bounds) {
+                        const corporationEntry = corporationOptions.get(corporation);
+                        if (corporationEntry.bounds) {
+                            mergeBounds(corporationEntry.bounds, bounds);
+                        } else {
+                            corporationEntry.bounds = bounds;
+                        }
+                    }
+
+                    wardOptions.push({
+                        corporation,
+                        wardNumber: Number.parseInt(data.ward_id, 10),
+                        wardValue,
+                        wardDisplayEn: formatWardLabel(data.ward_id, data.ward_name, wardValue),
+                        wardDisplayKn: formatWardLabel(data.ward_id, data.ward_name_kn, wardValue),
+                        bounds,
+                        rings: getPlacemarkRingsFromText(placemarkBlock)
+                    });
+                });
+
+                return { corporationOptions, wardOptions };
+            }
+
+            function extractSimpleDataValue(placemarkBlock, fieldName) {
+                const escapedFieldName = fieldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const match = placemarkBlock.match(new RegExp(`<SimpleData[^>]*name=["']${escapedFieldName}["'][^>]*>([\\s\\S]*?)<\\/SimpleData>`, 'i'));
+                return match ? decodeXmlEntities(match[1].trim()) : '';
+            }
+
+            function decodeXmlEntities(value) {
+                return value
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'");
+            }
+
+            function syncWardOptions() {
+                const corporation = document.getElementById('corporationFilter').value;
+                const wardSelect = document.getElementById('wardFilter');
+                const currentWard = wardSelect.value;
+                const currentLang = (localStorage.getItem('language') || 'en');
+
+                wardSelect.innerHTML = '';
+                const allWardOption = document.createElement('option');
+                allWardOption.value = '';
+                allWardOption.textContent = currentLang === 'kn' ? 'ಎಲ್ಲಾ ವಾರ್ಡ್‌ಗಳು' : 'All Wards';
+                wardSelect.appendChild(allWardOption);
+
+                const filteredWards = wardBoundaryOptions
+                    .filter((entry) => !corporation || entry.corporation === corporation)
+                    .sort((left, right) => compareWardEntries(left, right, currentLang));
+
+                filteredWards.forEach((wardEntry) => {
+                    const option = document.createElement('option');
+                    option.value = wardEntry.wardValue;
+                    option.textContent = currentLang === 'kn' ? wardEntry.wardDisplayKn : wardEntry.wardDisplayEn;
+                    wardSelect.appendChild(option);
+                });
+
+                const isCurrentWardStillValid = filteredWards.some((entry) => entry.wardValue === currentWard);
+                wardSelect.value = isCurrentWardStillValid ? currentWard : '';
+            }
+
+            document.getElementById('startDate').addEventListener('change', async () => {
+                await populateBoundaryFilters();
+            });
+            document.getElementById('endDate').addEventListener('change', async () => {
+                await populateBoundaryFilters();
+            });
+            document.getElementById('wardFilter').addEventListener('change', () => {
+                const corporationSelect = document.getElementById('corporationFilter');
+                const selectedWard = document.getElementById('wardFilter').value;
+                if (!selectedWard || corporationSelect.value) {
+                    focusSelectedBoundary();
+                    return;
+                }
+
+                const selectedEntry = wardBoundaryOptions.find((entry) => entry.wardValue === selectedWard);
+                if (selectedEntry) {
+                    corporationSelect.value = selectedEntry.corporation;
+                    syncWardOptions();
+                    document.getElementById('wardFilter').value = selectedWard;
+                }
+                focusSelectedBoundary();
+            });
+
+            function formatWardLabel(wardId, wardName, fallback) {
+                if (wardId && wardName) {
+                    return `${wardId} ${wardName}`.trim();
+                }
+                return (fallback || '').replace(/\s*-\s*/g, ' ').trim();
+            }
+
+            function getPlacemarkBounds(placemark) {
+                const coordinateNodes = getElementsByLocalName(placemark, 'coordinates');
+                const bounds = { north: -Infinity, south: Infinity, east: -Infinity, west: Infinity };
+
+                coordinateNodes.forEach((node) => {
+                    const coordinateText = (node.textContent || '').trim();
+                    if (!coordinateText) {
+                        return;
+                    }
+
+                    coordinateText.split(/\s+/).forEach((pair) => {
+                        const [lonString, latString] = pair.split(',');
+                        const lat = Number(latString);
+                        const lon = Number(lonString);
+                        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                            return;
+                        }
+
+                        bounds.north = Math.max(bounds.north, lat);
+                        bounds.south = Math.min(bounds.south, lat);
+                        bounds.east = Math.max(bounds.east, lon);
+                        bounds.west = Math.min(bounds.west, lon);
+                    });
+                });
+
+                if (!Number.isFinite(bounds.north) || !Number.isFinite(bounds.south) || !Number.isFinite(bounds.east) || !Number.isFinite(bounds.west)) {
+                    return null;
+                }
+
+                return bounds;
+            }
+
+            function getPlacemarkBoundsFromText(placemarkBlock) {
+                const coordinateMatches = placemarkBlock.match(/<coordinates>([\s\S]*?)<\/coordinates>/g) || [];
+                const bounds = { north: -Infinity, south: Infinity, east: -Infinity, west: Infinity };
+
+                coordinateMatches.forEach((coordinateMatch) => {
+                    const rawCoordinates = coordinateMatch
+                        .replace('<coordinates>', '')
+                        .replace('</coordinates>', '')
+                        .trim();
+
+                    rawCoordinates.split(/\s+/).forEach((pair) => {
+                        const [lonString, latString] = pair.split(',');
+                        const lat = Number(latString);
+                        const lon = Number(lonString);
+                        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                            return;
+                        }
+
+                        bounds.north = Math.max(bounds.north, lat);
+                        bounds.south = Math.min(bounds.south, lat);
+                        bounds.east = Math.max(bounds.east, lon);
+                        bounds.west = Math.min(bounds.west, lon);
+                    });
+                });
+
+                if (!Number.isFinite(bounds.north) || !Number.isFinite(bounds.south) || !Number.isFinite(bounds.east) || !Number.isFinite(bounds.west)) {
+                    return null;
+                }
+
+                return bounds;
+            }
+
+            function getPlacemarkRingsFromText(placemarkBlock) {
+                const coordinateMatches = placemarkBlock.match(/<coordinates>([\s\S]*?)<\/coordinates>/g) || [];
+
+                return coordinateMatches
+                    .map((coordinateMatch) => coordinateMatch
+                        .replace('<coordinates>', '')
+                        .replace('</coordinates>', '')
+                        .trim()
+                    )
+                    .map((rawCoordinates) => rawCoordinates
+                        .split(/\s+/)
+                        .map((pair) => {
+                            const [lonString, latString] = pair.split(',');
+                            const lat = Number(latString);
+                            const lon = Number(lonString);
+                            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                                return null;
+                            }
+                            return [lat, lon];
+                        })
+                        .filter(Boolean)
+                    )
+                    .filter((ring) => ring.length >= 3);
+            }
+
+            function mergeBounds(target, source) {
+                if (!target || !source) {
+                    return;
+                }
+                target.north = Math.max(target.north, source.north);
+                target.south = Math.min(target.south, source.south);
+                target.east = Math.max(target.east, source.east);
+                target.west = Math.min(target.west, source.west);
+            }
+
+            function getWardNumber(wardEntry) {
+                if (Number.isFinite(wardEntry.wardNumber)) {
+                    return wardEntry.wardNumber;
+                }
+
+                const match = wardEntry.wardValue.match(/^(\d+)/);
+                return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+            }
+
+            function compareWardEntries(left, right, currentLang) {
+                const leftNumber = getWardNumber(left);
+                const rightNumber = getWardNumber(right);
+                if (leftNumber !== rightNumber) {
+                    return leftNumber - rightNumber;
+                }
+
+                const leftLabel = currentLang === 'kn' ? left.wardDisplayKn : left.wardDisplayEn;
+                const rightLabel = currentLang === 'kn' ? right.wardDisplayKn : right.wardDisplayEn;
+                return leftLabel.localeCompare(rightLabel);
+            }
+
+            function getSelectedViewportBounds() {
+                const corporation = document.getElementById('corporationFilter').value;
+                const ward = document.getElementById('wardFilter').value;
+
+                if (ward) {
+                    return wardBoundaryOptions.find((entry) => entry.wardValue === ward)?.bounds || null;
+                }
+
+                if (corporation) {
+                    return corporationBoundaryOptions.get(corporation)?.bounds || null;
+                }
+
+                return null;
+            }
+
+            function getSelectedHighlightRings() {
+                const corporation = document.getElementById('corporationFilter').value;
+                const ward = document.getElementById('wardFilter').value;
+
+                if (ward) {
+                    return wardBoundaryOptions.find((entry) => entry.wardValue === ward)?.rings || [];
+                }
+
+                if (corporation) {
+                    return wardBoundaryOptions
+                        .filter((entry) => entry.corporation === corporation)
+                        .flatMap((entry) => entry.rings || []);
+                }
+
+                return [];
+            }
+
+            function getSelectedWardRings() {
+                const ward = document.getElementById('wardFilter').value;
+                if (!ward) {
+                    return [];
+                }
+
+                return wardBoundaryOptions
+                    .filter((entry) => entry.wardValue === ward)
+                    .flatMap((entry) => entry.rings || []);
+            }
+
+            function clearBoundaryHighlight() {
+                if (boundaryHighlightLayer && window.map) {
+                    window.map.removeLayer(boundaryHighlightLayer);
+                }
+                boundaryHighlightLayer = null;
+            }
+
+            function renderBoundaryHighlight() {
+                if (!window.map) {
+                    return;
+                }
+
+                clearBoundaryHighlight();
+
+                const rings = getSelectedHighlightRings();
+                if (!rings.length) {
+                    return;
+                }
+
+                boundaryHighlightLayer = L.layerGroup(
+                    rings.map((ring) => L.polygon(ring, {
+                        color: '#0f766e',
+                        weight: 3,
+                        opacity: 0.95,
+                        fillColor: '#14b8a6',
+                        fillOpacity: 0.12,
+                        interactive: false
+                    }))
+                ).addTo(window.map);
+            }
+
+            function focusSelectedBoundary() {
+                const bounds = getSelectedViewportBounds();
+                if (!bounds || !window.map) {
+                    clearBoundaryHighlight();
+                    return;
+                }
+
+                renderBoundaryHighlight();
+
+                const leafletBounds = L.latLngBounds(
+                    L.latLng(bounds.south, bounds.west),
+                    L.latLng(bounds.north, bounds.east)
+                );
+                window.map.fitBounds(leafletBounds, { padding: [20, 20], maxZoom: 15 });
+            }
 
             // Listen for heat map loaded event to show statistics
             window.addEventListener('heatMapLoaded', (event) => {

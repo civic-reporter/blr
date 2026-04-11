@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nāgarika Dhvani – Leaderboard</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+
+    <style>
+        .leaderboard-section {
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-section h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--x-text-primary);
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--x-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--x-border);
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--x-text-primary);
+        }
+
+        th {
+            background: var(--x-bg-secondary);
+            color: var(--x-accent);
+            font-weight: 600;
+        }
+
+        tr:hover td {
+            background: var(--x-bg-secondary);
+        }
+
+        @media (max-width: 600px) {
+
+            th,
+            td {
+                font-size: 0.8rem;
+                padding: 8px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
+        <div class="nav-left">
+            <a href="../../index.html" class="nav-home" title="Back to home">
+                <i class="fas fa-home"></i>
+                <span>Nāgarika Dhvani</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="civic.html" class="nav-switch-btn" title="Report Civic Issue" style="margin-left:8px;">
+                <i class="fas fa-landmark"></i>
+                <span>Report Issue</span>
+            </a>
+            <a href="heatmap.html" class="nav-switch-btn" title="Heatmap" style="margin-left:8px;">
+                <i class="fas fa-chart-area"></i>
+                <span>Heatmap</span>
+            </a>
+        </div>
+    </header>
+
+    <button id="themeToggle" class="theme-toggle-btn" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon" style="display:none;"></i>
+    </button>
+
+    <div class="container">
+        <h2>🏆 Civic Issue Leaderboard – Bengaluru</h2>
+        <p class="header-text">Top wards, constituencies, and MLAs by reported civic issues</p>
+
+        <div class="leaderboard-section">
+            <h2>MLA Leaderboard</h2>
+            <table id="mla-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>MLA Handle</th>
+                        <th>Reports</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="leaderboard-section">
+            <h2>Constituency Leaderboard</h2>
+            <table id="constituency-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Constituency</th>
+                        <th>Reports</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="leaderboard-section">
+            <h2>Ward Leaderboard</h2>
+            <table id="ward-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Ward</th>
+                        <th>Reports</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle (matches civic.html pattern)
+        const html = document.documentElement;
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('themeToggle');
+            const sun = btn.querySelector('.fa-sun');
+            const moon = btn.querySelector('.fa-moon');
+            const update = t => { sun.style.display = t === 'dark' ? 'none' : ''; moon.style.display = t === 'dark' ? '' : 'none'; };
+            update(html.getAttribute('data-theme'));
+            btn.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                update(next);
+            });
+        });
+    </script>
+    <script src="../../assets/js/leaderboard.js"></script>
+    <script>
+        function fetchAndRenderLeaderboardsBlr() {
+            fetch('/lambda/retrieve-logs-lambda?city=blr')
+                .then(res => res.json())
+                .then(data => {
+                    renderLeaderboard('mla-table', data.mla_leaderboard, 'mla_handle');
+                    renderLeaderboard('constituency-table', data.constituency_leaderboard, 'constituency');
+                    renderLeaderboard('ward-table', data.ward_leaderboard, 'ward');
+                })
+                .catch(err => {
+                    document.querySelectorAll('tbody').forEach(tb => {
+                        tb.innerHTML = '<tr><td colspan="3">Failed to load data</td></tr>';
+                    });
+                    console.error('Leaderboard fetch error:', err);
+                });
+        }
+        document.addEventListener('DOMContentLoaded', fetchAndRenderLeaderboardsBlr);
+    </script>
+</body>
+
+</html>
