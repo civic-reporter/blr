@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Nāgarika Dhvani - Civic</title>
 
-  <!-- Modern fonts + icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Local libs -->
   <link rel="stylesheet" href="../../assets/css/leaflet.css" />
   <link rel="stylesheet" href="../../assets/css/styles.css" />
 
@@ -18,7 +15,6 @@
 </head>
 
 <body>
-  <!-- Navigation Header -->
   <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
     <div class="nav-left">
       <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
@@ -27,10 +23,6 @@
       </a>
     </div>
     <div class="nav-right">
-      <a id="switchPageBtn" href="blr-traffic-index.html" class="nav-switch-btn" data-i18n-title="switchToTraffic">
-        <i class="fas fa-exchange-alt"></i>
-        <span id="switchLabel" data-i18n="switchToTraffic">Report Traffic</span>
-      </a>
       <a href="heatmap.html" class="nav-switch-btn" data-i18n-title="heatmap" style="margin-left:8px;">
         <i class="fas fa-chart-area"></i>
         <span id="switchLabelHeatmap" data-i18n="heatmap">Heatmap</span>
@@ -38,10 +30,9 @@
     </div>
   </header>
 
-  <!-- Floating theme toggle -->
   <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" title="Toggle light/dark mode">
     <i class="fas fa-sun"></i>
-    <i class="fas fa-moon" style="display:none;"></i>
+    <i class="fas fa-moon is-hidden"></i>
   </button>
 
   <div class="container">
@@ -51,9 +42,8 @@
 
     <!-- Image Upload Options (visible when no image loaded) -->
     <div id="uploadOptions" class="upload-options">
-      <p class="header-text" data-i18n="uploadInstructions">Click (mobile only) or upload a photo (GPS is
-        auto-detected). If GPS is missing, choose the
-        location on the map.</p>
+      <p class="header-text" data-i18n="uploadInstructions">Use mobile camera or upload a photo (GPS is
+        auto-detected; if missing, add location on the map). Confirm the photo, classify the issue, and submit.</p>
       <div class="button-group">
         <!-- Camera button (mobile only) -->
         <button id="cameraBtn" class="upload-btn camera-btn">
@@ -65,15 +55,15 @@
         </button>
       </div>
       <!-- Hidden real inputs (file, image-only) -->
-      <input type="file" id="imageInput" style="display:none" />
-      <input type="file" id="cameraInput" capture="environment" style="display:none" />
+      <input type="file" id="imageInput" class="is-hidden" />
+      <input type="file" id="cameraInput" capture="environment" class="is-hidden" />
     </div>
 
     <!-- Image Preview -->
-    <img id="preview" style="display:none;" />
+    <img id="preview" class="is-hidden" />
 
     <!-- Image confirmation -->
-    <div id="imageConfirm" style="display:none;" class="image-confirm">
+    <div id="imageConfirm" class="image-confirm is-hidden">
       <p data-i18n="isPhotoCorrect">Is this photo correct?</p>
       <button id="changeImageBtn" class="upload-btn">
         🔁 <span data-i18n="chooseAnotherPhoto">Choose another photo</span>
@@ -84,14 +74,18 @@
       </label>
     </div>
 
+    <div id="dragMarkerHint" class="map-message is-hidden" data-i18n="dragMarkerInstruction">
+      🔧 GPS not detected. Click map or drag marker to set the location (within GBA area only).
+    </div>
+
     <!-- Map -->
     <div id="map"></div>
 
     <!-- Location Info & Form -->
-    <div id="locationInfo" style="display:none">
+    <div id="locationInfo" class="is-hidden">
       <div class="info-box" id="infoBox">
         <div><strong data-i18n="locationLabel">📍 Location:</strong> <span id="gpsCoords"></span></div>
-        <div id="mapRestrictionMsg" class="map-message" style="display:none" data-i18n="mapRestrictionMsg">
+        <div id="mapRestrictionMsg" class="map-message is-hidden" data-i18n="mapRestrictionMsg">
           ⚠️ Map clicks outside GBA jurisdiction are automatically rejected.
         </div>
         <div class="issue-row">
@@ -110,15 +104,10 @@
           <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Extra details (optional)"
             maxlength="120" />
         </div>
-        <div><strong data-i18n="tweetFrom">𝕏 Tweet from:</strong>
-          <span class="gba-handle">@zenc_civic</span>
-        </div>
-        <small data-i18n="dragMarkerInstruction">🔧 Drag marker or click map to adjust location <strong>(within GBA area
-            only)</strong>.</small>
       </div>
 
       <!-- Email authorities option -->
-      <div id="emailOption" style="display:none;" class="email-option">
+      <div id="emailOption" class="email-option is-hidden">
         <label class="email-check">
           <input type="checkbox" id="emailAuthoritiesCheck" />
           <span data-i18n="emailAuthorities">
@@ -126,7 +115,7 @@
           </span>
         </label>
 
-        <div id="emailDetails" style="display:none;" class="email-details">
+        <div id="emailDetails" class="email-details is-hidden">
           <div id="emailRecipients" class="email-recipients">
             <small data-i18n="emailWillBeSentTo">Notifications will be sent to the following addresses:</small>
             <ul id="emailList"></ul>
@@ -137,9 +126,9 @@
               <input type="checkbox" id="ccMeCheck" />
               <span data-i18n="ccMe">Would you like to receive a copy of this email?</span>
             </label>
-            <input type="email" id="userEmailInput" class="email-input" placeholder="your.email@example.com"
-              data-i18n-placeholder="yourEmail" style="display:none;" maxlength="100" />
-            <small id="emailValidationMsg" class="validation-msg" style="display:none;"></small>
+            <input type="email" id="userEmailInput" class="email-input is-hidden" placeholder="your.email@example.com"
+              data-i18n-placeholder="yourEmail" maxlength="100" />
+            <small id="emailValidationMsg" class="validation-msg is-hidden"></small>
           </div>
         </div>
       </div>
@@ -153,7 +142,7 @@
     <div id="status"></div>
 
     <!-- Success Screen (Submit Another Issue) -->
-    <div id="successScreen" class="success-container" style="display:none;">
+    <div id="successScreen" class="success-container is-hidden">
       <div class="success-card">
         <div class="success-icon-large">🏛️</div>
         <h2 class="success-title" data-i18n="issuePostedSuccess">Civic Issue Reported!</h2>
@@ -165,7 +154,7 @@
         <div id="tweetLinkContainer" class="tweet-link-box"></div>
 
         <!-- Location Info on Success Screen -->
-        <div id="successLocationInfo" class="success-location-info" style="display:none;"></div>
+        <div id="successLocationInfo" class="success-location-info is-hidden"></div>
 
         <div class="success-actions">
           <button id="submitAnotherBtn" class="success-btn primary">
@@ -206,12 +195,14 @@
     function updateThemeToggle(theme) {
       const sun = document.querySelector('#themeToggle .fa-sun');
       const moon = document.querySelector('#themeToggle .fa-moon');
+      // Using direct valid style manipulation since this is specific element logic
+      // But we can use classes too if we want full consistency
       if (theme === 'dark') {
-        sun.style.display = 'none';
-        moon.style.display = 'block';
+        sun.classList.add('is-hidden');
+        moon.classList.remove('is-hidden');
       } else {
-        sun.style.display = 'block';
-        moon.style.display = 'none';
+        sun.classList.remove('is-hidden');
+        moon.classList.add('is-hidden');
       }
     }
 
@@ -238,18 +229,6 @@
   </script>
 
   <script type="module" src="../../assets/web/app.js"></script>
-
-  <!-- Navigation setup -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const switchBtn = document.getElementById('switchPageBtn');
-      if (switchBtn) {
-        switchBtn.href = 'traffic.html';
-        switchBtn.title = 'Switch to Traffic Reporter';
-      }
-    });
-  </script>
-
 </body>
 
 </html>

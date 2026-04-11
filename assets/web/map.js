@@ -7,6 +7,17 @@ let mapInstance, markerInstance;
 let mapInitialized = false;
 let CONFIG = null;
 let googleMapsLoaded = false;
+let markerPopupTimeout = null;
+
+function setMapRestrictionVisibility(visible) {
+    const msg = document.getElementById("mapRestrictionMsg");
+    if (!msg) return;
+    if (visible) {
+        msg.classList.remove("is-hidden");
+    } else {
+        msg.classList.add("is-hidden");
+    }
+}
 
 function loadGoogleMapsAPI(apiKey) {
     if (googleMapsLoaded || typeof google !== 'undefined') return;
@@ -60,7 +71,7 @@ function setupSearch() {
     const searchInput = document.createElement('input');
     searchInput.id = 'gbaSearch';
     searchInput.type = 'text';
-    searchInput.placeholder = 'Search GBA (MG Road, Jayanagar 4th Block)...';
+    searchInput.placeholder = 'Search for regions under Greater Bengaluru Authority';
     searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
 
     wrapper.appendChild(searchInput);
@@ -114,11 +125,13 @@ async function setupGoogleAutocomplete(searchInput) {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.placeMarker();
             window.map.setView([gps.lat, gps.lon], 16);
-            showStatus(`✅ ${place.name || place.formatted_address}`, 'success');
+            setMapRestrictionVisibility(false);
+            showStatus('', 'success');
             setTimeout(updateTweetButtonState, 50);
         } else {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.currentGPS = null;
+            setMapRestrictionVisibility(true);
             showStatus('❌ Outside GBA boundary', 'error');
             updateTweetButtonState();
         }
@@ -133,15 +146,17 @@ export async function handleMapClick(e) {
     if (!valid) {
         if (markerInstance) window.map.removeLayer(markerInstance);
         window.currentGPS = null;
+        setMapRestrictionVisibility(true);
         showStatus("❌ Outside GBA - click inside boundary", "error");
+        updateTweetButtonState();
         return;
     }
 
     window.currentGPS = testGPS;
+    setMapRestrictionVisibility(false);
     window.placeMarker();  // ✅ USE GLOBAL
-    updateGpsDisplay();
     ensureLocationVisible();
-    showStatus(`✅ Clicked: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
+    showStatus('', 'success');
     updateTweetButtonState();
 
     // Update email recipients based on flow type
@@ -165,8 +180,19 @@ export function placeMarker() {
     markerInstance = L.marker([window.currentGPS.lat, window.currentGPS.lon], {
         draggable: true
     }).addTo(window.map)
-        .bindPopup("Issue location ✅<br>Drag to adjust within GBA")
+        .bindPopup("Issue location")
         .openPopup();
+
+    if (markerPopupTimeout) {
+        clearTimeout(markerPopupTimeout);
+    }
+    markerPopupTimeout = setTimeout(() => {
+        if (markerInstance && markerInstance.isPopupOpen()) {
+            markerInstance.closePopup();
+        }
+    }, 5000);
+
+    updateGpsDisplay();
 
     markerInstance.on('dragend', async (e) => {
         const newPos = e.target.getLatLng();
@@ -176,8 +202,9 @@ export function placeMarker() {
         const valid = await validateLocationForCoords(testGPS);
         if (valid) {
             window.currentGPS = testGPS;
+            setMapRestrictionVisibility(false);
             updateGpsDisplay();
-            showStatus(`✅ Dragged: ${testGPS.lat.toFixed(4)}, ${testGPS.lon.toFixed(4)}`, "success");
+            showStatus('', 'success');
             updateTweetButtonState();
 
             // Update email recipients when marker is dragged
@@ -188,6 +215,7 @@ export function placeMarker() {
             }
         } else {
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
+            setMapRestrictionVisibility(true);
             showStatus("❌ Outside GBA jurisdiction", "error");
         }
     });

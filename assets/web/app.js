@@ -50,13 +50,13 @@ function initApp() {
     if (ccCheckbox && userEmailInput) {
         ccCheckbox.addEventListener("change", () => {
             if (ccCheckbox.checked) {
-                userEmailInput.style.display = 'block';
+                userEmailInput.classList.remove('is-hidden');
                 userEmailInput.focus();
             } else {
-                userEmailInput.style.display = 'none';
+                userEmailInput.classList.add('is-hidden');
                 userEmailInput.value = '';
                 const validationMsg = document.getElementById('emailValidationMsg');
-                if (validationMsg) validationMsg.style.display = 'none';
+                if (validationMsg) validationMsg.classList.add('is-hidden');
             }
         });
         console.log("✅ CC checkbox listener added");
@@ -70,6 +70,7 @@ function initApp() {
                 statusDiv.style.display = "none";
                 statusDiv.textContent = "";
             }
+            updateTweetButtonState();
         });
     }
 

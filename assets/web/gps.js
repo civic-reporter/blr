@@ -32,7 +32,7 @@ export async function extractGPSFromExif(dataUrl) {
 
             window.currentGPS = { lat, lon };
             updateTweetButtonState();
-            showStatus(`✅ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
+            showStatus('', "success");
 
             if (window.map) {
                 window.map.setView([lat, lon], 16);
@@ -70,7 +70,7 @@ export async function extractGPSFromExif(dataUrl) {
     }
 
     showLocation();
-    showStatus("ℹ️ No GPS. Use map/search.", "info");
+    showStatus('', "info");
     return null;
 }
 export async function getLiveGPSIfInGBA() {

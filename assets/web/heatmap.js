@@ -18,7 +18,7 @@ export async function initHeatMap() {
 
 /**
  * Fetch logs from Lambda endpoint
- * @param {Object} filters - Filter options {type, start_date, end_date, issue_type}
+ * @param {Object} filters - Filter options {type, start_date, end_date, issue_type, corporation, ward}
  * @returns {Promise<Object>} Heat map data
  */
 export async function fetchHeatMapData(filters = {}) {
@@ -26,7 +26,9 @@ export async function fetchHeatMapData(filters = {}) {
         type = 'both',
         start_date = null,
         end_date = null,
-        issue_type = null
+        issue_type = null,
+        corporation = null,
+        ward = null
     } = filters;
 
     try {
@@ -42,6 +44,12 @@ export async function fetchHeatMapData(filters = {}) {
         }
         if (issue_type) {
             params.append('issue_type', issue_type);
+        }
+        if (corporation) {
+            params.append('corporation', corporation);
+        }
+        if (ward) {
+            params.append('ward', ward);
         }
 
         // Call Lambda endpoint (configure in config.js)
@@ -303,24 +311,68 @@ export async function loadHeatMap(filters = {}) {
     showStatus('📊 Loading heatmap...', 'info');
     try {
         const data = await fetchHeatMapData(filters);
-        renderHeatMap(data.heat_map_points);
-        // Fit map to GBA bounding box after rendering
-        if (window.map && CONFIG && CONFIG.GBA_BBOX) {
-            const bbox = CONFIG.GBA_BBOX;
-            const bounds = L.latLngBounds(
-                L.latLng(bbox.south, bbox.west),
-                L.latLng(bbox.north, bbox.east)
+        let heatMapPoints = data.heat_map_points || [];
+        if (filters.wardRings && Array.isArray(filters.wardRings) && filters.wardRings.length) {
+            heatMapPoints = heatMapPoints.filter((point) =>
+                isPointInsideAnyWardRing(point.lat, point.lon, filters.wardRings)
             );
-            window.map.fitBounds(bounds, { padding: [20, 20], maxZoom: 13 });
+        }
+
+        renderHeatMap(heatMapPoints);
+        // Fit map to selected viewport when provided, else fall back to city bounds
+        if (window.map) {
+            if (filters.viewportBounds) {
+                const bounds = L.latLngBounds(
+                    L.latLng(filters.viewportBounds.south, filters.viewportBounds.west),
+                    L.latLng(filters.viewportBounds.north, filters.viewportBounds.east)
+                );
+                window.map.fitBounds(bounds, { padding: [20, 20], maxZoom: 15 });
+            } else if (CONFIG && CONFIG.GBA_BBOX) {
+                const bbox = CONFIG.GBA_BBOX;
+                const bounds = L.latLngBounds(
+                    L.latLng(bbox.south, bbox.west),
+                    L.latLng(bbox.north, bbox.east)
+                );
+                window.map.fitBounds(bounds, { padding: [20, 20], maxZoom: 13 });
+            }
         }
         // Hide loading message after rendering
-        showStatus(`✅ Loaded ${data.count} submissions`, 'success');
+        const countForDisplay = filters.wardRings ? heatMapPoints.length : data.count;
+        showStatus(`✅ Loaded ${countForDisplay} submissions`, 'success');
         if (loadBtn) loadBtn.disabled = false;
-        return data;
+        return {
+            ...data,
+            heat_map_points: heatMapPoints,
+            count: countForDisplay
+        };
     } catch (error) {
         console.error('❌ Failed to load heat map:', error);
         showStatus(`❌ Failed to load heat map: ${error.message}`, 'error');
         if (loadBtn) loadBtn.disabled = false;
         throw error;
     }
+}
+
+function isPointInsideAnyWardRing(lat, lon, wardRings) {
+    return wardRings.some((ring) => isPointInsideRing(lat, lon, ring));
+}
+
+function isPointInsideRing(lat, lon, ring) {
+    if (!Array.isArray(ring) || ring.length < 3) {
+        return false;
+    }
+
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const yi = ring[i][0];
+        const xi = ring[i][1];
+        const yj = ring[j][0];
+        const xj = ring[j][1];
+
+        const intersect = ((yi > lat) !== (yj > lat)) &&
+            (lon < ((xj - xi) * (lat - yi)) / ((yj - yi) || Number.EPSILON) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
 }

@@ -20,7 +20,7 @@ export async function handleImageUpload(file) {
             const preview = document.getElementById("preview");
             if (preview) {
                 preview.src = e.target.result;
-                preview.style.display = "block";
+                preview.classList.remove("is-hidden");
             }
 
             // ✅ GPS FIRST
@@ -46,7 +46,7 @@ export async function handleImageUpload(file) {
             // ✅ CRITICAL: Show imageConfirm for ALL (mobile + upload)
             hideUploadOptions();
             const imageConfirm = document.getElementById("imageConfirm");
-            if (imageConfirm) imageConfirm.style.display = "block";
+            if (imageConfirm) imageConfirm.classList.remove("is-hidden");
 
             resolve();
         };
@@ -71,7 +71,7 @@ export async function handleCameraCapture(file) {
             const preview = document.getElementById("preview");
             if (preview) {
                 preview.src = e.target.result;
-                preview.style.display = "block";
+                preview.classList.remove("is-hidden");
             }
 
             await extractGPSFromExif(e.target.result);
@@ -105,7 +105,7 @@ export async function handleCameraCapture(file) {
             // ✅ CRITICAL: Show imageConfirm for camera TOO
             hideUploadOptions();
             const imageConfirm = document.getElementById("imageConfirm");
-            if (imageConfirm) imageConfirm.style.display = "block";
+            if (imageConfirm) imageConfirm.classList.remove("is-hidden");
 
             resolve();
         };
