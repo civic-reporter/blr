@@ -1234,6 +1234,22 @@ body:not(:has(.page-header)) .language-toggle-btn {
     letter-spacing: 0.2px;
 }
 
+.home-bottom-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: -0.5rem auto 1.5rem;
+    padding: 0 1rem;
+}
+
+.home-bottom-actions .nav-switch-btn {
+    min-width: 180px;
+    justify-content: center;
+    box-shadow: 0 10px 24px rgba(29, 155, 240, 0.22);
+}
+
 .container h2 {
     font-size: clamp(1.45rem, 2.8vw, 2rem);
     margin-bottom: 0.75rem;
@@ -1438,6 +1454,14 @@ body:not(:has(.page-header)) .language-toggle-btn {
 
     .nav-home span {
         display: none;
+    }
+
+    .home-bottom-actions .nav-switch-btn span {
+        display: inline;
+    }
+
+    .home-bottom-actions {
+        padding: 0 1rem;
     }
 }
 
