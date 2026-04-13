@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nāgarika Dhvani – Leaderboard</title>
+    <title>Nāgarika Dhvani - Leaderboard</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/styles.css" />
@@ -104,6 +104,48 @@
             width: 1%;
         }
 
+        .rank-cell {
+            font-weight: 700;
+            white-space: nowrap;
+            width: 1%;
+        }
+
+        .rank-cell.medal {
+            font-size: 1.1rem;
+        }
+
+        tr.top-rank td {
+            background: rgba(29, 155, 240, 0.04);
+        }
+
+        .count-cell {
+            text-align: right;
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .issue-count-badge {
+            display: inline-block;
+            background: var(--x-accent);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 999px;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        td a {
+            color: var(--x-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
 
             .leaderboard-table-wrap {
@@ -127,50 +169,51 @@
 <body>
     <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
         <div class="nav-left">
-            <a href="../../index.html" class="nav-home" title="Back to home">
+            <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
                 <i class="fas fa-home"></i>
-                <span>Nāgarika Dhvani</span>
+                <span data-i18n="homeTitle">Nāgarika Dhvani</span>
             </a>
         </div>
         <div class="nav-right">
-            <a href="civic.html" class="nav-switch-btn" title="Report Civic Issue" style="margin-left:8px;">
+            <a href="civic.html" class="nav-switch-btn" data-i18n-title="switchToCivic" style="margin-left:8px;">
                 <i class="fas fa-landmark"></i>
-                <span>Report Issue</span>
+                <span data-i18n="switchToCivic">Report Civic Issue</span>
             </a>
-            <a href="heatmap.html" class="nav-switch-btn" title="Heatmap" style="margin-left:8px;">
+            <a href="heatmap.html" class="nav-switch-btn" data-i18n-title="heatmap" style="margin-left:8px;">
                 <i class="fas fa-chart-area"></i>
-                <span>Heatmap</span>
+                <span data-i18n="heatmap">Heatmap</span>
             </a>
         </div>
     </header>
 
-    <button id="themeToggle" class="theme-toggle-btn" title="Toggle light/dark mode">
+    <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" data-i18n-title="toggleTheme">
         <i class="fas fa-sun"></i>
         <i class="fas fa-moon" style="display:none;"></i>
     </button>
 
     <div class="container">
-        <h2>🏆 Civic Issue Leaderboard – Bengaluru</h2>
-        <p class="header-text">Top wards, constituencies, and MLAs by reported civic issues</p>
+        <h2 data-i18n="leaderboardTitle">🏆 Civic Issue Leaderboard - Bengaluru</h2>
+        <p class="header-text" data-i18n="leaderboardSubtitle">Top wards, constituencies, and MLAs by reported civic
+            issues</p>
 
         <div class="leaderboard-toolbar">
             <button id="loadLeaderboardBtn" class="leaderboard-load-btn" type="button">
                 <span class="spinner" aria-hidden="true"></span>
-                <span class="btn-label">Loading leaderboard...</span>
+                <span class="btn-label" data-i18n="leaderboardLoading">Loading leaderboard...</span>
             </button>
         </div>
 
         <div class="leaderboard-section">
-            <h2>Ward Leaderboard</h2>
+            <h2 data-i18n="wardLeaderboard">Ward Leaderboard</h2>
             <div class="leaderboard-table-wrap">
                 <table id="ward-table">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Ward Name</th>
-                            <th>Corporation</th>
-                            <th>Constituency</th>
-                            <th>Issues</th>
+                            <th data-i18n="rank">Rank</th>
+                            <th data-i18n="wardName">Ward Name</th>
+                            <th data-i18n="corporation">Corporation</th>
+                            <th data-i18n="constituency">Constituency</th>
+                            <th data-i18n="issues">Issues</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -178,14 +221,14 @@
             </div>
         </div>
         <div class="leaderboard-section">
-            <h2>Constituency Leaderboard</h2>
+            <h2 data-i18n="constituencyLeaderboard">Constituency Leaderboard</h2>
             <div class="leaderboard-table-wrap">
                 <table id="constituency-table">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Constituency</th>
-                            <th>Issues</th>
+                            <th data-i18n="rank">Rank</th>
+                            <th data-i18n="constituency">Constituency</th>
+                            <th data-i18n="issues">Issues</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -193,15 +236,15 @@
             </div>
         </div>
         <div class="leaderboard-section">
-            <h2>MLA Leaderboard</h2>
+            <h2 data-i18n="mlaLeaderboard">MLA Leaderboard</h2>
             <div class="leaderboard-table-wrap">
                 <table id="mla-table">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Constituency</th>
-                            <th>MLA X Handle</th>
-                            <th>Issues</th>
+                            <th data-i18n="rank">Rank</th>
+                            <th data-i18n="constituency">Constituency</th>
+                            <th data-i18n="mlaXHandle">MLA X Handle</th>
+                            <th data-i18n="issues">Issues</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -218,6 +261,10 @@
         html.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
 
         document.addEventListener('DOMContentLoaded', () => {
+            import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+                initLanguageSwitcher();
+            });
+
             const btn = document.getElementById('themeToggle');
             const sun = btn.querySelector('.fa-sun');
             const moon = btn.querySelector('.fa-moon');
