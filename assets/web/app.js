@@ -62,6 +62,16 @@ function initApp() {
         console.log("✅ CC checkbox listener added");
     }
 
+    const issueDesc = document.getElementById("issueDesc");
+    const issueDescCount = document.getElementById("issueDescCount");
+    if (issueDesc && issueDescCount) {
+        issueDesc.addEventListener("input", () => {
+            const len = issueDesc.value.length;
+            issueDescCount.textContent = `${len} / 120`;
+            issueDescCount.classList.toggle("char-count-warn", len > 100);
+        });
+    }
+
     const issueType = document.getElementById("issueType");
     if (issueType) {
         issueType.addEventListener("change", () => {

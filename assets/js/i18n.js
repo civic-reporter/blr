@@ -2,6 +2,7 @@
 export const translations = {
     en: {
         heatmap: "Heatmap",
+        leaderboard: "Leaderboard",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -23,7 +24,7 @@ export const translations = {
         // Civic Page (blr-civic-index.html)
         civicReporterTitle: "🏛️ Nāgarika Dhvani - Civic",
         civicReporterDesc: "Report potholes, drainage, streetlights to Greater Bengaluru Authority",
-        uploadInstructions: "Use mobile camera or upload a photo (GPS is auto-detected; if missing, add location on the map). Confirm the photo, classify the issue, and submit.",
+        uploadInstructions: "Snap or upload a photo of the issue. GPS location is detected automatically — if missing, tap the map to set it. Then confirm the photo, pick the issue type, and post.",
         mobileCamera: "Mobile Camera",
         uploadPhoto: "Upload Photo",
         isPhotoCorrect: "Is this photo correct?",
@@ -127,10 +128,27 @@ export const translations = {
         totalReports: "Total Reports",
         dateRange: "Date Range",
         topIssue: "Top Issue",
+        leaderboardTitle: "🏆 Civic Issue Leaderboard - Bengaluru",
+        leaderboardSubtitle: "Top wards, constituencies, and MLAs by reported civic issues",
+        leaderboardLoading: "Loading leaderboard...",
+        reloadLeaderboard: "Reload leaderboard",
+        wardLeaderboard: "Ward Leaderboard",
+        constituencyLeaderboard: "Constituency Leaderboard",
+        mlaLeaderboard: "MLA Leaderboard",
+        rank: "Rank",
+        wardName: "Ward Name",
+        corporation: "Corporation",
+        constituency: "Constituency",
+        issues: "Issues",
+        mlaXHandle: "MLA X Handle",
+        noDataAvailable: "No data available",
+        failedToLoadData: "Failed to load data",
+        unknown: "Unknown",
     },
 
     kn: {
         heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
+        leaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
@@ -259,6 +277,22 @@ export const translations = {
         totalReports: "ಒಟ್ಟು ವರದಿಗಳು",
         dateRange: "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ",
         topIssue: "ಪ್ರಮುಖ ಸಮಸ್ಯೆ",
+        leaderboardTitle: "🏆 ನಾಗರಿಕ ಸಮಸ್ಯೆ ಲೀಡರ್‌ಬೋರ್ಡ್ - ಬೆಂಗಳೂರು",
+        leaderboardSubtitle: "ವರದಿಯಾದ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳ ಆಧಾರದ ಮೇಲೆ ಪ್ರಮುಖ ವಾರ್ಡ್‌ಗಳು, ಕ್ಷೇತ್ರಗಳು ಮತ್ತು ಶಾಸಕರು",
+        leaderboardLoading: "ಲೀಡರ್‌ಬೋರ್ಡ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+        reloadLeaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್ ಮರುಲೋಡ್ ಮಾಡಿ",
+        wardLeaderboard: "ವಾರ್ಡ್ ಲೀಡರ್‌ಬೋರ್ಡ್",
+        constituencyLeaderboard: "ವಿಧಾನಸಭಾ ಕ್ಷೇತ್ರ ಲೀಡರ್‌ಬೋರ್ಡ್",
+        mlaLeaderboard: "ಶಾಸಕರ ಲೀಡರ್‌ಬೋರ್ಡ್",
+        rank: "ಸ್ಥಾನ",
+        wardName: "ವಾರ್ಡ್ ಹೆಸರು",
+        corporation: "ಕಾರ್ಪೊರೇಶನ್",
+        constituency: "ವಿಧಾನಸಭಾ ಕ್ಷೇತ್ರ",
+        issues: "ಸಮಸ್ಯೆಗಳು",
+        mlaXHandle: "ಶಾಸಕರ X ಹ್ಯಾಂಡಲ್",
+        noDataAvailable: "ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ",
+        failedToLoadData: "ಡೇಟಾ ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+        unknown: "ಅಜ್ಞಾತ",
     }
 };
 

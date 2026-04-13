@@ -1,4 +1,9 @@
 import { getConfig, getMlaHandles } from '../web/config.js';
+import { t, getCurrentLanguage } from './i18n.js';
+
+function tr(key) {
+    return t(key, getCurrentLanguage());
+}
 
 function setLoadingState(isLoading) {
     const button = document.getElementById('loadLeaderboardBtn');
@@ -9,13 +14,23 @@ function setLoadingState(isLoading) {
     const label = button.querySelector('.btn-label');
     button.disabled = isLoading;
     button.classList.toggle('loading', isLoading);
-    label.textContent = isLoading ? 'Loading leaderboard...' : 'Reload leaderboard';
+    label.textContent = isLoading ? tr('leaderboardLoading') : tr('reloadLeaderboard');
 }
 
 function renderEmptyState(tableId, colspan, message) {
     const tbody = document.querySelector(`#${tableId} tbody`);
     if (!tbody) return;
-    tbody.innerHTML = `<tr><td colspan="${colspan}">${message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center;color:var(--x-text-secondary);padding:2rem;">${message}</td></tr>`;
+}
+
+function rankCell(idx) {
+    const medals = ['🥇', '🥈', '🥉'];
+    if (idx < 3) return `<td class="rank-cell medal">${medals[idx]}</td>`;
+    return `<td class="rank-cell">${idx + 1}</td>`;
+}
+
+function countBadge(count) {
+    return `<span class="issue-count-badge">${count || 0}</span>`;
 }
 
 function normalizeHandle(handle) {
@@ -31,18 +46,19 @@ function renderWardLeaderboard(data) {
     tbody.innerHTML = '';
 
     if (!data || data.length === 0) {
-        renderEmptyState('ward-table', 5, 'No data available');
+        renderEmptyState('ward-table', 5, tr('noDataAvailable'));
         return;
     }
 
     data.forEach((row, idx) => {
         const tr = document.createElement('tr');
+        if (idx < 3) tr.classList.add('top-rank');
         tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${row.ward_name || 'Unknown'}</td>
-            <td>${row.corp_name || 'Unknown'}</td>
-            <td>${row.constituency || 'Unknown'}</td>
-            <td>${row.count || 0}</td>
+            ${rankCell(idx)}
+            <td>${row.ward_name || tr('unknown')}</td>
+            <td>${row.corp_name || tr('unknown')}</td>
+            <td>${row.constituency || tr('unknown')}</td>
+            <td class="count-cell">${countBadge(row.count)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -53,16 +69,17 @@ function renderConstituencyLeaderboard(data) {
     tbody.innerHTML = '';
 
     if (!data || data.length === 0) {
-        renderEmptyState('constituency-table', 3, 'No data available');
+        renderEmptyState('constituency-table', 3, tr('noDataAvailable'));
         return;
     }
 
     data.forEach((row, idx) => {
         const tr = document.createElement('tr');
+        if (idx < 3) tr.classList.add('top-rank');
         tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${row.constituency || 'Unknown'}</td>
-            <td>${row.count || 0}</td>
+            ${rankCell(idx)}
+            <td>${row.constituency || tr('unknown')}</td>
+            <td class="count-cell">${countBadge(row.count)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -73,23 +90,24 @@ function renderMlaLeaderboard(data, mlaHandles) {
     tbody.innerHTML = '';
 
     if (!data || data.length === 0) {
-        renderEmptyState('mla-table', 4, 'No data available');
+        renderEmptyState('mla-table', 4, tr('noDataAvailable'));
         return;
     }
 
     data.forEach((row, idx) => {
-        const constituency = row.constituency || 'Unknown';
+        const constituency = row.constituency || tr('unknown');
         const handle = normalizeHandle(mlaHandles?.[constituency] || '');
         const handleCell = handle
-            ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer">${handle}</a>`
-            : 'Unavailable';
+            ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer"><i class="fab fa-x-twitter" style="margin-right:4px;font-size:0.85em;"></i>${handle}</a>`
+            : '<span style="color:var(--x-text-secondary)">—</span>';
 
         const tr = document.createElement('tr');
+        if (idx < 3) tr.classList.add('top-rank');
         tr.innerHTML = `
-            <td>${idx + 1}</td>
+            ${rankCell(idx)}
             <td>${constituency}</td>
             <td>${handleCell}</td>
-            <td>${row.count || 0}</td>
+            <td class="count-cell">${countBadge(row.count)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -115,14 +133,18 @@ async function fetchAndRenderLeaderboards() {
         renderConstituencyLeaderboard(data.constituency_leaderboard);
         renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
     } catch (error) {
-        renderEmptyState('ward-table', 5, 'Failed to load data');
-        renderEmptyState('constituency-table', 3, 'Failed to load data');
-        renderEmptyState('mla-table', 4, 'Failed to load data');
+        renderEmptyState('ward-table', 5, tr('failedToLoadData'));
+        renderEmptyState('constituency-table', 3, tr('failedToLoadData'));
+        renderEmptyState('mla-table', 4, tr('failedToLoadData'));
         console.error('Leaderboard fetch error:', error);
     } finally {
         setLoadingState(false);
     }
 }
+
+window.addEventListener('languageChanged', () => {
+    fetchAndRenderLeaderboards();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     const loadButton = document.getElementById('loadLeaderboardBtn');
