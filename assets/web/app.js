@@ -133,7 +133,12 @@ function initApp() {
             const len = issueDesc.value.length;
             issueDescCount.textContent = `${len} / 120`;
             issueDescCount.classList.toggle("char-count-warn", len > 100);
+            const statusDiv = document.getElementById("status");
+            if (statusDiv && statusDiv.textContent.includes(t('issueDetailsRequired', getCurrentLanguage()))) {
+                showStatus("", "");
+            }
             saveCivicDraft();
+            updateTweetButtonState();
         });
     }
 

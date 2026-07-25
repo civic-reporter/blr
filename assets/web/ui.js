@@ -179,14 +179,18 @@ export function updateTweetButtonState() {
     const issueType = document.getElementById("issueType");
     const civicIssueSelected = !issueType || !!issueType.value;
 
-    const shouldEnable = imageOk && gpsOk && photoConfirmed && locationConfirmed && civicIssueSelected;
+    const issueDesc = document.getElementById("issueDesc");
+    const issueDescOk = !!(issueDesc && issueDesc.value.trim());
+
+    const shouldEnable = imageOk && gpsOk && photoConfirmed && locationConfirmed &&
+        civicIssueSelected && issueDescOk;
 
     // Update civic button (if present)
     const tweetBtn = document.getElementById("tweetBtn");
     if (tweetBtn) {
         tweetBtn.disabled = !shouldEnable;
         console.log("🔧 Civic button state:", {
-            imageOk, gpsOk, photoConfirmed, locationConfirmed, shouldEnable
+            imageOk, gpsOk, photoConfirmed, locationConfirmed, issueDescOk, shouldEnable
         });
     }
 

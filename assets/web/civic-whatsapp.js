@@ -5,7 +5,6 @@
  */
 
 import { cityConfig } from './config.js';
-import { isInGBA } from './utils.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let whatsappConfig = null;
@@ -154,20 +153,19 @@ export async function updateCivicWhatsAppOption() {
     if (!whatsappOption) return;
 
     const enabled = await isWhatsAppEnabled();
-    if (!enabled) {
+    const hasGps = !!(window.currentGPS &&
+        typeof window.currentGPS.lat === 'number' &&
+        typeof window.currentGPS.lon === 'number');
+
+    if (!enabled || !hasGps) {
         whatsappOption.classList.add('is-hidden');
         whatsappOption.style.display = 'none';
         return;
     }
 
-    if (window.currentGPS && isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
-        whatsappOption.classList.remove('is-hidden');
-        whatsappOption.style.display = 'block';
-        if (numberDisplay) {
-            numberDisplay.textContent = await getWhatsAppDisplayNumber();
-        }
-    } else {
-        whatsappOption.classList.add('is-hidden');
-        whatsappOption.style.display = 'none';
+    whatsappOption.classList.remove('is-hidden');
+    whatsappOption.style.display = 'block';
+    if (numberDisplay) {
+        numberDisplay.textContent = await getWhatsAppDisplayNumber();
     }
 }

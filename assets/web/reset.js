@@ -1,6 +1,7 @@
 import { showUploadOptions, showStatus } from './ui.js';
 import { clearCivicDraft } from './twitter.js';
 import { clearReportPreview } from './civic-preview.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 export function resetApp() {
     clearCivicDraft();
@@ -36,9 +37,6 @@ export function resetApp() {
     const locationConfirmCheck = document.getElementById('confirmLocationCheck');
     if (locationConfirmCheck) locationConfirmCheck.checked = false;
 
-    const whatsappCheck = document.getElementById('whatsappNotifyCheck');
-    if (whatsappCheck) whatsappCheck.checked = false;
-
     const whatsappSuccessBox = document.getElementById('whatsappSuccessBox');
     if (whatsappSuccessBox) {
         whatsappSuccessBox.innerHTML = '';
@@ -64,7 +62,7 @@ export function resetApp() {
 
     if (tweetBtn) {
         tweetBtn.classList.remove('loading');
-        tweetBtn.textContent = '🚨 Post Issue via @zenc_civic';
+        tweetBtn.textContent = t('postIssue', getCurrentLanguage());
         tweetBtn.disabled = true;
     }
     if (trafficSubmitBtn) {
