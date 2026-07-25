@@ -5,6 +5,7 @@ let CONFIG = null;
 let MLA_HANDLES = null;
 import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
 import { isValidNumber, isInGBA, pointInRing, loadGeoLayers } from './utils.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let constPolygons = null;
 
@@ -25,7 +26,7 @@ async function loadConstituencyPolygons() {
     }
 }
 
-async function findConstituencyForCurrentGPS() {
+export async function findConstituencyForCurrentGPS() {
     if (!window.currentGPS) return { acName: "", mlaHandle: "" };
     if (!MLA_HANDLES) MLA_HANDLES = await getMlaHandles();
     const polys = await loadConstituencyPolygons();
@@ -41,6 +42,14 @@ async function findConstituencyForCurrentGPS() {
 }
 
 export async function shareToGBA() {
+    const lang = getCurrentLanguage();
+
+    if (!navigator.onLine) {
+        showStatus(`❌ ${t('offlineError', lang)}<br>${getTryAgainButtonText()}`, "error");
+        attachRetryHandler();
+        return;
+    }
+
     if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
@@ -94,6 +103,8 @@ export async function shareToGBA() {
     // Add email data if email option is enabled
     const emailCheckbox = document.getElementById('emailAuthoritiesCheck');
     const shouldEmail = emailCheckbox && emailCheckbox.checked;
+    const whatsappCheckbox = document.getElementById('whatsappNotifyCheck');
+    const shouldWhatsApp = whatsappCheckbox && whatsappCheckbox.checked;
 
     if (shouldEmail && window.prepareCivicEmailData) {
         const ccCheckbox = document.getElementById('ccMeCheck');
@@ -124,6 +135,28 @@ export async function shareToGBA() {
         }
     }
 
+    if (shouldWhatsApp) {
+        const { getWhatsAppNumber } = await import('./civic-whatsapp.js');
+        const whatsappNumber = await getWhatsAppNumber();
+        if (whatsappNumber) {
+            formData.append("whatsappNotify", "true");
+            formData.append("whatsappNumber", whatsappNumber);
+        }
+    }
+
+    const reportDataForWhatsApp = {
+        issueType,
+        description: desc,
+        wardNo,
+        wardName,
+        corpName,
+        constituency: acName,
+        coordinates: {
+            lat: window.currentGPS.lat.toFixed(6),
+            lon: window.currentGPS.lon.toFixed(6)
+        }
+    };
+
     let wasSuccess = false;
 
     try {
@@ -139,6 +172,7 @@ export async function shareToGBA() {
 
         if (res.ok && data.success) {
             wasSuccess = true;
+            clearCivicDraft();
             const url = data.tweetUrl || data.tweet_url || "";
 
             // Save GPS data before clearing for success screen display
@@ -194,6 +228,20 @@ export async function shareToGBA() {
                     }
                 }, 50);
             }
+
+            reportDataForWhatsApp.tweetUrl = url;
+
+            if (shouldWhatsApp && window.shareCivicViaWhatsApp) {
+                const whatsappBox = document.getElementById('whatsappSuccessBox');
+                if (whatsappBox) {
+                    whatsappBox.classList.remove('is-hidden');
+                    whatsappBox.innerHTML = `<p class="map-message">${t('whatsappSuccessHint', lang)}</p>`;
+                }
+                setTimeout(() => {
+                    window.shareCivicViaWhatsApp(reportDataForWhatsApp);
+                }, 400);
+            }
+
             return;
         } else {
             const tryAgainText = getTryAgainButtonText();
@@ -202,7 +250,9 @@ export async function shareToGBA() {
         }
     } catch (e) {
         const tryAgainText = getTryAgainButtonText();
-        showStatus(`❌ Submission failed: ${e.message}<br>${tryAgainText}`, "error");
+        const isNetworkError = !navigator.onLine || e.message === 'Failed to fetch' || e.name === 'TypeError';
+        const message = isNetworkError ? t('networkError', lang) : e.message;
+        showStatus(`❌ ${message}<br>${tryAgainText}`, "error");
         attachRetryHandler();
         console.error("Post error:", e);
     } finally {
@@ -228,26 +278,61 @@ function getTryAgainButtonText() {
 function attachRetryHandler() {
     setTimeout(() => {
         const retryBtn = document.getElementById('errorRetryBtn');
-        console.log('Retry button found:', retryBtn);
         if (retryBtn) {
             retryBtn.addEventListener('click', () => {
-                console.log('Retry button clicked - keeping image and GPS');
-
-                // Hide the retry button
-                retryBtn.remove();
-
-                // Clear error status and reset tweet button
-                showStatus('📸 Ready to submit', 'info');
-
-                // Re-enable tweet button
-                if (window.tweetBtn) {
-                    window.tweetBtn.disabled = false;
-                    window.tweetBtn.textContent = '🐦 Report to @zenc_civic';
-                    window.tweetBtn.classList.remove('loading');
-                }
-
-                updateTweetButtonState();
+                showStatus('', '');
+                shareToGBA();
             });
         }
     }, 100);
+}
+
+const CIVIC_DRAFT_KEY = 'civic_report_draft';
+
+export function saveCivicDraft() {
+    try {
+        const issueType = document.getElementById('issueType')?.value || '';
+        const issueDesc = document.getElementById('issueDesc')?.value || '';
+        const draft = {
+            issueType,
+            issueDesc,
+            lat: window.currentGPS?.lat ?? null,
+            lon: window.currentGPS?.lon ?? null,
+            savedAt: Date.now()
+        };
+        localStorage.setItem(CIVIC_DRAFT_KEY, JSON.stringify(draft));
+    } catch (e) {
+        console.warn('Could not save civic draft:', e);
+    }
+}
+
+export function restoreCivicDraft() {
+    try {
+        const raw = localStorage.getItem(CIVIC_DRAFT_KEY);
+        if (!raw) return false;
+
+        const draft = JSON.parse(raw);
+        const issueTypeEl = document.getElementById('issueType');
+        const issueDescEl = document.getElementById('issueDesc');
+
+        if (issueTypeEl && draft.issueType) issueTypeEl.value = draft.issueType;
+        if (issueDescEl && draft.issueDesc) {
+            issueDescEl.value = draft.issueDesc;
+            const countEl = document.getElementById('issueDescCount');
+            if (countEl) countEl.textContent = `${draft.issueDesc.length} / 120`;
+        }
+
+        return !!(draft.issueType || draft.issueDesc);
+    } catch (e) {
+        console.warn('Could not restore civic draft:', e);
+        return false;
+    }
+}
+
+export function clearCivicDraft() {
+    try {
+        localStorage.removeItem(CIVIC_DRAFT_KEY);
+    } catch (e) {
+        console.warn('Could not clear civic draft:', e);
+    }
 }

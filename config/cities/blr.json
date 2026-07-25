@@ -83,5 +83,10 @@
             "en",
             "kn"
         ]
+    },
+    "whatsapp": {
+        "enabled": true,
+        "number": "919480685700",
+        "displayNumber": "9480685700"
     }
 }

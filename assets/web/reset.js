@@ -1,6 +1,10 @@
 import { showUploadOptions, showStatus } from './ui.js';
+import { clearCivicDraft } from './twitter.js';
+import { clearReportPreview } from './civic-preview.js';
 
 export function resetApp() {
+    clearCivicDraft();
+    clearReportPreview();
     // 1. Clear global state
     window.currentImageFile = null;
     window.currentGPS = null;
@@ -27,6 +31,15 @@ export function resetApp() {
     }
     const confirmCheck = document.getElementById('confirmImageCheck');
     if (confirmCheck) confirmCheck.checked = false;
+
+    const whatsappCheck = document.getElementById('whatsappNotifyCheck');
+    if (whatsappCheck) whatsappCheck.checked = false;
+
+    const whatsappSuccessBox = document.getElementById('whatsappSuccessBox');
+    if (whatsappSuccessBox) {
+        whatsappSuccessBox.innerHTML = '';
+        whatsappSuccessBox.classList.add('is-hidden');
+    }
 
     const searchInput = document.getElementById('gbaSearch');
     const suggBox = document.getElementById('gbaSearchSuggestions');

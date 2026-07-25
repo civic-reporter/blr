@@ -6,33 +6,41 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ಬಳಕೆಯ ವಿಧಾನ - ನಾಗರಿಕ ಧ್ವನಿ</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
-    <!-- Floating theme toggle -->
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
     <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="ಥೀಮ್ ಬದಲಾವಣೆ">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <!-- Language toggle -->
-    <a href="how-to.html" class="language-toggle-btn" style="text-decoration: none; color: inherit;"
-        title="Switch to English">
-        English
-    </a>
+    <a href="how-to.html" class="app-lang-link" title="Switch to English">English</a>
 
-    <div class="container" style="max-width: 800px; margin: 2rem auto;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="index.html" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-landmark" style="font-size: 2rem;"></i>
-                <h1>ನಾಗರಿಕ ಧ್ವನಿ</h1>
-            </a>
-        </div>
+    <header class="app-header">
+        <a href="index.html" class="home-brand nav-home">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text">ನಾಗರಿಕ ಧ್ವನಿ</span>
+        </a>
+        <span class="hero-pill app-pill">ಬಳಕೆಯ ವಿಧಾನ</span>
+    </header>
 
-        <h2>📖 ಬಳಕೆಯ ವಿಧಾನ</h2>
-        <p><em>ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳನ್ನು ವರದಿ ಮಾಡಲು ತ್ವರಿತ ಮಾರ್ಗದರ್ಶಿ</em></p>
+    <main class="app-main">
+        <div class="container app-shell content-prose">
+            <section class="app-hero">
+                <h1 class="app-hero-title">ಬಳಕೆಯ ವಿಧಾನ</h1>
+                <p class="app-hero-desc"><em>ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳನ್ನು ವರದಿ ಮಾಡಲು ತ್ವರಿತ ಮಾರ್ಗದರ್ಶಿ</em></p>
+            </section>
 
         <h3>🏛️ ನಾಗರಿಕ ಸಮಸ್ಯೆಯನ್ನು ವರದಿ ಮಾಡುವುದು</h3>
         <ol>
@@ -46,9 +54,9 @@
             <li>ಪರಿಶೀಲಿಸಿ ಮತ್ತು <strong>"🚨 @zenc_civic ಮೂಲಕ ಸಮಸ್ಯೆ ಪೋಸ್ಟ್ ಮಾಡಿ"</strong> ಕ್ಲಿಕ್ ಮಾಡಿ</li>
         </ol>
 
-        <div style="background: var(--x-bg-secondary); padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+        <div class="content-tip-box">
             <p><strong>✅ ನಾಗರಿಕ ವರದಿಗಾಗಿ ಸಲಹೆಗಳು:</strong></p>
-            <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <ul>
                 <li>ಸಮಸ್ಯೆಯನ್ನು ತೋರಿಸುವ ಸ್ಪಷ್ಟ ಫೋಟೋಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ</li>
                 <li>ನಿಖರ ಸ್ಥಳಕ್ಕಾಗಿ ನಿಮ್ಮ GPS ಸಕ್ರಿಯಗೊಂಡಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ</li>
                 <li>ಅತ್ಯಂತ ಸಂಬಂಧಿತ ಸಮಸ್ಯೆ ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ</li>
@@ -75,24 +83,16 @@
             <li>ನಕ್ಷೆಯಲ್ಲಿ ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಸರಿಯಾಗಿ ಹೊಂದಿಸಲಾಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ</li>
         </ul>
 
-        <div
-            style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--x-border); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-            <a href="index.html" style="text-decoration: none;">
-                <button class="upload-btn" style="width: auto; min-width: 200px;">
-                    <i class="fas fa-home"></i> ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ
-                </button>
-            </a>
-            <a href="cities/blr/civic.html" style="text-decoration: none;">
-                <button class="upload-btn" style="width: auto; min-width: 200px;">
-                    <i class="fas fa-flag"></i> ನಾಗರಿಕ ಸಮಸ್ಯೆ ವರದಿ
-                </button>
-            </a>
+        <div class="app-action-row">
+            <a href="index.html" class="app-action-link app-action-link-secondary"><i class="fas fa-home"></i> ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ</a>
+            <a href="cities/blr/civic.html" class="app-action-link"><i class="fas fa-flag"></i> ನಾಗರಿಕ ಸಮಸ್ಯೆ ವರದಿ</a>
         </div>
 
-        <div class="app-footer" style="margin-top: 2rem;">
+        <footer class="app-footer app-footer-inline">
             <small>© 2026 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ</small>
+        </footer>
         </div>
-    </div>
+    </main>
 
     <script>
         const html = document.documentElement;
@@ -109,11 +109,11 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 

@@ -6,314 +6,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🗺️ Heat Map Analytics - Bengaluru Issues</title>
 
-    <!-- Modern fonts + icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <link rel="stylesheet" href="../../assets/css/leaflet.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            max-width: none;
-            background: var(--x-bg-primary);
-            color: var(--x-text-primary);
-        }
-
-        .heatmap-container {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-        }
-
-        .heatmap-content {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: var(--x-bg-secondary);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .page-title {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            color: var(--x-text-primary);
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .subtitle {
-            color: var(--x-text-secondary);
-            margin: 5px 0 0 0;
-            font-size: 14px;
-        }
-
-        .controls-panel {
-            background: var(--x-bg-secondary);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .controls-panel h2 {
-            color: var(--x-text-primary);
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .control-group label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--x-text-primary);
-            font-size: 14px;
-        }
-
-        .control-group select,
-        .control-group input {
-            padding: 8px 12px;
-            border: 1px solid var(--x-border);
-            border-radius: 4px;
-            font-size: 14px;
-            background: var(--x-bg-primary);
-            color: var(--x-text-primary);
-        }
-
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        button {
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--x-button-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--x-button-primary-hover);
-        }
-
-        .btn-secondary {
-            background: var(--x-bg-tertiary);
-            color: var(--x-text-primary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--x-border);
-        }
-
-        .map-container {
-            background: var(--x-bg-secondary);
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            height: calc(100vh - 300px);
-            min-height: 500px;
-        }
-
-        #map {
-            height: 100%;
-            width: 100%;
-            border-radius: 4px;
-        }
-
-        .status-message {
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .status-message.info {
-            background: #e3f2fd;
-            color: #1976d2;
-            border: 1px solid #1976d2;
-        }
-
-        .status-message.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #2e7d32;
-        }
-
-        .status-message.error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #c62828;
-        }
-
-        .stats-panel {
-            background: var(--x-bg-secondary);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats-panel h2 {
-            color: var(--x-text-primary);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .stat-card {
-            padding: 1rem;
-            background: var(--x-bg-tertiary);
-            border-radius: 4px;
-            border-left: 4px solid var(--x-button-primary);
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--x-button-primary);
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: var(--x-text-secondary);
-            margin-top: 5px;
-        }
-
-        .legend {
-            margin-top: 15px;
-        }
-
-        .legend h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: var(--x-text-primary);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 8px 0;
-        }
-
-        .legend-color {
-            width: 30px;
-            height: 20px;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 768px) {
-            .controls-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-            }
-        }
-    </style>
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
-    <!-- Floating theme toggle -->
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
     <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <div class="heatmap-container">
-        <div class="heatmap-content">
-            <header class="page-header">
-                <div class="nav-left">
-                    <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
-                        <i class="fas fa-home"></i>
-                        <span data-i18n="homeTitle">Nāgarika Dhvani</span>
-                    </a>
-                </div>
-                <div class="nav-right">
-                    <a href="../../cities/blr/civic.html" class="nav-switch-btn" data-i18n-title="switchToCivic">
-                        <i class="fas fa-building"></i>
-                        <span id="switchLabelCivic" data-i18n="switchToCivic">Report Civic Issue</span>
-                    </a>
-                </div>
-            </header>
-            <div class="page-title">
-                <h1>🗺️ <span data-i18n="heatMapTitle">Heat Map Analytics</span></h1>
-                <p class="subtitle" data-i18n="heatMapSubtitle">Visualize civic issues across Bengaluru</p>
-            </div>
+    <header class="app-header">
+        <a href="../../index.html" class="home-brand nav-home" data-i18n-title="backToHome">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+        </a>
 
-            <section class="controls-panel">
-                <h2 style="margin-top: 0; font-size: 18px;" data-i18n="filters">Filters</h2>
+        <span class="hero-pill app-pill" data-i18n="heatmap">Heatmap</span>
 
-                <div class="controls-grid">
-                    <div class="control-group">
+        <nav class="app-header-nav" aria-label="Page navigation">
+            <a href="civic.html" class="app-nav-link" data-i18n-title="switchToCivic">
+                <i class="fas fa-landmark"></i>
+                <span data-i18n="switchToCivic">Report Civic Issue</span>
+            </a>
+            <a href="leaderboard.html" class="app-nav-link" data-i18n-title="leaderboard">
+                <i class="fas fa-trophy"></i>
+                <span data-i18n="leaderboard">Leaderboard</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="app-main app-main-wide">
+        <div class="container app-shell">
+            <section class="app-hero">
+                <h1 class="app-hero-title"><span data-i18n="heatMapTitle">Heat Map Analytics</span></h1>
+                <p class="app-hero-desc" data-i18n="heatMapSubtitle">Visualize civic issues across Bengaluru</p>
+            </section>
+
+            <section class="heatmap-controls-panel">
+                <h2 data-i18n="filters">Filters</h2>
+
+                <div class="heatmap-controls-grid">
+                    <div class="heatmap-control-group">
                         <label for="reportType" data-i18n="reportTypeLabel">Report Type</label>
                         <select id="reportType">
                             <option value="civic" data-i18n="civicIssues">Civic Issues</option>
                         </select>
                     </div>
 
-                    <div class="control-group">
+                    <div class="heatmap-control-group">
                         <label for="startDate" data-i18n="startDateLabel">Start Date</label>
                         <input type="date" id="startDate">
                     </div>
 
-                    <div class="control-group">
+                    <div class="heatmap-control-group">
                         <label for="endDate" data-i18n="endDateLabel">End Date</label>
                         <input type="date" id="endDate">
                     </div>
 
-                    <div class="control-group">
+                    <div class="heatmap-control-group">
                         <label for="issueType" data-i18n="issueTypeLabel">Issue Type (Optional)</label>
                         <select id="issueType">
                             <option value="" data-i18n="allIssueTypes">All Issue Types</option>
                         </select>
                     </div>
 
-                    <div class="control-group">
+                    <div class="heatmap-control-group">
                         <label for="corporationFilter" data-i18n="corporationFilterLabel">Corporation</label>
                         <select id="corporationFilter">
                             <option value="" data-i18n="allCorporations">All Corporations</option>
@@ -325,7 +93,7 @@
                         </select>
                     </div>
 
-                    <div class="control-group">
+                    <div class="heatmap-control-group">
                         <label for="wardFilter" data-i18n="wardFilterLabel">Ward Filter</label>
                         <select id="wardFilter">
                             <option value="" data-i18n="allWards">All Wards</option>
@@ -333,67 +101,55 @@
                     </div>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn-primary" id="loadHeatMapBtn">📊 <span data-i18n="loadHeatMapBtn">Load Heat
-                            Map</span></button>
-                    <button class="btn-secondary" id="resetFiltersBtn">🔄 <span data-i18n="resetFiltersBtn">Reset
-                            Filters</span></button>
+                <div class="heatmap-button-group">
+                    <button class="heatmap-btn-primary" id="loadHeatMapBtn">
+                        <i class="fas fa-chart-area"></i>
+                        <span data-i18n="loadHeatMapBtn">Load Heat Map</span>
+                    </button>
+                    <button class="heatmap-btn-secondary" id="resetFiltersBtn">
+                        <i class="fas fa-rotate-left"></i>
+                        <span data-i18n="resetFiltersBtn">Reset Filters</span>
+                    </button>
                 </div>
             </section>
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="heatmap-status-message" id="statusMessage"></div>
 
-            <section class="map-container">
+            <section class="heatmap-map-panel">
                 <div id="map"></div>
             </section>
 
-            <section class="legend controls-panel">
+            <section class="heatmap-legend-panel">
                 <h3 data-i18n="intensityLegend">Intensity Legend</h3>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #F44336;"></div>
+                <div class="heatmap-legend-item">
+                    <div class="heatmap-legend-color" style="background: #F44336;"></div>
                     <span data-i18n="highIntensity">High (10+ reports)</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FF9800;"></div>
+                <div class="heatmap-legend-item">
+                    <div class="heatmap-legend-color" style="background: #FF9800;"></div>
                     <span data-i18n="mediumHighIntensity">Medium-High (5-9 reports)</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FFC107;"></div>
+                <div class="heatmap-legend-item">
+                    <div class="heatmap-legend-color" style="background: #FFC107;"></div>
                     <span data-i18n="mediumIntensity">Medium (3-4 reports)</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #4CAF50;"></div>
+                <div class="heatmap-legend-item">
+                    <div class="heatmap-legend-color" style="background: #4CAF50;"></div>
                     <span data-i18n="lowIntensity">Low (1-2 reports)</span>
                 </div>
             </section>
 
-            <section class="stats-panel" id="statsPanel" style="display: none;">
-                <h2 style="margin-top: 0; font-size: 18px;" data-i18n="statistics">Statistics</h2>
-                <div class="stats-grid" id="statsGrid">
-                </div>
+            <section class="heatmap-stats-panel" id="statsPanel" style="display: none;">
+                <h2 data-i18n="statistics">Statistics</h2>
+                <div class="heatmap-stats-grid" id="statsGrid"></div>
             </section>
+
+            <footer class="app-footer app-footer-inline">
+                <small data-i18n="footerText">© 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a href="../../how-to.html" data-i18n="howToLink">How to Use</a></small>
+            </footer>
         </div>
+    </main>
 
-        <!-- Footer -->
-        <footer class="app-footer">
-            <div class="footer-content">
-                <small data-i18n="footerText">&copy; 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
-                        href="../../how-to.html" style="text-decoration: none; color: var(--x-text-secondary);"
-                        data-i18n="howToLink">How to Use</a></small>
-                <div class="social-links">
-                    <a id="privacyLink" href="../../privacy.html"
-                        style="margin-right: 1rem; text-decoration: none; color: var(--x-text-secondary);">
-                        <i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span>
-                    </a>
-                    <a href="https://twitter.com/zenc_civic" target="_blank" aria-label="X (formerly Twitter)">
-                        <i class="fab fa-x-twitter"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Theme toggle script -->
     <script>
         const html = document.documentElement;
 
@@ -409,15 +165,14 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 
-        // Initialize theme
         initTheme();
     </script>
 
@@ -952,10 +707,10 @@
 
                 boundaryHighlightLayer = L.layerGroup(
                     rings.map((ring) => L.polygon(ring, {
-                        color: '#0f766e',
+                        color: '#5b9bd5',
                         weight: 3,
                         opacity: 0.95,
-                        fillColor: '#14b8a6',
+                        fillColor: '#94a3b8',
                         fillOpacity: 0.12,
                         interactive: false
                     }))
@@ -1004,21 +759,21 @@
 
                 // Generate statistics HTML
                 statsGrid.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-value">${totalReports}</div>
-                        <div class="stat-label" data-i18n="totalReports">Total Reports</div>
+                    <div class="heatmap-stat-card">
+                        <div class="heatmap-stat-value">${totalReports}</div>
+                        <div class="heatmap-stat-label" data-i18n="totalReports">Total Reports</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${heatMapData.length}</div>
-                        <div class="stat-label">Hotspot Locations</div>
+                    <div class="heatmap-stat-card">
+                        <div class="heatmap-stat-value">${heatMapData.length}</div>
+                        <div class="heatmap-stat-label">Hotspot Locations</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${avgReports}</div>
-                        <div class="stat-label">Avg Reports/Location</div>
+                    <div class="heatmap-stat-card">
+                        <div class="heatmap-stat-value">${avgReports}</div>
+                        <div class="heatmap-stat-label">Avg Reports/Location</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${issueTypes.size}</div>
-                        <div class="stat-label">Issue Types</div>
+                    <div class="heatmap-stat-card">
+                        <div class="heatmap-stat-value">${issueTypes.size}</div>
+                        <div class="heatmap-stat-label">Issue Types</div>
                     </div>
                 `;
 
@@ -1028,7 +783,7 @@
             function showMessage(message, type = 'info') {
                 const messageEl = document.getElementById('statusMessage');
                 messageEl.textContent = message;
-                messageEl.className = 'status-message ' + type;
+                messageEl.className = 'heatmap-status-message ' + type;
                 messageEl.style.display = 'block';
 
                 setTimeout(() => {
