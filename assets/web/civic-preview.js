@@ -58,7 +58,11 @@ export async function updateReportPreview() {
             : t('previewUnavailable', lang);
 
         const constituencyText = acName || t('previewUnavailable', lang);
-        const mlaText = mlaHandle || t('previewUnavailable', lang);
+        const mlaText = mlaHandle
+            ? mlaHandle
+            : acName
+                ? t('mlaHandleNotConfigured', lang)
+                : t('previewUnavailable', lang);
 
         setPreviewValue('previewWard', wardText);
         setPreviewValue('previewCorp', corpText);
