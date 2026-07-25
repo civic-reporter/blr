@@ -58,7 +58,7 @@ export async function findConstituencyForCurrentGPS() {
 
 export async function shareToGBA() {
     const lang = getCurrentLanguage();
-    const { isWhatsAppEnabled, shareViaWhatsApp } = await import('./civic-whatsapp.js');
+    const { isWhatsAppEnabled, shareViaWhatsApp, formatWhatsAppHint, getWhatsAppDisplayNumber } = await import('./civic-whatsapp.js');
 
     if (!(await isWhatsAppEnabled())) {
         showStatus(`❌ ${t('whatsappDisabled', lang)}`, "error");
@@ -132,11 +132,8 @@ export async function shareToGBA() {
             attachRetryHandler();
             return;
         }
-        if (result.mode === 'cancelled') {
-            showStatus(t('whatsappCancelled', lang), "info");
-            return;
-        }
 
+        const displayNumber = result.displayNumber || await getWhatsAppDisplayNumber();
         wasSuccess = true;
         clearCivicDraft();
 
@@ -183,7 +180,7 @@ export async function shareToGBA() {
         if (box) {
             box.classList.remove('is-hidden');
             box.innerHTML = `
-                <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>
+                <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(result.hintKey, displayNumber)}</p>
                 <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
                     <i class="fab fa-whatsapp"></i>
                     <span>${t('sendWhatsApp', lang)}</span>
@@ -193,7 +190,10 @@ export async function shareToGBA() {
                 const retry = await shareViaWhatsApp(reportData, savedImageFile);
                 const hintEl = document.getElementById('whatsappSuccessHint');
                 if (hintEl && retry.hintKey) {
-                    hintEl.textContent = t(retry.hintKey, getCurrentLanguage());
+                    hintEl.textContent = formatWhatsAppHint(
+                        retry.hintKey,
+                        retry.displayNumber || displayNumber
+                    );
                 }
             });
         }
