@@ -3,7 +3,36 @@ import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
-async function processSelectedImage(file, { preferExif = true } = {}) {
+function needsGps() {
+    return !window.currentGPS ||
+        !isValidNumber(window.currentGPS.lat) ||
+        !isValidNumber(window.currentGPS.lon);
+}
+
+async function tryLiveGpsFallback({ showMissingHint = false } = {}) {
+    if (!needsGps()) return;
+
+    const liveGPS = await getLiveGPSIfInGBA();
+    if (liveGPS) {
+        const valid = await validateLocationForCoords(liveGPS);
+        if (valid) {
+            window.currentGPS = liveGPS;
+            window.gpsFromPhotoExif = false;
+            window.gpsManuallySet = false;
+            showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
+        } else {
+            window.currentGPS = null;
+            showStatus("❌ Live GPS outside GBA boundary", "error");
+        }
+        return;
+    }
+
+    if (showMissingHint) {
+        showStatus("ℹ️ No valid GPS. Use map/search.", "info");
+    }
+}
+
+async function processSelectedImage(file, { preferExif = true, useLiveGpsFallback = false } = {}) {
     window.currentImageFile = file;
     window.gpsFromPhotoExif = false;
     window.gpsManuallySet = false;
@@ -28,6 +57,10 @@ async function processSelectedImage(file, { preferExif = true } = {}) {
 
             if (preferExif && !window.currentGPS) {
                 await extractGPSFromExif(e.target.result);
+            }
+
+            if (useLiveGpsFallback && needsGps()) {
+                await tryLiveGpsFallback();
             }
 
             if (window.currentGPS && isValidNumber(window.currentGPS.lat) && isValidNumber(window.currentGPS.lon)) {
@@ -65,7 +98,7 @@ export async function handleImageUpload(file) {
         return;
     }
 
-    await processSelectedImage(file, { preferExif: true });
+    await processSelectedImage(file, { preferExif: true, useLiveGpsFallback: true });
 }
 
 export async function handleCameraCapture(file) {
@@ -76,26 +109,8 @@ export async function handleCameraCapture(file) {
 
     await extractGPSFromImageFile(file);
 
-    const needsGPS = !window.currentGPS ||
-        !isValidNumber(window.currentGPS.lat) ||
-        !isValidNumber(window.currentGPS.lon);
-
-    if (needsGPS) {
-        const liveGPS = await getLiveGPSIfInGBA();
-        if (liveGPS) {
-            const valid = await validateLocationForCoords(liveGPS);
-            if (valid) {
-                window.currentGPS = liveGPS;
-                window.gpsFromPhotoExif = false;
-                window.gpsManuallySet = false;
-                showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
-            } else {
-                window.currentGPS = null;
-                showStatus("❌ Live GPS outside GBA boundary", "error");
-            }
-        } else {
-            showStatus("ℹ️ No valid GPS. Use map/search.", "info");
-        }
+    if (needsGps()) {
+        await tryLiveGpsFallback({ showMissingHint: true });
     }
 
     await processSelectedImage(file, { preferExif: false });
