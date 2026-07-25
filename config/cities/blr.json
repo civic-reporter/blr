@@ -14,6 +14,7 @@
         "mapKml": "data/cities/blr/map.kml",
         "constKml": "data/cities/blr/const.kml",
         "wardKml": "data/cities/blr/wards.kml",
+        "oldWardKml": "data/cities/blr/old-wards.kml",
         "trafficKml": "data/cities/blr/traffic.kml"
     },
     "pages": {

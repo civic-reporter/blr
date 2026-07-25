@@ -71,20 +71,24 @@ export async function displaySuccessLocationInfo() {
         return;
     }
 
-    const [{ wardNo, wardName }, { corpName }] = await Promise.all([
+    const [{ wardNo, wardName, oldWardNo, oldWardName }, { corpName }] = await Promise.all([
         findWardForCurrentGPS(),
         findCorpForCurrentGPS()
     ]);
 
-    if (!wardNo && !corpName) {
+    if (!wardNo && !oldWardNo && !corpName) {
         successInfoDiv.style.display = 'none';
         return;
     }
 
     let html = '<div style="margin: 1rem 0; padding: 1.5rem; background: var(--x-bg-card); border-radius: 16px; border: 1px solid var(--x-border); box-shadow: var(--shadow);">';
 
-    if (wardNo && wardName) {
-        html += `<div style="margin-bottom: 0.5rem; color: var(--x-text-primary);"><strong>📋 Ward:</strong> ${wardNo} - ${wardName}</div>`;
+    if (wardNo || wardName) {
+        html += `<div style="margin-bottom: 0.5rem; color: var(--x-text-primary);"><strong>📋 GBA Ward:</strong> ${[wardNo, wardName].filter(Boolean).join(' - ')}</div>`;
+    }
+
+    if (oldWardNo || oldWardName) {
+        html += `<div style="margin-bottom: 0.5rem; color: var(--x-text-primary);"><strong>📋 BBMP Ward:</strong> ${[oldWardNo, oldWardName].filter(Boolean).join(' - ')}</div>`;
     }
 
     if (corpName) {

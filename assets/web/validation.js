@@ -6,6 +6,33 @@ let CONFIG = null;
 let corpPolygons = null;
 let constPolygons = null;
 let wardPolygons = null;
+let oldWardPolygons = null;
+
+const EMPTY_WARD = { wardNo: "", wardName: "", oldWardNo: "", oldWardName: "" };
+
+function normalizeWardNo(raw) {
+    if (!raw) return "";
+    const n = parseFloat(String(raw).trim());
+    return Number.isFinite(n) ? String(Math.round(n)) : String(raw).trim();
+}
+
+function ringFromPlacemark(pm) {
+    const coordsNode = pm.getElementsByTagName("coordinates")[0];
+    if (!coordsNode) return null;
+    return coordsNode.textContent.trim()
+        .split(/\s+/)
+        .map(pair => pair.split(",").map(Number))
+        .map(([lon, lat]) => [lon, lat]);
+}
+
+function findWardInPolygons(polys, lon, lat) {
+    for (const p of polys) {
+        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
+            return { wardNo: p.wardNo, wardName: p.wardName };
+        }
+    }
+    return { wardNo: "", wardName: "" };
+}
 
 export function isInGBA(lat, lon) {
     return CONFIG.GBA_BBOX.south <= lat && lat <= CONFIG.GBA_BBOX.north &&
@@ -75,15 +102,11 @@ export async function loadWardPolygons() {
             let wardNo = "", wardName = "";
             for (const sd of simpleData) {
                 const nameAttr = sd.getAttribute("name");
-                if (nameAttr === "ward_id") wardNo = sd.textContent.trim();
+                if (nameAttr === "ward_id") wardNo = normalizeWardNo(sd.textContent);
                 else if (nameAttr === "ward_name") wardName = sd.textContent.trim();
             }
-            const coordsNode = pm.getElementsByTagName("coordinates")[0];
-            if (!coordsNode) return null;
-            const ring = coordsNode.textContent.trim()
-                .split(/\s+/)
-                .map(pair => pair.split(",").map(Number))
-                .map(([lon, lat]) => [lon, lat]);
+            const ring = ringFromPlacemark(pm);
+            if (!ring) return null;
             return { wardNo, wardName, ring };
         }).filter(Boolean);
         return wardPolygons;
@@ -93,14 +116,49 @@ export async function loadWardPolygons() {
     }
 }
 
-export async function findWardForCurrentGPS() {
-    if (!window.currentGPS) return { wardNo: "", wardName: "" };
-    const polys = await loadWardPolygons();
-    const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
-    for (const p of polys) {
-        if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            return { wardNo: p.wardNo, wardName: p.wardName };
-        }
+export async function loadOldWardPolygons() {
+    if (oldWardPolygons !== null) return oldWardPolygons;
+    try {
+        if (!CONFIG) CONFIG = await getConfig();
+        if (!CONFIG.OLD_WARD_KML_URL) return oldWardPolygons = [];
+        const res = await fetch(CONFIG.OLD_WARD_KML_URL);
+        if (!res.ok) return oldWardPolygons = [];
+        const kmlText = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(kmlText, "application/xml");
+        const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+        oldWardPolygons = placemarks.map(pm => {
+            const simpleData = pm.getElementsByTagName("SimpleData");
+            let wardNo = "", wardName = "";
+            for (const sd of simpleData) {
+                const nameAttr = sd.getAttribute("name");
+                if (nameAttr === "WARD_NO") wardNo = normalizeWardNo(sd.textContent);
+                else if (nameAttr === "WARD_NAME") wardName = sd.textContent.trim();
+            }
+            const ring = ringFromPlacemark(pm);
+            if (!ring) return null;
+            return { wardNo, wardName, ring };
+        }).filter(Boolean);
+        return oldWardPolygons;
+    } catch (e) {
+        console.warn("Old ward polygons failed:", e);
+        return oldWardPolygons = [];
     }
-    return { wardNo: "", wardName: "" };
+}
+
+export async function findWardForCurrentGPS() {
+    if (!window.currentGPS) return { ...EMPTY_WARD };
+    const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
+    const [newPolys, oldPolys] = await Promise.all([
+        loadWardPolygons(),
+        loadOldWardPolygons()
+    ]);
+    const newWard = findWardInPolygons(newPolys, lon, lat);
+    const oldWard = findWardInPolygons(oldPolys, lon, lat);
+    return {
+        wardNo: newWard.wardNo,
+        wardName: newWard.wardName,
+        oldWardNo: oldWard.wardNo,
+        oldWardName: oldWard.wardName
+    };
 }

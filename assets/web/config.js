@@ -25,6 +25,7 @@ function startConfigLoad() {
                 MAP_KML_URL: basePath + boundaries.mapKml,
                 CONST_KML_URL: basePath + boundaries.constKml,
                 WARD_KML_URL: basePath + boundaries.wardKml,
+                OLD_WARD_KML_URL: boundaries.oldWardKml ? basePath + boundaries.oldWardKml : null,
                 TRAFFIC_KML_URL: basePath + boundaries.trafficKml,
 
                 GBA_BBOX: cityConfig.getBBox()

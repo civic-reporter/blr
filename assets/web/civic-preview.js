@@ -17,6 +17,13 @@ function setPreviewValue(id, value) {
     if (el) el.textContent = value || t('unknown', getCurrentLanguage());
 }
 
+function formatWardText(wardNo, wardName, lang) {
+    if (wardNo || wardName) {
+        return [wardNo ? `Ward ${wardNo}` : '', wardName || ''].filter(Boolean).join(' · ');
+    }
+    return t('previewUnavailable', lang);
+}
+
 export async function updateReportPreview() {
     const panel = document.getElementById('reportPreview');
     if (!panel) return;
@@ -30,6 +37,7 @@ export async function updateReportPreview() {
 
     panel.classList.remove('is-hidden');
     setPreviewValue('previewWard', t('loading', lang));
+    setPreviewValue('previewOldWard', t('loading', lang));
     setPreviewValue('previewCorp', t('loading', lang));
     setPreviewValue('previewConstituency', t('loading', lang));
     setPreviewValue('previewMla', t('loading', lang));
@@ -40,7 +48,7 @@ export async function updateReportPreview() {
         const [
             { acName, mlaHandle },
             { corpName, corpHandle },
-            { wardNo, wardName }
+            { wardNo, wardName, oldWardNo, oldWardName }
         ] = await Promise.all([
             findConstituencyForCurrentGPS(),
             findCorpForCurrentGPS(),
@@ -49,9 +57,8 @@ export async function updateReportPreview() {
 
         if (requestId !== previewRequestId) return;
 
-        const wardText = wardNo || wardName
-            ? [wardNo ? `Ward ${wardNo}` : '', wardName || ''].filter(Boolean).join(' · ')
-            : t('previewUnavailable', lang);
+        const wardText = formatWardText(wardNo, wardName, lang);
+        const oldWardText = formatWardText(oldWardNo, oldWardName, lang);
 
         const corpText = corpName
             ? `${corpName}${corpHandle ? ` (${corpHandle})` : ''}`
@@ -65,6 +72,7 @@ export async function updateReportPreview() {
                 : t('previewUnavailable', lang);
 
         setPreviewValue('previewWard', wardText);
+        setPreviewValue('previewOldWard', oldWardText);
         setPreviewValue('previewCorp', corpText);
         setPreviewValue('previewConstituency', constituencyText);
         setPreviewValue('previewMla', mlaText);
@@ -73,6 +81,7 @@ export async function updateReportPreview() {
         if (requestId !== previewRequestId) return;
         const unavailable = t('previewUnavailable', lang);
         setPreviewValue('previewWard', unavailable);
+        setPreviewValue('previewOldWard', unavailable);
         setPreviewValue('previewCorp', unavailable);
         setPreviewValue('previewConstituency', unavailable);
         setPreviewValue('previewMla', unavailable);
