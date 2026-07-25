@@ -95,7 +95,7 @@ export async function shareToGBA() {
     const [
         { acName, mlaHandle },
         { corpName, corpHandle },
-        { wardNo, wardName }
+        { wardNo, wardName, oldWardNo, oldWardName }
     ] = await Promise.all([
         findConstituencyForCurrentGPS(),
         findCorpForCurrentGPS(),
@@ -112,6 +112,8 @@ export async function shareToGBA() {
     formData.append("corpName", corpName || "");
     formData.append("wardNo", wardNo || "");
     formData.append("wardName", wardName || "");
+    formData.append("oldWardNo", oldWardNo || "");
+    formData.append("oldWardName", oldWardName || "");
     formData.append("constituency", acName);
     formData.append("mlaHandle", mlaHandle);
 
@@ -132,6 +134,8 @@ export async function shareToGBA() {
             description: desc,
             wardNo: wardNo,
             wardName: wardName,
+            oldWardNo: oldWardNo,
+            oldWardName: oldWardName,
             corpName: corpName,
             constituency: acName,
             coordinates: {
@@ -165,6 +169,8 @@ export async function shareToGBA() {
         description: desc,
         wardNo,
         wardName,
+        oldWardNo,
+        oldWardName,
         corpName,
         constituency: acName,
         coordinates: {

@@ -64,7 +64,11 @@ function buildWhatsAppMessage(reportData, { includeRecipient = false, displayNum
     }
 
     if (reportData.wardNo || reportData.wardName) {
-        lines.push(`Ward: ${[reportData.wardNo, reportData.wardName].filter(Boolean).join(' - ')}`);
+        lines.push(`GBA ward: ${[reportData.wardNo, reportData.wardName].filter(Boolean).join(' - ')}`);
+    }
+
+    if (reportData.oldWardNo || reportData.oldWardName) {
+        lines.push(`BBMP ward: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
     }
 
     if (reportData.corpName) {
