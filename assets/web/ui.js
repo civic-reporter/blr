@@ -204,6 +204,8 @@ export function updateSubmitButtonState() {
     }
 
     updateLocationHints();
+
+    if (window.refreshCivicSteps) window.refreshCivicSteps();
 }
 
 export function ensureLocationVisible() {

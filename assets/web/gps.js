@@ -5,6 +5,34 @@ import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfir
 const EXIF_HEAD_BYTES = 512 * 1024;
 const EXIFR_OPTIONS = { gps: true, reviveValues: true, mergeOutput: false, translateKeys: true };
 
+// Why the photo did or did not yield coordinates. Drives the location panel copy,
+// which has to explain platform behaviour the parser cannot work around.
+export const GPS_SOURCE = {
+    NONE: 'none',
+    PHOTO: 'photo',
+    LIVE: 'live',
+    MANUAL: 'manual',
+    STRIPPED: 'stripped',
+    NO_LOCATION_TAG: 'no-location-tag',
+    OUTSIDE_BOUNDARY: 'outside-boundary'
+};
+
+let gpsSource = GPS_SOURCE.NONE;
+
+function setGpsSource(source) {
+    gpsSource = source;
+    window.gpsSource = source;
+    document.dispatchEvent(new CustomEvent('civic:gps-source', { detail: { source } }));
+}
+
+export function getGpsSource() {
+    return gpsSource;
+}
+
+export function resetGpsSource() {
+    setGpsSource(GPS_SOURCE.NONE);
+}
+
 function getExifr() {
     return globalThis.exifr;
 }
@@ -44,6 +72,12 @@ function dmsToDecimal(value, ref) {
 
 function normalizeGpsResult(result) {
     if (!result) return null;
+
+    // exifr nests the GPS block when mergeOutput is disabled.
+    if (result.gps && typeof result.gps === 'object') {
+        const nested = normalizeGpsResult(result.gps);
+        if (nested) return nested;
+    }
 
     if (typeof result.lat === 'number' && typeof result.lon === 'number') {
         return normalizeGpsResult({ latitude: result.lat, longitude: result.lon });
@@ -195,14 +229,36 @@ async function extractGpsWithPiexif(file, buffer) {
     return null;
 }
 
-async function readExifGpsFromFile(file) {
-    if (!file) return null;
+// Distinguishes "the picker handed us a metadata-free copy" from "the camera never
+// recorded a location", which need very different advice.
+async function hasAnyExifMetadata(fileOrBuffer) {
+    const exifr = getExifr();
+    if (!exifr || !fileOrBuffer) return false;
+
+    try {
+        const meta = await exifr.parse(fileOrBuffer, {
+            tiff: true,
+            ifd0: true,
+            exif: true,
+            mergeOutput: true
+        });
+        return !!meta && Object.keys(meta).length > 0;
+    } catch (e) {
+        console.warn('EXIF presence check failed:', e);
+        return false;
+    }
+}
+
+async function readExifFromFile(file) {
+    if (!file) return { gps: null, hasExif: false };
 
     const buffer = await readFileBuffer(file);
-    const exifrGps = await extractGpsWithExifr(file, buffer);
-    if (exifrGps) return exifrGps;
+    const gps = await extractGpsWithExifr(file, buffer) ||
+        await extractGpsWithPiexif(file, buffer);
 
-    return extractGpsWithPiexif(file, buffer);
+    if (gps) return { gps, hasExif: true };
+
+    return { gps: null, hasExif: await hasAnyExifMetadata(buffer || file) };
 }
 
 async function isInGbaBbox(lat, lon) {
@@ -215,6 +271,7 @@ async function isInGbaBbox(lat, lon) {
 export function markManualGps() {
     window.gpsFromPhotoExif = false;
     window.gpsManuallySet = true;
+    setGpsSource(GPS_SOURCE.MANUAL);
     updateLocationConfirmVisibility();
 }
 
@@ -222,6 +279,7 @@ async function applyExtractedGps(lat, lon) {
     if (!(await isInGbaBbox(lat, lon))) {
         window.currentGPS = null;
         window.gpsFromPhotoExif = false;
+        setGpsSource(GPS_SOURCE.OUTSIDE_BOUNDARY);
         showStatus(`❌ GPS location outside GBA boundary`, "error");
         showLocation();
         updateSubmitButtonState();
@@ -232,9 +290,10 @@ async function applyExtractedGps(lat, lon) {
     window.currentGPS = { lat, lon };
     window.gpsFromPhotoExif = true;
     window.gpsManuallySet = false;
+    setGpsSource(GPS_SOURCE.PHOTO);
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
-    showStatus(`✅ Photo GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
+    showStatus('', "info");
 
     if (window.map) {
         window.map.setView([lat, lon], 16);
@@ -262,9 +321,11 @@ export async function extractGPSFromImageFile(file) {
     if (!file) return null;
 
     console.log('🔍 EXIF parse from file:', file.name, file.type, file.size);
-    const gps = await readExifGpsFromFile(file);
+    const { gps, hasExif } = await readExifFromFile(file);
+
     if (!gps) {
-        console.warn('⚠️ No GPS metadata found in uploaded file');
+        console.warn('⚠️ No GPS metadata found in uploaded file (hasExif:', hasExif, ')');
+        setGpsSource(hasExif ? GPS_SOURCE.NO_LOCATION_TAG : GPS_SOURCE.STRIPPED);
         return null;
     }
 
@@ -292,19 +353,68 @@ export async function extractGPSFromExif(dataUrl) {
     return null;
 }
 
-export async function getLiveGPSIfInGBA() {
-    console.log("📍 Live GPS fallback...");
+function readCurrentPosition() {
     return new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve(null);
+        if (!navigator.geolocation) {
+            resolve({ ok: false, reason: 'unsupported' });
+            return;
+        }
 
         navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const gp = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                if (await isInGbaBbox(gp.lat, gp.lon)) resolve(gp);
-                else resolve(null);
-            },
-            () => resolve(null),
+            (pos) => resolve({
+                ok: true,
+                coords: { lat: pos.coords.latitude, lon: pos.coords.longitude },
+                accuracy: pos.coords.accuracy
+            }),
+            (err) => resolve({
+                ok: false,
+                reason: err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable'
+            }),
             { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     });
+}
+
+export async function getLiveGPSIfInGBA() {
+    console.log("📍 Live GPS fallback...");
+    const result = await readCurrentPosition();
+    if (!result.ok) return null;
+    return (await isInGbaBbox(result.coords.lat, result.coords.lon)) ? result.coords : null;
+}
+
+// Triggered only by the user pressing "use my current location", so a denied
+// permission prompt is meaningful feedback rather than a silent failure.
+export async function requestLiveGpsFromUser() {
+    const result = await readCurrentPosition();
+
+    if (!result.ok) {
+        return { ok: false, reason: result.reason };
+    }
+
+    const { lat, lon } = result.coords;
+    if (!(await isInGbaBbox(lat, lon))) {
+        return { ok: false, reason: 'outside' };
+    }
+
+    window.currentGPS = { lat, lon };
+    window.gpsFromPhotoExif = false;
+    window.gpsManuallySet = true;
+    setGpsSource(GPS_SOURCE.LIVE);
+
+    if (window.map) {
+        window.map.setView([lat, lon], 17);
+        if (window.placeMarker) window.placeMarker();
+    }
+
+    showLocation();
+    updateSubmitButtonState();
+    updateLocationConfirmVisibility();
+
+    if (window.updateReportPreview) window.updateReportPreview();
+    if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
+    if (window.isCivicFlow && window.updateCivicEmailRecipients) {
+        window.updateCivicEmailRecipients();
+    }
+
+    return { ok: true, coords: { lat, lon }, accuracy: result.accuracy };
 }

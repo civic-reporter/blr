@@ -60,97 +60,161 @@
       </section>
 
       <section class="civic-workflow" aria-label="Report workflow">
-        <div id="uploadOptions" class="upload-options civic-upload-card">
-          <div class="civic-upload-visual" aria-hidden="true">
-            <span class="civic-upload-icon"><i class="fas fa-camera"></i></span>
-            <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
-            <span class="civic-upload-icon"><i class="fab fa-whatsapp"></i></span>
-          </div>
-          <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags,
-            or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo,
-            pick the issue type, describe it, and send via WhatsApp.</p>
-          <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a
-            photo here</p>
-          <div class="button-group civic-button-group">
-            <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
-              <i class="fas fa-image"></i>
-              <span data-i18n="Choose a Photo">Choose photo</span>
-            </button>
-            <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
-              <i class="fas fa-camera"></i>
-              <span data-i18n="Mobile Camera">Take photo</span>
-            </button>
-          </div>
-          <input type="file" id="imageInput" class="is-hidden" />
-          <input type="file" id="cameraInput" capture="environment" class="is-hidden" />
-        </div>
+        <nav class="civic-stepper" aria-label="Report progress">
+          <button type="button" class="civic-stepper-item" data-step="photo">
+            <span class="civic-stepper-num">1</span>
+            <span class="civic-stepper-label" data-i18n="stepPhoto">Photo</span>
+          </button>
+          <span class="civic-stepper-line" aria-hidden="true"></span>
+          <button type="button" class="civic-stepper-item" data-step="location">
+            <span class="civic-stepper-num">2</span>
+            <span class="civic-stepper-label" data-i18n="stepLocation">Location</span>
+          </button>
+          <span class="civic-stepper-line" aria-hidden="true"></span>
+          <button type="button" class="civic-stepper-item" data-step="details">
+            <span class="civic-stepper-num">3</span>
+            <span class="civic-stepper-label" data-i18n="stepDetails">Details</span>
+          </button>
+        </nav>
 
-        <div class="civic-media-panel">
-          <img id="preview" class="civic-preview is-hidden" alt="Issue photo preview" />
-          <div id="blurStatus" class="blur-status is-hidden" aria-live="polite"></div>
+        <section class="civic-step" data-step="photo" aria-label="Step 1: Photo">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepPhotoTitle">Add a photo of the issue</h2>
+            <p class="civic-step-sub" data-i18n="stepPhotoSub">A clear, close photo helps the ward officer act faster.
+            </p>
+          </header>
 
-          <div id="imageConfirm" class="image-confirm civic-confirm-card is-hidden">
-            <p data-i18n="isPhotoCorrect">Is this photo correct?</p>
-            <button id="changeImageBtn" class="upload-btn civic-change-btn">
-              <i class="fas fa-rotate-left"></i>
-              <span data-i18n="chooseAnotherPhoto">Choose another photo</span>
-            </button>
-            <label class="confirm-check">
-              <input type="checkbox" id="confirmImageCheck" />
-              <span data-i18n="confirmPhotoText">I confirm this photo clearly shows the issue.</span>
-            </label>
-          </div>
-
-          <div id="dragMarkerHint" class="map-message civic-map-hint is-hidden" data-i18n="dragMarkerInstruction">
-            GPS not detected. Click map or drag marker to set the location (within GBA area only).
-          </div>
-
-          <div id="map" class="civic-map"></div>
-        </div>
-
-        <div id="locationInfo" class="civic-form-panel is-hidden">
-          <div class="info-box civic-info-box" id="infoBox">
-            <div class="civic-location-row">
-              <strong data-i18n="locationLabel">Location:</strong>
-              <span id="gpsCoords"></span>
+          <div id="uploadOptions" class="upload-options civic-upload-card">
+            <div class="civic-upload-visual" aria-hidden="true">
+              <span class="civic-upload-icon"><i class="fas fa-camera"></i></span>
+              <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
+              <span class="civic-upload-icon"><i class="fab fa-whatsapp"></i></span>
             </div>
-            <div id="mapRestrictionMsg" class="map-message civic-warning is-hidden" data-i18n="mapRestrictionMsg">
-              Selected location is outside GBA limits. Please choose a point within GBA.
+            <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS
+              tags, or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm
+              the photo, pick the issue type, describe it, and send via WhatsApp.</p>
+            <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a
+              photo here</p>
+            <div class="button-group civic-button-group">
+              <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
+                <i class="fas fa-image"></i>
+                <span data-i18n="choosePhoto">Choose photo</span>
+              </button>
+              <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
+                <i class="fas fa-camera"></i>
+                <span data-i18n="mobileCamera">Take photo</span>
+              </button>
             </div>
+            <input type="file" id="imageInput" class="is-hidden" />
+            <input type="file" id="cameraInput" capture="environment" class="is-hidden" />
+          </div>
 
-            <div id="locationConfirm" class="image-confirm civic-confirm-card is-hidden">
+          <div class="civic-media-panel">
+            <img id="preview" class="civic-preview is-hidden" alt="Issue photo preview" />
+            <div id="blurStatus" class="blur-status is-hidden" aria-live="polite"></div>
+
+            <div id="imageConfirm" class="image-confirm civic-confirm-card is-hidden">
+              <p data-i18n="isPhotoCorrect">Is this photo correct?</p>
+              <button id="changeImageBtn" class="upload-btn civic-change-btn">
+                <i class="fas fa-rotate-left"></i>
+                <span data-i18n="chooseAnotherPhoto">Choose another photo</span>
+              </button>
               <label class="confirm-check">
-                <input type="checkbox" id="confirmLocationCheck" />
-                <span data-i18n="confirmLocationText">I confirm this map pin matches where the photo was taken.</span>
+                <input type="checkbox" id="confirmImageCheck" />
+                <span data-i18n="confirmPhotoText">I confirm this photo clearly shows the issue.</span>
               </label>
             </div>
+          </div>
 
-            <div id="reportPreview" class="civic-report-preview is-hidden" aria-live="polite">
-              <p class="civic-report-preview-title" data-i18n="reportPreviewTitle">Your report will be routed to:</p>
-              <dl class="civic-report-preview-list">
-                <div class="civic-preview-row">
-                  <dt data-i18n="previewWardLabel">GBA ward</dt>
-                  <dd id="previewWard">—</dd>
-                </div>
-                <div class="civic-preview-row">
-                  <dt data-i18n="previewOldWardLabel">BBMP ward (pre-GBA)</dt>
-                  <dd id="previewOldWard">—</dd>
-                </div>
-                <div class="civic-preview-row">
-                  <dt data-i18n="previewCorpLabel">Corporation</dt>
-                  <dd id="previewCorp">—</dd>
-                </div>
-                <div class="civic-preview-row">
-                  <dt data-i18n="previewConstituencyLabel">Constituency</dt>
-                  <dd id="previewConstituency">—</dd>
-                </div>
-                <div class="civic-preview-row">
-                  <dt data-i18n="previewMlaLabel">MLA</dt>
-                  <dd id="previewMla">—</dd>
-                </div>
-              </dl>
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-primary" data-step-next disabled>
+              <span data-i18n="stepNextLocation">Next: Location</span>
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </section>
+
+        <section class="civic-step is-hidden" data-step="location" aria-label="Step 2: Location">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepLocationTitle">Confirm where this is</h2>
+            <p class="civic-step-sub" data-i18n="stepLocationSub">We route the complaint using this pin, so it needs to
+              match the spot in the photo.</p>
+          </header>
+
+          <div id="locationStatus" class="civic-loc-status" aria-live="polite"></div>
+
+          <div class="civic-media-panel">
+            <div id="dragMarkerHint" class="map-message civic-map-hint is-hidden" data-i18n="dragMarkerInstruction">
+              GPS not detected. Click map or drag marker to set the location (within GBA area only).
             </div>
 
+            <div id="map" class="civic-map"></div>
+          </div>
+
+          <div id="locationInfo" class="civic-form-panel is-hidden">
+            <div class="info-box civic-info-box" id="infoBox">
+              <div class="civic-location-row">
+                <strong data-i18n="locationLabel">Location:</strong>
+                <span id="gpsCoords"></span>
+              </div>
+              <div id="mapRestrictionMsg" class="map-message civic-warning is-hidden" data-i18n="mapRestrictionMsg">
+                Selected location is outside GBA limits. Please choose a point within GBA.
+              </div>
+
+              <div id="locationConfirm" class="image-confirm civic-confirm-card is-hidden">
+                <label class="confirm-check">
+                  <input type="checkbox" id="confirmLocationCheck" />
+                  <span data-i18n="confirmLocationText">I confirm this map pin matches where the photo was taken.</span>
+                </label>
+              </div>
+
+              <div id="reportPreview" class="civic-report-preview is-hidden" aria-live="polite">
+                <p class="civic-report-preview-title" data-i18n="reportPreviewTitle">Your report will be routed to:</p>
+                <dl class="civic-report-preview-list">
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewWardLabel">GBA ward</dt>
+                    <dd id="previewWard">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewOldWardLabel">BBMP ward (pre-GBA)</dt>
+                    <dd id="previewOldWard">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewCorpLabel">Corporation</dt>
+                    <dd id="previewCorp">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewConstituencyLabel">Constituency</dt>
+                    <dd id="previewConstituency">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewMlaLabel">MLA</dt>
+                    <dd id="previewMla">—</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-ghost" data-step-back>
+              <i class="fas fa-arrow-left" aria-hidden="true"></i>
+              <span data-i18n="stepBack">Back</span>
+            </button>
+            <button type="button" class="civic-step-btn civic-step-btn-primary" data-step-next disabled>
+              <span data-i18n="stepNextDetails">Next: Details</span>
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </section>
+
+        <section class="civic-step is-hidden" data-step="details" aria-label="Step 3: Details">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepDetailsTitle">Describe the issue</h2>
+            <p class="civic-step-sub" data-i18n="stepDetailsSub">Then send it to the grievance desk on WhatsApp.</p>
+          </header>
+
+          <div class="info-box civic-info-box">
             <div class="issue-row civic-issue-row">
               <label class="civic-field">
                 <span class="civic-field-label" data-i18n="issueCategory">Issue Category</span>
@@ -169,8 +233,8 @@
               </label>
 
               <label class="civic-field issue-desc-wrap">
-                <span class="civic-field-label" data-i18n="issueDetails">Extra details (optional)</span>
-                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Extra details (optional)"
+                <span class="civic-field-label" data-i18n="issueDetails">Describe the issue</span>
+                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Describe the issue"
                   maxlength="120" />
                 <small id="issueDescCount" class="char-count">0 / 120</small>
               </label>
@@ -210,12 +274,16 @@
               complaint text ready — attach the downloaded photo and tap Send.</p>
           </div>
 
-          <div class="civic-form-actions">
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-ghost" data-step-back>
+              <i class="fas fa-arrow-left" aria-hidden="true"></i>
+              <span data-i18n="stepBack">Back</span>
+            </button>
             <button id="submitBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
               Send via WhatsApp
             </button>
           </div>
-        </div>
+        </section>
 
         <div id="status"></div>
       </section>

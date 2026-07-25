@@ -126,12 +126,12 @@ if (document.readyState === 'loading') {
 
 // Traffic-specific image handlers with face blurring
 async function handleTrafficImageUpload(file) {
-    await handleImageUpload(file);
+    await handleImageUpload(file, { useLiveGpsFallback: true });
     await blurAndUpdatePreview();
 }
 
 async function handleTrafficCameraCapture(file) {
-    await handleCameraCapture(file);
+    await handleCameraCapture(file, { useLiveGpsFallback: true });
     await blurAndUpdatePreview();
 }
 

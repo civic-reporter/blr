@@ -1,6 +1,7 @@
 import { showUploadOptions, showStatus } from './ui.js';
 import { clearCivicDraft } from './civic-submit.js';
 import { clearReportPreview } from './civic-preview.js';
+import { resetGpsSource } from './gps.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 export function resetApp() {
@@ -11,6 +12,7 @@ export function resetApp() {
     window.currentGPS = null;
     window.gpsFromPhotoExif = false;
     window.gpsManuallySet = false;
+    resetGpsSource();
     if (window.map && window.marker) {
         window.map.removeLayer(window.marker);
         window.marker = null;
@@ -74,4 +76,5 @@ export function resetApp() {
     // 5. Show upload screen
     showStatus('', '');
     showUploadOptions();
+    if (window.resetCivicSteps) window.resetCivicSteps();
 }
