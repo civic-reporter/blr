@@ -132,6 +132,10 @@ export async function shareToGBA() {
             attachRetryHandler();
             return;
         }
+        if (result.mode === 'cancelled') {
+            showStatus(t('whatsappCancelled', lang), "info");
+            return;
+        }
 
         wasSuccess = true;
         clearCivicDraft();
@@ -178,7 +182,20 @@ export async function shareToGBA() {
         const box = document.getElementById('whatsappSuccessBox');
         if (box) {
             box.classList.remove('is-hidden');
-            box.innerHTML = `<p class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>`;
+            box.innerHTML = `
+                <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>
+                <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>${t('sendWhatsApp', lang)}</span>
+                </button>
+            `;
+            document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
+                const retry = await shareViaWhatsApp(reportData, savedImageFile);
+                const hintEl = document.getElementById('whatsappSuccessHint');
+                if (hintEl && retry.hintKey) {
+                    hintEl.textContent = t(retry.hintKey, getCurrentLanguage());
+                }
+            });
         }
     } catch (e) {
         showStatus(`❌ ${e.message}<br>${getTryAgainButtonText()}`, "error");
