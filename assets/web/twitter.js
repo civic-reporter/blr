@@ -9,6 +9,23 @@ import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let constPolygons = null;
 
+// Constituency names in const.kml do not always match mlaHandles keys exactly.
+const AC_NAME_ALIASES = {
+    "Yeshwanthapura": "Yeshwanthpur",
+    "Vijayanagar": "Vijayanagara",
+    "Govindarajanagar": "Govindaraja Nagar",
+    "Chamrajapet": "Chamrajpet",
+    "Padmanabanagar": "Padmanabhanagar",
+    "Bangalore South": "Bengaluru South",
+    "C.V. RamannNagar": "C. V. Raman Nagar"
+};
+
+function lookupMlaHandle(acName) {
+    if (!acName || !MLA_HANDLES) return "";
+    const handleUser = MLA_HANDLES[acName] || MLA_HANDLES[AC_NAME_ALIASES[acName]] || "";
+    return handleUser ? "@" + handleUser : "";
+}
+
 async function loadConstituencyPolygons() {
     if (constPolygons !== null) return constPolygons;
     try {
@@ -33,9 +50,7 @@ export async function findConstituencyForCurrentGPS() {
     const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            const handleUser = MLA_HANDLES[p.acName] || "";
-            const handle = handleUser ? "@" + handleUser : "";
-            return { acName: p.acName, mlaHandle: handle };
+            return { acName: p.acName, mlaHandle: lookupMlaHandle(p.acName) };
         }
     }
     return { acName: "", mlaHandle: "" };
