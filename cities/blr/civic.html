@@ -81,8 +81,10 @@
               <span data-i18n="Mobile Camera">Take photo</span>
             </button>
           </div>
-          <input type="file" id="imageInput" class="is-hidden" accept="image/*" />
-          <input type="file" id="cameraInput" capture="environment" class="is-hidden" accept="image/*" />
+          <!-- No accept filter: on Android it routes the picker to the media
+               picker, which returns a copy with the GPS tags redacted. -->
+          <input type="file" id="imageInput" class="is-hidden" />
+          <input type="file" id="cameraInput" capture="environment" class="is-hidden" />
         </div>
 
         <div class="civic-media-panel">
