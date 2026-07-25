@@ -105,6 +105,7 @@ export async function shareToGBA() {
     const shouldEmail = emailCheckbox && emailCheckbox.checked;
     const whatsappCheckbox = document.getElementById('whatsappNotifyCheck');
     const shouldWhatsApp = whatsappCheckbox && whatsappCheckbox.checked;
+    const savedImageFile = window.currentImageFile;
 
     if (shouldEmail && window.prepareCivicEmailData) {
         const ccCheckbox = document.getElementById('ccMeCheck');
@@ -175,8 +176,9 @@ export async function shareToGBA() {
             clearCivicDraft();
             const url = data.tweetUrl || data.tweet_url || "";
 
-            // Save GPS data before clearing for success screen display
+            // Save GPS and photo before clearing for success screen / WhatsApp share
             const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
+            const savedImageForWhatsApp = savedImageFile;
 
             ['uploadOptions', 'locationInfo', 'imageConfirm', 'tweetBtnContainer'].forEach(id => {
                 const el = document.getElementById(id);
@@ -231,14 +233,9 @@ export async function shareToGBA() {
 
             reportDataForWhatsApp.tweetUrl = url;
 
-            if (shouldWhatsApp && window.shareCivicViaWhatsApp) {
-                const whatsappBox = document.getElementById('whatsappSuccessBox');
-                if (whatsappBox) {
-                    whatsappBox.classList.remove('is-hidden');
-                    whatsappBox.innerHTML = `<p class="map-message">${t('whatsappSuccessHint', lang)}</p>`;
-                }
+            if (shouldWhatsApp && window.renderWhatsAppSuccess) {
                 setTimeout(() => {
-                    window.shareCivicViaWhatsApp(reportDataForWhatsApp);
+                    window.renderWhatsAppSuccess(reportDataForWhatsApp, savedImageForWhatsApp);
                 }, 400);
             }
 
