@@ -81,7 +81,7 @@
               <span data-i18n="Mobile Camera">Take photo</span>
             </button>
           </div>
-          <input type="file" id="imageInput" class="is-hidden" accept="image/*" />
+          <input type="file" id="imageInput" class="is-hidden" />
           <input type="file" id="cameraInput" capture="environment" class="is-hidden" accept="image/*" />
         </div>
 
@@ -169,8 +169,8 @@
               </label>
 
               <label class="civic-field issue-desc-wrap">
-                <span class="civic-field-label" data-i18n="issueDetails">Issue description</span>
-                <input id="issueDesc" required data-i18n-placeholder="issueDetails" placeholder="Describe the issue"
+                <span class="civic-field-label" data-i18n="issueDetails">Extra details (optional)</span>
+                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Extra details (optional)"
                   maxlength="120" />
                 <small id="issueDescCount" class="char-count">0 / 120</small>
               </label>
@@ -206,12 +206,13 @@
               <small data-i18n="whatsappWillBeSentTo">Report will be sent via WhatsApp to:</small>
               <strong id="whatsappNumberDisplay">9480685700</strong>
             </p>
-            <p class="whatsapp-note" data-i18n="whatsappPhotoNote">WhatsApp opens with your complaint text ready — attach civic-issue.jpg and tap Send.</p>
+            <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
+              complaint text ready — attach civic-issue.jpg and tap Send.</p>
           </div>
 
           <div class="civic-form-actions">
-            <button id="tweetBtn" class="civic-submit-btn civic-whatsapp-btn" disabled data-i18n="postIssue">
-              <i class="fab fa-whatsapp"></i> Send via WhatsApp
+            <button id="tweetBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
+              Post Issue via @zenc_civic
             </button>
           </div>
         </div>
