@@ -4,7 +4,7 @@ import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
 let CONFIG = null;
 let MLA_HANDLES = null;
 import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
-import { isValidNumber, isInGBA, pointInRing, loadGeoLayers } from './utils.js';
+import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let constPolygons = null;
@@ -58,14 +58,14 @@ export async function findConstituencyForCurrentGPS() {
 
 export async function shareToGBA() {
     const lang = getCurrentLanguage();
+    const { isWhatsAppEnabled, shareViaWhatsApp } = await import('./civic-whatsapp.js');
 
-    if (!navigator.onLine) {
-        showStatus(`❌ ${t('offlineError', lang)}<br>${getTryAgainButtonText()}`, "error");
-        attachRetryHandler();
+    if (!(await isWhatsAppEnabled())) {
+        showStatus(`❌ ${t('whatsappDisabled', lang)}`, "error");
         return;
     }
 
-    if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
+    if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isValidNumber(window.currentGPS.lon)) {
         showStatus("❌ Location must be inside GBA boundary.", "error");
         return;
     }
@@ -74,27 +74,31 @@ export async function shareToGBA() {
         return;
     }
 
-    // Validate issue type selection
     const issueType = document.getElementById("issueType")?.value;
     if (!issueType) {
         showStatus("❌ Please select an issue type.", "error");
         return;
     }
 
-    if (window.tweetBtn) {
-        window.tweetBtn.disabled = true;
-        window.tweetBtn.textContent = "Posting...";
-        window.tweetBtn.classList.add("loading");
+    const desc = document.getElementById("issueDesc")?.value.trim() || "";
+    if (!desc) {
+        showStatus(`❌ ${t('issueDetailsRequired', lang)}`, "error");
+        return;
     }
-    showStatus("📤 Uploading issue to @zenc_civic...", "info");
+
+    const submitBtn = window.tweetBtn;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = t('sendingWhatsApp', lang);
+        submitBtn.classList.add("loading");
+    }
+    showStatus(t('openingWhatsApp', lang), "info");
 
     await new Promise(resolve => requestAnimationFrame(resolve));
 
-    const desc = document.getElementById("issueDesc")?.value.trim() || "";
-
     const [
-        { acName, mlaHandle },
-        { corpName, corpHandle },
+        { acName },
+        { corpName },
         { wardNo, wardName, oldWardNo, oldWardName }
     ] = await Promise.all([
         findConstituencyForCurrentGPS(),
@@ -102,69 +106,7 @@ export async function shareToGBA() {
         findWardForCurrentGPS()
     ]);
 
-    const formData = new FormData();
-    formData.append("image", window.currentImageFile);
-    formData.append("lat", window.currentGPS.lat.toFixed(6));
-    formData.append("lon", window.currentGPS.lon.toFixed(6));
-    formData.append("issueType", issueType);
-    formData.append("description", desc);
-    formData.append("corpHandle", corpHandle || "");
-    formData.append("corpName", corpName || "");
-    formData.append("wardNo", wardNo || "");
-    formData.append("wardName", wardName || "");
-    formData.append("oldWardNo", oldWardNo || "");
-    formData.append("oldWardName", oldWardName || "");
-    formData.append("constituency", acName);
-    formData.append("mlaHandle", mlaHandle);
-
-    // Add email data if email option is enabled
-    const emailCheckbox = document.getElementById('emailAuthoritiesCheck');
-    const shouldEmail = emailCheckbox && emailCheckbox.checked;
-    const whatsappCheckbox = document.getElementById('whatsappNotifyCheck');
-    const shouldWhatsApp = whatsappCheckbox && whatsappCheckbox.checked;
-    const savedImageFile = window.currentImageFile;
-
-    if (shouldEmail && window.prepareCivicEmailData) {
-        const ccCheckbox = document.getElementById('ccMeCheck');
-        const userEmailInput = document.getElementById('userEmailInput');
-        const userEmail = (ccCheckbox && ccCheckbox.checked && userEmailInput) ? userEmailInput.value.trim() : '';
-
-        const reportData = {
-            issueType: issueType,
-            description: desc,
-            wardNo: wardNo,
-            wardName: wardName,
-            oldWardNo: oldWardNo,
-            oldWardName: oldWardName,
-            corpName: corpName,
-            constituency: acName,
-            coordinates: {
-                lat: window.currentGPS.lat.toFixed(6),
-                lon: window.currentGPS.lon.toFixed(6)
-            },
-            timestamp: new Date().toLocaleString()
-        };
-
-        const emailData = window.prepareCivicEmailData(reportData, userEmail);
-        if (emailData && emailData.to && emailData.to.length > 0) {
-            formData.append("emailRecipients", JSON.stringify(emailData.to));
-            if (userEmail) {
-                formData.append("userEmail", userEmail);
-            }
-            console.log('📧 Added email data to submission:', emailData.to);
-        }
-    }
-
-    if (shouldWhatsApp) {
-        const { getWhatsAppNumber } = await import('./civic-whatsapp.js');
-        const whatsappNumber = await getWhatsAppNumber();
-        if (whatsappNumber) {
-            formData.append("whatsappNotify", "true");
-            formData.append("whatsappNumber", whatsappNumber);
-        }
-    }
-
-    const reportDataForWhatsApp = {
+    const reportData = {
         issueType,
         description: desc,
         wardNo,
@@ -179,95 +121,94 @@ export async function shareToGBA() {
         }
     };
 
+    const savedImageFile = window.currentImageFile;
+    const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
     let wasSuccess = false;
 
     try {
-        if (!CONFIG) CONFIG = await getConfig();
-        const res = await fetch(CONFIG.API_GATEWAY_URL, { method: "POST", body: formData });
-        const raw = await res.text();
-        let data;
-        try {
-            data = JSON.parse(raw);
-        } catch (e) {
-            throw new Error("Bad JSON from API: " + raw.slice(0, 200));
+        const result = await shareViaWhatsApp(reportData, savedImageFile);
+        if (result.mode === 'disabled') {
+            showStatus(`❌ ${t('whatsappDisabled', lang)}`, "error");
+            attachRetryHandler();
+            return;
+        }
+        if (result.mode === 'cancelled') {
+            showStatus(t('whatsappCancelled', lang), "info");
+            return;
         }
 
-        if (res.ok && data.success) {
-            wasSuccess = true;
-            clearCivicDraft();
-            const url = data.tweetUrl || data.tweet_url || "";
+        wasSuccess = true;
+        clearCivicDraft();
 
-            // Save GPS and photo before clearing for success screen / WhatsApp share
-            const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
-            const savedImageForWhatsApp = savedImageFile;
+        ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
 
-            ['uploadOptions', 'locationInfo', 'imageConfirm', 'tweetBtnContainer'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
+        document.querySelectorAll('.form-group').forEach(el => el.style.display = 'none');
+        const mapEl = document.getElementById('map');
+        if (mapEl) mapEl.style.display = 'none';
+
+        window.currentImageFile = null;
+        window.currentGPS = null;
+        const issueTypeEl = document.getElementById('issueType');
+        const issueDescEl = document.getElementById('issueDesc');
+        if (issueTypeEl) issueTypeEl.value = '';
+        if (issueDescEl) issueDescEl.value = '';
+        const previewEl = document.getElementById("preview");
+        if (previewEl) previewEl.src = '';
+        const confirmEl = document.getElementById("confirmImageCheck");
+        if (confirmEl) confirmEl.checked = false;
+        const locationConfirmEl = document.getElementById("confirmLocationCheck");
+        if (locationConfirmEl) locationConfirmEl.checked = false;
+        const searchWrapper = document.getElementById('gbaSearchWrapper');
+        if (searchWrapper) searchWrapper.style.display = 'none';
+
+        showStatus("", "");
+        showSuccessScreen();
+
+        window.currentGPS = savedGPS;
+
+        if (window.displaySuccessLocationInfo) {
+            window.displaySuccessLocationInfo();
+        }
+
+        const tweetLink = document.getElementById("tweetLinkContainer");
+        if (tweetLink) {
+            tweetLink.innerHTML = '';
+            tweetLink.classList.add('is-hidden');
+        }
+
+        const box = document.getElementById('whatsappSuccessBox');
+        if (box) {
+            box.classList.remove('is-hidden');
+            box.innerHTML = `
+                <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>
+                <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>${t('sendWhatsApp', lang)}</span>
+                </button>
+            `;
+            document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
+                const retry = await shareViaWhatsApp(reportData, savedImageFile);
+                const hintEl = document.getElementById('whatsappSuccessHint');
+                if (hintEl && retry.hintKey) {
+                    hintEl.textContent = t(retry.hintKey, getCurrentLanguage());
+                }
             });
-
-            document.querySelectorAll('.form-group').forEach(el => el.style.display = 'none');
-            const mapEl = document.getElementById('map');
-            if (mapEl) mapEl.style.display = 'none';
-
-            window.currentImageFile = null;
-            window.currentGPS = null;
-            const issueTypeEl = document.getElementById('issueType');
-            const issueDescEl = document.getElementById('issueDesc');
-            if (issueTypeEl) issueTypeEl.value = '';
-            if (issueDescEl) issueDescEl.value = '';
-            const previewEl = document.getElementById("preview");
-            if (previewEl) previewEl.src = '';
-            const confirmEl = document.getElementById("confirmImageCheck");
-            if (confirmEl) confirmEl.checked = false;
-            const searchWrapper = document.getElementById('gbaSearchWrapper');
-            if (searchWrapper) searchWrapper.style.display = 'none';
-
-            showStatus("", "");
-            showSuccessScreen();
-
-            // Restore GPS temporarily for success screen display
-            window.currentGPS = savedGPS;
-
-            // Display location info on success screen
-            if (window.displaySuccessLocationInfo) {
-                window.displaySuccessLocationInfo();
-            }
-
-            if (url && document.getElementById("tweetLinkContainer")) {
-                document.getElementById("tweetLinkContainer").innerHTML = `
-                    <p class="map-message"><a href="${url}" target="_blank" rel="noopener noreferrer">View on X</a></p>
-                `;
-            }
-
-            if (shouldWhatsApp && window.renderWhatsAppSuccess) {
-                setTimeout(() => {
-                    window.renderWhatsAppSuccess(reportDataForWhatsApp, savedImageForWhatsApp);
-                }, 400);
-            }
-
-            return;
-        } else {
-            const tryAgainText = getTryAgainButtonText();
-            showStatus(`❌ Failed to post: ${data.message || data.error || res.status}<br>${tryAgainText}`, "error");
-            attachRetryHandler();
         }
     } catch (e) {
-        const tryAgainText = getTryAgainButtonText();
-        const isNetworkError = !navigator.onLine || e.message === 'Failed to fetch' || e.name === 'TypeError';
-        const message = isNetworkError ? t('networkError', lang) : e.message;
-        showStatus(`❌ ${message}<br>${tryAgainText}`, "error");
+        showStatus(`❌ ${e.message}<br>${getTryAgainButtonText()}`, "error");
         attachRetryHandler();
-        console.error("Post error:", e);
+        console.error("WhatsApp submit error:", e);
     } finally {
-        const tweetContainer = document.getElementById('tweetBtnContainer');
         const successVisible = document.getElementById("successScreen") &&
-            document.getElementById("successScreen").style.display === 'block';
+            !document.getElementById("successScreen").classList.contains('is-hidden');
 
-        if (!wasSuccess && window.tweetBtn && tweetContainer && tweetContainer.style.display !== 'none' && !successVisible) {
-            window.tweetBtn.classList.remove("loading");
-            window.tweetBtn.textContent = "🚨 Post Issue via @zenc_civic";
-            window.tweetBtn.disabled = false;
+        if (!wasSuccess && submitBtn && !successVisible) {
+            submitBtn.classList.remove("loading");
+            submitBtn.textContent = t('postIssue', lang);
+            submitBtn.disabled = false;
             updateTweetButtonState();
         }
     }

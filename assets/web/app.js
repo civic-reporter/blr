@@ -15,6 +15,8 @@ console.log('✅ app.js imports loaded');
 
 window.currentImageFile = null;
 window.currentGPS = null;
+window.gpsFromPhotoExif = false;
+window.gpsManuallySet = false;
 window.isCivicFlow = true;
 
 console.log('📋 Document ready state:', document.readyState);
@@ -91,6 +93,12 @@ function initApp() {
         console.log("✅ Checkbox listener added");
     }
 
+    const locationCheckbox = document.getElementById("confirmLocationCheck");
+    if (locationCheckbox) {
+        locationCheckbox.addEventListener("change", updateTweetButtonState);
+        console.log("✅ Location checkbox listener added");
+    }
+
     const emailCheckbox = document.getElementById("emailAuthoritiesCheck");
     if (emailCheckbox) {
         emailCheckbox.addEventListener("change", () => {
@@ -125,7 +133,12 @@ function initApp() {
             const len = issueDesc.value.length;
             issueDescCount.textContent = `${len} / 120`;
             issueDescCount.classList.toggle("char-count-warn", len > 100);
+            const statusDiv = document.getElementById("status");
+            if (statusDiv && statusDiv.textContent.includes(t('issueDetailsRequired', getCurrentLanguage()))) {
+                showStatus("", "");
+            }
             saveCivicDraft();
+            updateTweetButtonState();
         });
     }
 

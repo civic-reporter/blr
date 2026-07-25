@@ -64,7 +64,7 @@
           <div class="civic-upload-visual" aria-hidden="true">
             <span class="civic-upload-icon"><i class="fas fa-camera"></i></span>
             <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
-            <span class="civic-upload-icon"><i class="fab fa-x-twitter"></i></span>
+            <span class="civic-upload-icon"><i class="fab fa-whatsapp"></i></span>
           </div>
           <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags,
             or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo,
@@ -74,11 +74,11 @@
           <div class="button-group civic-button-group">
             <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
               <i class="fas fa-image"></i>
-              <span data-i18n="choosePhoto">Choose photo</span>
+              <span data-i18n="Choose a Photo">Choose photo</span>
             </button>
             <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
               <i class="fas fa-camera"></i>
-              <span data-i18n="mobileCamera">Take photo</span>
+              <span data-i18n="Mobile Camera">Take photo</span>
             </button>
           </div>
           <input type="file" id="imageInput" class="is-hidden" />
@@ -116,6 +116,13 @@
             </div>
             <div id="mapRestrictionMsg" class="map-message civic-warning is-hidden" data-i18n="mapRestrictionMsg">
               Selected location is outside GBA limits. Please choose a point within GBA.
+            </div>
+
+            <div id="locationConfirm" class="image-confirm civic-confirm-card is-hidden">
+              <label class="confirm-check">
+                <input type="checkbox" id="confirmLocationCheck" />
+                <span data-i18n="confirmLocationText">I confirm this map pin matches where the photo was taken.</span>
+              </label>
             </div>
 
             <div id="reportPreview" class="civic-report-preview is-hidden" aria-live="polite">
@@ -170,7 +177,7 @@
             </div>
           </div>
 
-          <div id="emailOption" class="email-option civic-email-card is-hidden">
+          <div id="emailOption" class="email-option civic-email-card is-hidden" hidden>
             <label class="email-check">
               <input type="checkbox" id="emailAuthoritiesCheck" />
               <span data-i18n="emailAuthorities">Would you like to email the authorities as well?</span>
@@ -195,12 +202,8 @@
           </div>
 
           <div id="whatsappOption" class="email-option civic-email-card civic-whatsapp-card is-hidden">
-            <label class="email-check">
-              <input type="checkbox" id="whatsappNotifyCheck" />
-              <span data-i18n="whatsappNotify">Also send this report via WhatsApp</span>
-            </label>
             <p class="whatsapp-target">
-              <small data-i18n="whatsappWillBeSentTo">Will open WhatsApp to send details to:</small>
+              <small data-i18n="whatsappWillBeSentTo">Report will be sent via WhatsApp to:</small>
               <strong id="whatsappNumberDisplay">9480685700</strong>
             </p>
             <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
@@ -227,12 +230,10 @@
   <div id="successScreen" class="success-container is-hidden">
     <div class="success-card civic-success-card">
       <div class="success-icon-large">🏛️</div>
-      <h2 class="success-title" data-i18n="issuePostedSuccess">Civic Issue Reported!</h2>
-      <p class="success-message" data-i18n="issuePostedDesc">Your civic issue has been posted successfully via
-        <strong>@zenc_civic</strong>
-      </p>
+      <h2 class="success-title" data-i18n="issuePostedSuccess">Report sent to WhatsApp!</h2>
+      <p class="success-message" data-i18n="issuePostedDesc">WhatsApp opened with your complaint ready — attach the photo and tap Send.</p>
 
-      <div id="tweetLinkContainer" class="tweet-link-box"></div>
+      <div id="tweetLinkContainer" class="tweet-link-box is-hidden"></div>
       <div id="whatsappSuccessBox" class="tweet-link-box is-hidden"></div>
       <div id="successLocationInfo" class="success-location-info is-hidden"></div>
 

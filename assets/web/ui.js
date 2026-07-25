@@ -1,5 +1,5 @@
 // UI State Management - SINGLE showLocation
-import { isValidNumber, isInGBA } from './utils.js';
+import { isValidNumber } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
 let imageInput, cameraInput, tweetBtn, infoBox, dropZone;
@@ -40,8 +40,20 @@ function toggleVisibility(element, isVisible, displayClass = 'is-visible') {
 function hasValidGps() {
     return !!(window.currentGPS &&
         isValidNumber(window.currentGPS.lat) &&
-        isValidNumber(window.currentGPS.lon) &&
-        isInGBA(window.currentGPS.lat, window.currentGPS.lon));
+        isValidNumber(window.currentGPS.lon));
+}
+
+function needsLocationConfirm() {
+    return !!(window.currentImageFile && hasValidGps() && window.gpsManuallySet);
+}
+
+export function updateLocationConfirmVisibility() {
+    const locationConfirm = document.getElementById("locationConfirm");
+    const confirmLocationCheck = document.getElementById("confirmLocationCheck");
+    const show = needsLocationConfirm();
+
+    toggleVisibility(locationConfirm, show);
+    if (!show && confirmLocationCheck) confirmLocationCheck.checked = false;
 }
 
 function updateLocationHints() {
@@ -101,6 +113,8 @@ export function showUploadOptions() {
 
     window.currentImageFile = null;
     window.currentGPS = null;
+    window.gpsFromPhotoExif = false;
+    window.gpsManuallySet = false;
 }
 
 export function showSuccessScreen() {
@@ -152,27 +166,41 @@ export function updateTweetButtonState() {
     const imageOk = !!window.currentImageFile;
     const gpsOk = hasValidGps();
 
-    // ✅ PURE DOM - NO CACHED VARS
-    const checkbox = document.getElementById("confirmImageCheck");
-    const confirmed = !!(checkbox && checkbox.checked);
+    const photoCheckbox = document.getElementById("confirmImageCheck");
+    const photoConfirmed = !!(photoCheckbox && photoCheckbox.checked);
+
+    const locationCheckbox = document.getElementById("confirmLocationCheck");
+    const locationConfirmRequired = needsLocationConfirm();
+    const locationConfirmed = !locationConfirmRequired ||
+        !!(locationCheckbox && locationCheckbox.checked);
+
+    updateLocationConfirmVisibility();
 
     const issueType = document.getElementById("issueType");
     const civicIssueSelected = !issueType || !!issueType.value;
 
-    const shouldEnable = imageOk && gpsOk && confirmed && civicIssueSelected;
+    const issueDesc = document.getElementById("issueDesc");
+    const issueDescOk = !!(issueDesc && issueDesc.value.trim());
+
+    const shouldEnable = imageOk && gpsOk && photoConfirmed && locationConfirmed &&
+        civicIssueSelected && issueDescOk;
 
     // Update civic button (if present)
     const tweetBtn = document.getElementById("tweetBtn");
     if (tweetBtn) {
         tweetBtn.disabled = !shouldEnable;
-        console.log("🔧 Civic button state:", { imageOk, gpsOk, confirmed, shouldEnable });
+        console.log("🔧 Civic button state:", {
+            imageOk, gpsOk, photoConfirmed, locationConfirmed, issueDescOk, shouldEnable
+        });
     }
 
     // Update traffic button (if present)
     const trafficBtn = document.getElementById("trafficSubmit");
     if (trafficBtn) {
         trafficBtn.disabled = !shouldEnable;
-        console.log("🔧 Traffic button state:", { imageOk, gpsOk, confirmed, shouldEnable });
+        console.log("🔧 Traffic button state:", {
+            imageOk, gpsOk, photoConfirmed, locationConfirmed, shouldEnable
+        });
     }
 
     updateLocationHints();
