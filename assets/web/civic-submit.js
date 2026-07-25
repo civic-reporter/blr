@@ -137,6 +137,9 @@ export async function shareToGBA() {
         wasSuccess = true;
         clearCivicDraft();
 
+        const { recordCivicReport } = await import('./report-ingest.js');
+        recordCivicReport(reportData);
+
         ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';

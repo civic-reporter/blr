@@ -1,10 +1,11 @@
 /**
  * Heat Map Module
- * Retrieves logs from S3 via Lambda and displays heat map on the map
+ * Loads report data from static submissions.json and aggregates client-side.
  */
 
 import { getConfig } from './config.js';
 import { showStatus } from './ui.js';
+import { fetchStaticHeatMapData } from './heatmap-aggregate.js';
 
 let CONFIG = null;
 let heatmapLayer = null;
@@ -22,6 +23,18 @@ export async function initHeatMap() {
  * @returns {Promise<Object>} Heat map data
  */
 export async function fetchHeatMapData(filters = {}) {
+    if (!CONFIG) {
+        CONFIG = await getConfig();
+    }
+
+    if (CONFIG.HEATMAP_DATA_URL) {
+        return fetchStaticHeatMapData(CONFIG, filters);
+    }
+
+    if (!CONFIG.HEATMAP_API_URL) {
+        throw new Error('Heatmap data source is not configured');
+    }
+
     const {
         type = 'both',
         start_date = null,
@@ -32,7 +45,6 @@ export async function fetchHeatMapData(filters = {}) {
     } = filters;
 
     try {
-        // Build query parameters
         const params = new URLSearchParams();
         params.append('type', type);
 
@@ -52,7 +64,6 @@ export async function fetchHeatMapData(filters = {}) {
             params.append('ward', ward);
         }
 
-        // Call Lambda endpoint (configure in config.js)
         const response = await fetch(`${CONFIG.HEATMAP_API_URL}?${params.toString()}`);
 
         if (!response.ok) {

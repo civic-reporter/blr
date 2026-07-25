@@ -20,7 +20,9 @@ function startConfigLoad() {
                 API_GATEWAY_URL: apis.civicApi,
                 TRAFFIC_API_URL: apis.trafficApi,
                 GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
-                HEATMAP_API_URL: apis.heatmapApi || 'https://n54j3iscjk.execute-api.ap-south-1.amazonaws.com/heatmap',  // Add your Lambda endpoint
+                HEATMAP_API_URL: apis.heatmapApi || null,
+                HEATMAP_DATA_URL: apis.heatmapData ? basePath + apis.heatmapData : null,
+                SUBMISSIONS_INGEST_URL: apis.submissionsIngestUrl || null,
 
                 MAP_KML_URL: basePath + boundaries.mapKml,
                 CONST_KML_URL: basePath + boundaries.constKml,

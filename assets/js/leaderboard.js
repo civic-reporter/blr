@@ -1,5 +1,6 @@
 import { getConfig, getMlaHandles } from '../web/config.js';
 import { t, getCurrentLanguage } from './i18n.js';
+import { fetchStaticHeatMapData } from '../web/heatmap-aggregate.js';
 
 function tr(key) {
     return t(key, getCurrentLanguage());
@@ -118,6 +119,19 @@ async function fetchAndRenderLeaderboards() {
 
     try {
         const [config, mlaHandles] = await Promise.all([getConfig(), getMlaHandles()]);
+
+        if (config.HEATMAP_DATA_URL) {
+            const data = await fetchStaticHeatMapData(config, { type: 'civic' });
+            renderWardLeaderboard(data.ward_leaderboard);
+            renderConstituencyLeaderboard(data.constituency_leaderboard);
+            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+            return;
+        }
+
+        if (!config.HEATMAP_API_URL) {
+            throw new Error('Leaderboard data source is not configured');
+        }
+
         const response = await fetch(`${config.HEATMAP_API_URL}?type=civic`);
 
         if (!response.ok) {
@@ -151,6 +165,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loadButton) {
         loadButton.addEventListener('click', fetchAndRenderLeaderboards);
     }
-
     fetchAndRenderLeaderboards();
 });

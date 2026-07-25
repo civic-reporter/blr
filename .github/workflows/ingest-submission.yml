@@ -1,0 +1,28 @@
+name: Ingest civic report submission
+
+on:
+  repository_dispatch:
+    types: [civic-report]
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Append submission
+        env:
+          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: node scripts/submissions-store.mjs append "$CLIENT_PAYLOAD"
+
+      - name: Commit submission
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/cities/blr/submissions.json
+          git commit -m "Add civic report submission"
+          git push

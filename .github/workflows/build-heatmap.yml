@@ -1,0 +1,34 @@
+name: Validate heatmap submissions
+
+on:
+  push:
+    paths:
+      - 'data/cities/**/submissions.json'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate submissions.json
+        run: node scripts/submissions-store.mjs validate
+
+      - name: Commit normalized submissions
+        run: |
+          if git diff --quiet data/cities/blr/submissions.json; then
+            echo "No normalization changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/cities/blr/submissions.json
+          git commit -m "Normalize heatmap submissions data"
+          git push
