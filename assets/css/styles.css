@@ -1905,6 +1905,12 @@ body.civic-page {
     font-size: 1rem;
 }
 
+.whatsapp-note {
+    margin: 0.35rem 0 0;
+    font-size: 0.82rem;
+    color: var(--x-text-secondary);
+}
+
 .civic-whatsapp-btn {
     background: linear-gradient(135deg, #25d366, #128c7e);
 }

@@ -7,7 +7,7 @@ import { resetApp } from './reset.js';
 import { initEmailModule, isValidEmail } from './email-authorities.js';
 import { updateCivicEmailRecipients, displaySuccessLocationInfo, prepareCivicEmailData } from './civic-email.js';
 import { updateReportPreview } from './civic-preview.js';
-import { updateCivicWhatsAppOption, shareViaWhatsApp } from './civic-whatsapp.js';
+import { updateCivicWhatsAppOption, renderWhatsAppSuccess } from './civic-whatsapp.js';
 import { blurFacesInImage } from '../js/face-blur.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
@@ -195,7 +195,7 @@ function initApp() {
     window.prepareCivicEmailData = prepareCivicEmailData;
     window.updateReportPreview = updateReportPreview;
     window.updateCivicWhatsAppOption = updateCivicWhatsAppOption;
-    window.shareCivicViaWhatsApp = shareViaWhatsApp;
+    window.renderWhatsAppSuccess = renderWhatsAppSuccess;
 
     console.log('✅ Civic app initialization complete');
 }
