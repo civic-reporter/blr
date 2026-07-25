@@ -1,6 +1,6 @@
 import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA } from './gps.js';
 import { compressImage, isValidNumber } from './utils.js';
-import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
+import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
 async function processSelectedImage(file, { preferExif = true } = {}) {
@@ -11,7 +11,7 @@ async function processSelectedImage(file, { preferExif = true } = {}) {
     const locationConfirmCheck = document.getElementById("confirmLocationCheck");
     if (confirmCheck) confirmCheck.checked = false;
     if (locationConfirmCheck) locationConfirmCheck.checked = false;
-    if (window.tweetBtn) window.tweetBtn.disabled = true;
+    if (window.submitBtn) window.submitBtn.disabled = true;
 
     if (preferExif) {
         await extractGPSFromImageFile(file);
@@ -41,7 +41,7 @@ async function processSelectedImage(file, { preferExif = true } = {}) {
             }
 
             showLocation();
-            updateTweetButtonState();
+            updateSubmitButtonState();
             updateLocationConfirmVisibility();
             if (window.updateReportPreview) window.updateReportPreview();
 

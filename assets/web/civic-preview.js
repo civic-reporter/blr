@@ -1,5 +1,5 @@
 import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
-import { findConstituencyForCurrentGPS } from './twitter.js';
+import { findConstituencyForCurrentGPS } from './civic-submit.js';
 import { isValidNumber, isInGBA } from './utils.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 

@@ -1,5 +1,5 @@
 import { showUploadOptions, showStatus } from './ui.js';
-import { clearCivicDraft } from './twitter.js';
+import { clearCivicDraft } from './civic-submit.js';
 import { clearReportPreview } from './civic-preview.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
@@ -57,13 +57,13 @@ export function resetApp() {
     if (mapEl) mapEl.style.display = 'none';
 
 
-    const tweetBtn = document.getElementById('tweetBtn');
+    const submitBtn = document.getElementById('submitBtn');
     const trafficSubmitBtn = document.getElementById('trafficSubmit');
 
-    if (tweetBtn) {
-        tweetBtn.classList.remove('loading');
-        tweetBtn.textContent = t('postIssue', getCurrentLanguage());
-        tweetBtn.disabled = true;
+    if (submitBtn) {
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = t('postIssue', getCurrentLanguage());
+        submitBtn.disabled = true;
     }
     if (trafficSubmitBtn) {
         trafficSubmitBtn.classList.remove('loading');

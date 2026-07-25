@@ -49,24 +49,24 @@
             </section>
 
             <h3>Overview</h3>
-            <p>Nāgarika Dhvani is a civic reporting platform that allows Bengaluru citizens to report civic issues directly to authorities via X (formerly Twitter).</p>
+            <p>Nāgarika Dhvani helps Bengaluru citizens report civic issues by identifying ward, corporation, and constituency from a photo and location, then opening WhatsApp to the centralized grievance desk.</p>
 
             <h3>Data Privacy</h3>
             <h4>We Do NOT Store Your Data</h4>
             <ul>
                 <li><strong>No user data collection:</strong> We do not collect, store, or retain any personal information, user accounts, or identifiable data.</li>
-                <li><strong>No image storage:</strong> Photos you upload are processed in your browser and posted directly to X. We do not store images on our servers.</li>
-                <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the map, used only for the report, and not stored by us.</li>
-                <li><strong>AI processing:</strong> Images are processed in your browser before transmission. Images are sent to AWS Rekognition for content moderation to prevent misuse. Text descriptions are analyzed using AWS Comprehend to prevent abusive language. These AWS services process data transiently for moderation purposes only and do not retain your content.</li>
+                <li><strong>No image storage:</strong> Photos you upload are processed in your browser. We do not store images on our servers.</li>
+                <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the map, used only to build your report, and not stored by us.</li>
+                <li><strong>AI processing:</strong> Images are processed in your browser before you send your report. Face blurring runs locally in your browser for privacy.</li>
             </ul>
 
-            <h3>Public Posting</h3>
+            <h3>WhatsApp Reporting</h3>
             <p><strong>Important:</strong> When you submit a report:</p>
             <ul>
-                <li>Your image and location details are <strong>posted publicly on X</strong> (formerly Twitter)</li>
-                <li>The post is accessible to anyone on the internet</li>
-                <li>Posts are tagged with relevant authorities (@zenc_civic)</li>
-                <li>Once posted, the content is governed by X's terms and privacy policy</li>
+                <li>Your complaint text (including location and ward details) is sent via <strong>WhatsApp</strong> to the configured grievance number</li>
+                <li>You review and tap Send in WhatsApp — nothing is sent without your confirmation</li>
+                <li>Photos are attached by you in WhatsApp when prompted; we may download a copy to your device to attach</li>
+                <li>Once sent, the message is governed by WhatsApp's terms and privacy policy</li>
             </ul>
 
             <h3>Cookies & Local Storage</h3>
@@ -80,29 +80,29 @@
             <h3>User Consent</h3>
             <p>By using Nāgarika Dhvani, you acknowledge and agree that:</p>
             <ul>
-                <li>Images and location data you submit will be posted publicly on X</li>
+                <li>Images and location data you submit will be included in your WhatsApp message to the grievance desk</li>
                 <li>You have the right to photograph and share the reported issue</li>
-                <li>You will not post images containing sensitive personal information</li>
-                <li>You are responsible for the content you post</li>
+                <li>You will not share images containing sensitive personal information</li>
+                <li>You are responsible for the content you send</li>
             </ul>
 
             <h3>Security</h3>
             <ul>
                 <li>All connections use HTTPS encryption</li>
-                <li>Image compression and face detection happen in your browser</li>
-                <li>API calls to X are made securely through our gateway</li>
+                <li>Image compression and face blurring happen in your browser</li>
+                <li>WhatsApp opens on your device; we do not access your WhatsApp account</li>
             </ul>
 
             <h3>Liability</h3>
             <p>Nāgarika Dhvani is provided "as is" without warranties. We are not responsible for:</p>
             <ul>
                 <li>Response times or actions taken by authorities</li>
-                <li>Content posted by users</li>
-                <li>Third-party services (X platform, map providers)</li>
+                <li>Content you send via WhatsApp</li>
+                <li>Third-party services (WhatsApp, map providers)</li>
             </ul>
 
             <h3>Contact</h3>
-            <p>For questions or concerns, reach out via <a href="https://twitter.com/zenc_civic" target="_blank" rel="noopener noreferrer">@zenc_civic</a> on X.</p>
+            <p>For questions or concerns, reach out via WhatsApp to the grievance desk at <a href="https://wa.me/919480685700" target="_blank" rel="noopener noreferrer">9480685700</a>.</p>
 
             <div class="app-action-row">
                 <a href="index.html" class="app-action-link"><i class="fas fa-home"></i> <span data-i18n="backToHome">Back to Home</span></a>

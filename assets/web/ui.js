@@ -2,7 +2,7 @@
 import { isValidNumber } from './utils.js';
 
 let uploadOptions, previewImg, locationInfo, successScreen, statusDiv;
-let imageInput, cameraInput, tweetBtn, infoBox, dropZone;
+let imageInput, cameraInput, submitBtn, infoBox, dropZone;
 let imageConfirm, confirmImageCheck, changeImageBtn;
 
 export function cacheUIElements() {
@@ -13,13 +13,13 @@ export function cacheUIElements() {
     statusDiv = document.getElementById("status");
     imageInput = document.getElementById("imageInput");
     cameraInput = document.getElementById("cameraInput");
-    tweetBtn = document.getElementById("tweetBtn");
+    submitBtn = document.getElementById("submitBtn");
     infoBox = document.getElementById("infoBox");
     dropZone = document.getElementById("dropZone");
     imageConfirm = document.getElementById("imageConfirm");
     confirmImageCheck = document.getElementById("confirmImageCheck");
     changeImageBtn = document.getElementById("changeImageBtn");
-    window.tweetBtn = tweetBtn;
+    window.submitBtn = submitBtn;
 }
 
 // Helper to toggle visibility using classes
@@ -109,7 +109,7 @@ export function showUploadOptions() {
     toggleVisibility(successScreen, false);
 
     if (statusDiv) statusDiv.innerHTML = "";
-    if (tweetBtn) tweetBtn.disabled = true;
+    if (submitBtn) submitBtn.disabled = true;
 
     window.currentImageFile = null;
     window.currentGPS = null;
@@ -162,7 +162,7 @@ export function showLocation() {
 }
 
 
-export function updateTweetButtonState() {
+export function updateSubmitButtonState() {
     const imageOk = !!window.currentImageFile;
     const gpsOk = hasValidGps();
 
@@ -186,9 +186,9 @@ export function updateTweetButtonState() {
         civicIssueSelected && issueDescOk;
 
     // Update civic button (if present)
-    const tweetBtn = document.getElementById("tweetBtn");
-    if (tweetBtn) {
-        tweetBtn.disabled = !shouldEnable;
+    const civicSubmitBtn = document.getElementById("submitBtn");
+    if (civicSubmitBtn) {
+        civicSubmitBtn.disabled = !shouldEnable;
         console.log("🔧 Civic button state:", {
             imageOk, gpsOk, photoConfirmed, locationConfirmed, issueDescOk, shouldEnable
         });
@@ -204,11 +204,6 @@ export function updateTweetButtonState() {
     }
 
     updateLocationHints();
-}
-
-// Alias for traffic flow compatibility
-export function updateSubmitButtonState() {
-    updateTweetButtonState();
 }
 
 export function ensureLocationVisible() {

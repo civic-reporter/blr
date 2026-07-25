@@ -3,7 +3,7 @@ import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
 
 let CONFIG = null;
 let MLA_HANDLES = null;
-import { showStatus, showSuccessScreen, updateTweetButtonState } from './ui.js';
+import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
 import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
@@ -86,7 +86,7 @@ export async function shareToGBA() {
         return;
     }
 
-    const submitBtn = window.tweetBtn;
+    const submitBtn = window.submitBtn;
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = t('sendingWhatsApp', lang);
@@ -170,12 +170,6 @@ export async function shareToGBA() {
             window.displaySuccessLocationInfo();
         }
 
-        const tweetLink = document.getElementById("tweetLinkContainer");
-        if (tweetLink) {
-            tweetLink.innerHTML = '';
-            tweetLink.classList.add('is-hidden');
-        }
-
         const box = document.getElementById('whatsappSuccessBox');
         if (box) {
             box.classList.remove('is-hidden');
@@ -209,7 +203,7 @@ export async function shareToGBA() {
             submitBtn.classList.remove("loading");
             submitBtn.textContent = t('postIssue', lang);
             submitBtn.disabled = false;
-            updateTweetButtonState();
+            updateSubmitButtonState();
         }
     }
 }

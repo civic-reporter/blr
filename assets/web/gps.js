@@ -1,6 +1,6 @@
 // GPS module - SYNTAX FIXED
 import { getConfig } from './config.js';
-import { showStatus, showLocation, updateTweetButtonState, updateLocationConfirmVisibility } from './ui.js';
+import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
 
 function bufferToBinary(buffer) {
     const bytes = new Uint8Array(buffer);
@@ -45,7 +45,7 @@ async function applyExtractedGps(lat, lon) {
         window.gpsFromPhotoExif = false;
         showStatus(`❌ GPS location outside GBA boundary`, "error");
         showLocation();
-        updateTweetButtonState();
+        updateSubmitButtonState();
         updateLocationConfirmVisibility();
         return null;
     }
@@ -53,7 +53,7 @@ async function applyExtractedGps(lat, lon) {
     window.currentGPS = { lat, lon };
     window.gpsFromPhotoExif = true;
     window.gpsManuallySet = false;
-    updateTweetButtonState();
+    updateSubmitButtonState();
     updateLocationConfirmVisibility();
     showStatus('', "success");
 
