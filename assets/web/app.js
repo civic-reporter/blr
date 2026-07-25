@@ -8,6 +8,8 @@ import { initEmailModule, isValidEmail } from './email-authorities.js';
 import { updateCivicEmailRecipients, displaySuccessLocationInfo, prepareCivicEmailData } from './civic-email.js';
 import { updateReportPreview } from './civic-preview.js';
 import { updateCivicWhatsAppOption, renderWhatsAppSuccess } from './civic-whatsapp.js';
+import { initSteps } from './civic-steps.js';
+import { initLocationStatus } from './civic-location-status.js';
 import { blurFacesInImage } from '../js/face-blur.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
@@ -204,6 +206,9 @@ function initApp() {
     initMap();
     console.log('📤 Calling showUploadOptions()...');
     showUploadOptions();
+
+    initSteps();
+    initLocationStatus();
 
     if (restoreCivicDraft()) {
         const lang = getCurrentLanguage();
