@@ -84,11 +84,19 @@ export function validateStore() {
     return store;
 }
 
+export function refreshStore() {
+    const store = validateStore();
+    console.log(`Refreshed heatmap data at ${store.updated_at}`);
+    return store;
+}
+
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const command = process.argv[2];
 
     if (command === 'validate') {
         validateStore();
+    } else if (command === 'refresh') {
+        refreshStore();
     } else if (command === 'append') {
         const payload = process.argv[3] || process.env.CLIENT_PAYLOAD;
         if (!payload) {
@@ -96,6 +104,6 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
         }
         appendSubmission(JSON.parse(payload));
     } else {
-        throw new Error('Usage: node scripts/submissions-store.mjs <validate|append>');
+        throw new Error('Usage: node scripts/submissions-store.mjs <validate|refresh|append>');
     }
 }

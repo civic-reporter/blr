@@ -58,6 +58,7 @@
                 </div>
                 <h1 class="app-hero-title" data-i18n="heatMapTitle">Heat Map Analytics</h1>
                 <p class="app-hero-desc" data-i18n="heatMapSubtitle">Visualize civic issues across Bengaluru</p>
+                <p id="dataLastUpdated" class="data-last-updated is-hidden" data-i18n="dataLastUpdated">Last updated: —</p>
             </section>
 
             <section class="heatmap-controls-panel">
@@ -351,6 +352,13 @@
             window.addEventListener('languageChanged', async () => {
                 await populateIssueTypes();
                 await populateBoundaryFilters();
+                const { getConfig } = await import('../../assets/web/config.js');
+                const { showStaticDataLastUpdated } = await import('../../assets/web/heatmap-aggregate.js');
+                const { getCurrentLanguage } = await import('../../assets/js/i18n.js');
+                const config = await getConfig();
+                if (config.HEATMAP_DATA_URL) {
+                    await showStaticDataLastUpdated(config, 'dataLastUpdated', getCurrentLanguage());
+                }
             });
 
             async function populateBoundaryFilters() {

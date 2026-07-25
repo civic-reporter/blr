@@ -1,4 +1,4 @@
-name: Validate heatmap submissions
+name: Refresh heatmap and leaderboard data
 
 on:
   push:
@@ -6,29 +6,29 @@ on:
       - 'data/cities/**/submissions.json'
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 */2 * * *'
 
 permissions:
   contents: write
 
 jobs:
-  validate:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate submissions.json
-        run: node scripts/submissions-store.mjs validate
+      - name: Refresh submissions data
+        run: node scripts/submissions-store.mjs refresh
 
-      - name: Commit normalized submissions
+      - name: Commit refreshed data
         run: |
           if git diff --quiet data/cities/blr/submissions.json; then
-            echo "No normalization changes."
+            echo "No changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/cities/blr/submissions.json
-          git commit -m "Normalize heatmap submissions data"
+          git commit -m "Refresh heatmap and leaderboard data timestamp"
           git push

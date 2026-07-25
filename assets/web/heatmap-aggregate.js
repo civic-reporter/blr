@@ -2,7 +2,10 @@
  * Client-side aggregation for static submissions.json heatmap data.
  */
 
+import { t } from '../js/i18n.js';
+
 let cachedSubmissions = null;
+let cachedUpdatedAt = null;
 let cachedUrl = null;
 
 function parseTimestamp(value) {
@@ -30,25 +33,72 @@ export function normalizeSubmission(raw) {
     };
 }
 
-export async function loadSubmissions(config) {
+export async function loadSubmissionsPayload(config) {
     const url = config.HEATMAP_DATA_URL;
     if (!url) {
         throw new Error('Static heatmap data URL is not configured');
     }
 
     if (cachedSubmissions && cachedUrl === url) {
-        return cachedSubmissions;
+        return {
+            submissions: cachedSubmissions,
+            updated_at: cachedUpdatedAt
+        };
     }
 
-    const response = await fetch(url, { cache: 'no-cache' });
+    const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, {
+        cache: 'no-store'
+    });
     if (!response.ok) {
         throw new Error(`Failed to load submissions (${response.status})`);
     }
 
     const payload = await response.json();
     cachedSubmissions = (payload.submissions || []).map(normalizeSubmission);
+    cachedUpdatedAt = payload.updated_at || null;
     cachedUrl = url;
-    return cachedSubmissions;
+
+    return {
+        submissions: cachedSubmissions,
+        updated_at: cachedUpdatedAt
+    };
+}
+
+export async function loadSubmissions(config) {
+    const payload = await loadSubmissionsPayload(config);
+    return payload.submissions;
+}
+
+export function formatDataUpdatedAt(isoString, lang = 'en') {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return '';
+
+    return date.toLocaleString(lang === 'kn' ? 'kn-IN' : 'en-IN', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+    });
+}
+
+export function renderDataLastUpdated(updatedAt, elementId = 'dataLastUpdated', lang = 'en') {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    const formatted = formatDataUpdatedAt(updatedAt, lang);
+    if (!formatted) {
+        el.textContent = '';
+        el.classList.add('is-hidden');
+        return;
+    }
+
+    el.textContent = t('dataLastUpdated', lang).replace('{time}', formatted);
+    el.classList.remove('is-hidden');
+}
+
+export async function showStaticDataLastUpdated(config, elementId = 'dataLastUpdated', lang = 'en') {
+    const payload = await loadSubmissionsPayload(config);
+    renderDataLastUpdated(payload.updated_at, elementId, lang);
+    return payload.updated_at;
 }
 
 export function filterSubmissions(submissions, filters = {}) {
@@ -214,6 +264,8 @@ export function buildHeatmapPayload(submissions, filters = {}) {
 }
 
 export async function fetchStaticHeatMapData(config, filters = {}) {
-    const submissions = await loadSubmissions(config);
-    return buildHeatmapPayload(submissions, filters);
+    const payload = await loadSubmissionsPayload(config);
+    const result = buildHeatmapPayload(payload.submissions, filters);
+    result.updated_at = payload.updated_at;
+    return result;
 }

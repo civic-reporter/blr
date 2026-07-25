@@ -5,7 +5,8 @@
 
 import { getConfig } from './config.js';
 import { showStatus } from './ui.js';
-import { fetchStaticHeatMapData } from './heatmap-aggregate.js';
+import { fetchStaticHeatMapData, renderDataLastUpdated, showStaticDataLastUpdated } from './heatmap-aggregate.js';
+import { getCurrentLanguage } from '../js/i18n.js';
 
 let CONFIG = null;
 let heatmapLayer = null;
@@ -15,6 +16,10 @@ let markerClusterGroup = null;
 export async function initHeatMap() {
     CONFIG = await getConfig();
     console.log('🔥 Heat map module initialized');
+
+    if (CONFIG.HEATMAP_DATA_URL) {
+        await showStaticDataLastUpdated(CONFIG, 'dataLastUpdated', getCurrentLanguage());
+    }
 }
 
 /**
@@ -326,6 +331,9 @@ export async function loadHeatMap(filters = {}) {
         // Hide loading message after rendering
         const countForDisplay = filters.wardRings ? heatMapPoints.length : data.count;
         showStatus(`✅ Loaded ${countForDisplay} submissions`, 'success');
+        if (data.updated_at) {
+            renderDataLastUpdated(data.updated_at, 'dataLastUpdated', getCurrentLanguage());
+        }
         if (loadBtn) loadBtn.disabled = false;
 
         window.dispatchEvent(new CustomEvent('heatMapLoaded', {

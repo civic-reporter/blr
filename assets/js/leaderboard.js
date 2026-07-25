@@ -1,6 +1,6 @@
 import { getConfig, getMlaHandles } from '../web/config.js';
 import { t, getCurrentLanguage } from './i18n.js';
-import { fetchStaticHeatMapData } from '../web/heatmap-aggregate.js';
+import { fetchStaticHeatMapData, showStaticDataLastUpdated } from '../web/heatmap-aggregate.js';
 
 function tr(key) {
     return t(key, getCurrentLanguage());
@@ -125,6 +125,9 @@ async function fetchAndRenderLeaderboards() {
             renderWardLeaderboard(data.ward_leaderboard);
             renderConstituencyLeaderboard(data.constituency_leaderboard);
             renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+            if (data.updated_at) {
+                await showStaticDataLastUpdated(config, 'dataLastUpdated', getCurrentLanguage());
+            }
             return;
         }
 
