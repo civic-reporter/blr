@@ -115,16 +115,16 @@ function renderLeafletHeatMap(heatMapPoints) {
 
     // Create heat map layer
     heatmapLayer = L.heatLayer(heatData, {
-        radius: 25,
-        blur: 35,
+        radius: 28,
+        blur: 32,
         maxZoom: 17,
-        max: 10,  // Max intensity for color scaling
+        max: 10,
         gradient: {
-            0.0: 'blue',
-            0.3: 'cyan',
-            0.5: 'lime',
-            0.7: 'yellow',
-            1.0: 'red'
+            0.0: '#4CAF50',
+            0.3: '#8BC34A',
+            0.45: '#FFC107',
+            0.65: '#FF9800',
+            1.0: '#F44336'
         }
     }).addTo(window.map);
 
@@ -171,47 +171,28 @@ function addHeatMapMarkers(heatMapPoints) {
     });
 }
 
+function getIntensityClass(intensity) {
+    if (intensity >= 10) return 'high';
+    if (intensity >= 5) return 'medium-high';
+    if (intensity >= 3) return 'medium';
+    return 'low';
+}
+
 /**
  * Create a marker for a heat map point
  */
 function createHeatMapMarker(point) {
-    // Color based on intensity
-    let color = '#4CAF50';
-    if (point.intensity >= 10) {
-        color = '#F44336';  // Red for high intensity
-    } else if (point.intensity >= 5) {
-        color = '#FF9800';  // Orange for medium intensity
-    } else if (point.intensity >= 3) {
-        color = '#FFC107';  // Amber for low-medium intensity
-    }
+    const intensityClass = getIntensityClass(point.intensity);
 
-    // Create custom icon
     const icon = L.divIcon({
         className: 'heatmap-marker',
-        html: `<div style="
-            background-color: ${color};
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-        ">${point.intensity}</div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
+        html: `<div class="heatmap-marker-dot heatmap-marker-dot--${intensityClass}">${point.intensity}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
     });
 
     const marker = L.marker([point.lat, point.lon], { icon });
-
-    // Create popup with details
-    const popup = createHeatMapPopup(point);
-    marker.bindPopup(popup);
-
+    marker.bindPopup(createHeatMapPopup(point));
     return marker;
 }
 
@@ -226,49 +207,44 @@ function createHeatMapPopup(point) {
     const submissionsHtml = (point.submissions || [])
         .slice(0, 5)
         .map(sub => `
-            <div style="border-top: 1px solid #eee; padding: 8px 0; font-size: 12px;">
-                <div><strong>${sub.issue_type}</strong></div>
-                <div style="color: #666;">${new Date(sub.timestamp).toLocaleString()}</div>
-                <div style="margin-top: 4px;">${sub.description || 'No description'}</div>
+            <div class="heatmap-popup-submission">
+                <strong>${sub.issue_type}</strong>
+                <time>${new Date(sub.timestamp).toLocaleString()}</time>
+                <div>${sub.description || 'No description'}</div>
             </div>
         `)
         .join('');
 
     return `
-        <div style="min-width: 250px; max-width: 350px;">
-            <h3 style="margin: 0 0 10px 0; color: #333;">
-                📍 ${point.intensity} Report${point.intensity > 1 ? 's' : ''}
-            </h3>
-            
-            <div style="margin-bottom: 10px;">
-                <strong>Primary Issue:</strong> ${point.issue_type}
+        <div class="heatmap-popup">
+            <h3 class="heatmap-popup-title">${point.intensity} report${point.intensity > 1 ? 's' : ''}</h3>
+
+            <div class="heatmap-popup-section">
+                <strong>Primary issue</strong>
+                ${point.issue_type}
             </div>
-            
+
             ${issueCountsHtml ? `
-                <div style="margin-bottom: 10px;">
-                    <strong>Issue Breakdown:</strong>
-                    <ul style="margin: 5px 0; padding-left: 20px;">
-                        ${issueCountsHtml}
-                    </ul>
+                <div class="heatmap-popup-section">
+                    <strong>Issue breakdown</strong>
+                    <ul class="heatmap-popup-list">${issueCountsHtml}</ul>
                 </div>
             ` : ''}
-            
-            <div style="margin-bottom: 10px;">
-                <strong>Location:</strong><br>
+
+            <div class="heatmap-popup-section">
+                <strong>Location</strong>
                 ${point.lat.toFixed(5)}, ${point.lon.toFixed(5)}
-                <a href="https://www.google.com/maps?q=${point.lat},${point.lon}" 
-                   target="_blank" 
-                   style="margin-left: 10px;">View on Google Maps</a>
+                <a class="heatmap-popup-link" href="https://www.google.com/maps?q=${point.lat},${point.lon}" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
             </div>
-            
-            <div style="margin-bottom: 10px;">
-                <strong>Most Recent:</strong><br>
+
+            <div class="heatmap-popup-section">
+                <strong>Most recent</strong>
                 ${new Date(point.recent_timestamp).toLocaleString()}
             </div>
-            
+
             ${submissionsHtml ? `
-                <div style="margin-top: 15px; border-top: 2px solid #ddd; padding-top: 10px;">
-                    <strong>Recent Submissions:</strong>
+                <div class="heatmap-popup-submissions">
+                    <strong>Recent submissions</strong>
                     ${submissionsHtml}
                 </div>
             ` : ''}
@@ -340,6 +316,11 @@ export async function loadHeatMap(filters = {}) {
         const countForDisplay = filters.wardRings ? heatMapPoints.length : data.count;
         showStatus(`✅ Loaded ${countForDisplay} submissions`, 'success');
         if (loadBtn) loadBtn.disabled = false;
+
+        window.dispatchEvent(new CustomEvent('heatMapLoaded', {
+            detail: heatMapPoints
+        }));
+
         return {
             ...data,
             heat_map_points: heatMapPoints,

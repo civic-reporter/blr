@@ -54,6 +54,20 @@ async function handleCivicImageUpload(file) {
     await blurAndUpdatePreview();
 }
 
+function openPhotoPicker() {
+    const input = document.getElementById("imageInput");
+    if (!input) return;
+    input.value = '';
+    input.click();
+}
+
+function openCameraCapture() {
+    const input = document.getElementById("cameraInput");
+    if (!input) return;
+    input.value = '';
+    input.click();
+}
+
 async function handleCivicCameraCapture(file) {
     await handleCameraCapture(file);
     await blurAndUpdatePreview();
@@ -128,10 +142,8 @@ function initApp() {
         });
     }
 
-    document.getElementById("cameraBtn")?.addEventListener("click", () =>
-        document.getElementById("cameraInput").click());
-    document.getElementById("uploadBtn")?.addEventListener("click", () =>
-        document.getElementById("imageInput").click());
+    document.getElementById("uploadBtn")?.addEventListener("click", openPhotoPicker);
+    document.getElementById("cameraBtn")?.addEventListener("click", openCameraCapture);
 
     document.getElementById("imageInput")?.addEventListener("change", e =>
         handleCivicImageUpload(e.target.files[0]));
@@ -139,7 +151,7 @@ function initApp() {
         handleCivicCameraCapture(e.target.files[0]));
     document.getElementById("tweetBtn")?.addEventListener("click", shareToGBA);
     document.getElementById("submitAnotherBtn")?.addEventListener("click", resetApp);
-    document.getElementById("changeImageBtn")?.addEventListener("click", resetApp);
+    document.getElementById("changeImageBtn")?.addEventListener("click", openPhotoPicker);
 
     const dropZone = document.getElementById("uploadOptions");
     if (dropZone) {

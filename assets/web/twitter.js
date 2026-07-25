@@ -236,23 +236,9 @@ export async function shareToGBA() {
 
             if (url && document.getElementById("tweetLinkContainer")) {
                 document.getElementById("tweetLinkContainer").innerHTML = `
-                    <p class="map-message">Tweet posted! <a href="${url}" target="_blank">View on X</a></p>
-                    <button id="copyTweetBtn" class="copy-btn">📋 Copy Tweet URL</button>
+                    <p class="map-message"><a href="${url}" target="_blank" rel="noopener noreferrer">View on X</a></p>
                 `;
-                setTimeout(() => {
-                    const copyBtn = document.getElementById('copyTweetBtn');
-                    if (copyBtn) {
-                        copyBtn.addEventListener('click', () => {
-                            navigator.clipboard.writeText(url).then(() => {
-                                copyBtn.textContent = '✅ Copied!';
-                                setTimeout(() => copyBtn.textContent = '📋 Copy Tweet URL', 2000);
-                            });
-                        });
-                    }
-                }, 50);
             }
-
-            reportDataForWhatsApp.tweetUrl = url;
 
             if (shouldWhatsApp && window.renderWhatsAppSuccess) {
                 setTimeout(() => {

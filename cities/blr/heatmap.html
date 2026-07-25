@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🗺️ Heat Map Analytics - Bengaluru Issues</title>
+    <title>Heat Map Analytics - Nāgarika Dhvani</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,16 +12,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/leaflet.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body class="app-page">
+<body class="app-page heatmap-page">
     <div class="home-bg-orb orb-1" aria-hidden="true"></div>
     <div class="home-bg-orb orb-2" aria-hidden="true"></div>
     <div class="home-bg-orb orb-3" aria-hidden="true"></div>
     <div class="home-grid-pattern" aria-hidden="true"></div>
 
-    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" data-i18n-title="toggleTheme">
         <i class="fas fa-sun"></i>
         <i class="fas fa-moon is-hidden"></i>
     </button>
@@ -46,15 +48,23 @@
         </nav>
     </header>
 
-    <main class="app-main app-main-wide">
-        <div class="container app-shell">
-            <section class="app-hero">
-                <h1 class="app-hero-title"><span data-i18n="heatMapTitle">Heat Map Analytics</span></h1>
+    <main class="app-main app-main-wide heatmap-main">
+        <div class="container app-shell heatmap-shell">
+            <section class="app-hero heatmap-hero">
+                <div class="heatmap-hero-visual" aria-hidden="true">
+                    <span class="heatmap-hero-icon"><i class="fas fa-chart-area"></i></span>
+                    <span class="heatmap-hero-icon"><i class="fas fa-map-marked-alt"></i></span>
+                    <span class="heatmap-hero-icon"><i class="fas fa-filter"></i></span>
+                </div>
+                <h1 class="app-hero-title" data-i18n="heatMapTitle">Heat Map Analytics</h1>
                 <p class="app-hero-desc" data-i18n="heatMapSubtitle">Visualize civic issues across Bengaluru</p>
             </section>
 
             <section class="heatmap-controls-panel">
-                <h2 data-i18n="filters">Filters</h2>
+                <div class="heatmap-panel-head">
+                    <h2><i class="fas fa-sliders"></i> <span data-i18n="filters">Filters</span></h2>
+                    <p class="heatmap-panel-desc" data-i18n="heatmapFilterDesc">Filter reports by date, issue type, corporation, or ward, then load the map.</p>
+                </div>
 
                 <div class="heatmap-controls-grid">
                     <div class="heatmap-control-group">
@@ -113,36 +123,45 @@
                 </div>
             </section>
 
-            <div class="heatmap-status-message" id="statusMessage"></div>
+            <div class="heatmap-status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
-            <section class="heatmap-map-panel">
-                <div id="map"></div>
-            </section>
+            <div class="heatmap-dashboard">
+                <section class="heatmap-map-panel">
+                    <div class="heatmap-map-head">
+                        <span data-i18n="heatmapMapLabel">Issue density map</span>
+                    </div>
+                    <div id="map" class="heatmap-map"></div>
+                </section>
 
-            <section class="heatmap-legend-panel">
-                <h3 data-i18n="intensityLegend">Intensity Legend</h3>
-                <div class="heatmap-legend-item">
-                    <div class="heatmap-legend-color" style="background: #F44336;"></div>
-                    <span data-i18n="highIntensity">High (10+ reports)</span>
-                </div>
-                <div class="heatmap-legend-item">
-                    <div class="heatmap-legend-color" style="background: #FF9800;"></div>
-                    <span data-i18n="mediumHighIntensity">Medium-High (5-9 reports)</span>
-                </div>
-                <div class="heatmap-legend-item">
-                    <div class="heatmap-legend-color" style="background: #FFC107;"></div>
-                    <span data-i18n="mediumIntensity">Medium (3-4 reports)</span>
-                </div>
-                <div class="heatmap-legend-item">
-                    <div class="heatmap-legend-color" style="background: #4CAF50;"></div>
-                    <span data-i18n="lowIntensity">Low (1-2 reports)</span>
-                </div>
-            </section>
+                <aside class="heatmap-sidebar">
+                    <section class="heatmap-legend-panel">
+                        <h3 data-i18n="intensityLegend">Intensity Legend</h3>
+                        <div class="heatmap-legend-list">
+                            <div class="heatmap-legend-item">
+                                <div class="heatmap-legend-color" style="background: #F44336;"></div>
+                                <span data-i18n="highIntensity">High (10+ reports)</span>
+                            </div>
+                            <div class="heatmap-legend-item">
+                                <div class="heatmap-legend-color" style="background: #FF9800;"></div>
+                                <span data-i18n="mediumHighIntensity">Medium-High (5-9 reports)</span>
+                            </div>
+                            <div class="heatmap-legend-item">
+                                <div class="heatmap-legend-color" style="background: #FFC107;"></div>
+                                <span data-i18n="mediumIntensity">Medium (3-4 reports)</span>
+                            </div>
+                            <div class="heatmap-legend-item">
+                                <div class="heatmap-legend-color" style="background: #4CAF50;"></div>
+                                <span data-i18n="lowIntensity">Low (1-2 reports)</span>
+                            </div>
+                        </div>
+                    </section>
 
-            <section class="heatmap-stats-panel" id="statsPanel" style="display: none;">
-                <h2 data-i18n="statistics">Statistics</h2>
-                <div class="heatmap-stats-grid" id="statsGrid"></div>
-            </section>
+                    <section class="heatmap-stats-panel is-hidden" id="statsPanel">
+                        <h2 data-i18n="statistics">Statistics</h2>
+                        <div class="heatmap-stats-grid" id="statsGrid"></div>
+                    </section>
+                </aside>
+            </div>
 
             <footer class="app-footer app-footer-inline">
                 <small data-i18n="footerText">© 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a href="../../how-to.html" data-i18n="howToLink">How to Use</a></small>
@@ -276,6 +295,7 @@
                 syncWardOptions();
                 clearHeatMap();
                 focusSelectedBoundary();
+                document.getElementById('statsPanel')?.classList.add('is-hidden');
             });
 
             async function populateIssueTypes() {
@@ -745,11 +765,9 @@
                 const statsPanel = document.getElementById('statsPanel');
                 const statsGrid = document.getElementById('statsGrid');
 
-                // Calculate statistics
                 const totalReports = heatMapData.reduce((sum, point) => sum + point.intensity, 0);
                 const avgReports = (totalReports / heatMapData.length).toFixed(1);
 
-                // Count unique issue types
                 const issueTypes = new Set();
                 heatMapData.forEach(point => {
                     if (point.issue_counts) {
@@ -757,37 +775,36 @@
                     }
                 });
 
-                // Generate statistics HTML
                 statsGrid.innerHTML = `
-                    <div class="heatmap-stat-card">
+                    <div class="heatmap-stat-card heatmap-stat-card--reports">
                         <div class="heatmap-stat-value">${totalReports}</div>
                         <div class="heatmap-stat-label" data-i18n="totalReports">Total Reports</div>
                     </div>
-                    <div class="heatmap-stat-card">
+                    <div class="heatmap-stat-card heatmap-stat-card--hotspots">
                         <div class="heatmap-stat-value">${heatMapData.length}</div>
-                        <div class="heatmap-stat-label">Hotspot Locations</div>
+                        <div class="heatmap-stat-label" data-i18n="hotspotLocations">Hotspot locations</div>
                     </div>
-                    <div class="heatmap-stat-card">
+                    <div class="heatmap-stat-card heatmap-stat-card--average">
                         <div class="heatmap-stat-value">${avgReports}</div>
-                        <div class="heatmap-stat-label">Avg Reports/Location</div>
+                        <div class="heatmap-stat-label" data-i18n="avgReportsLocation">Avg reports / location</div>
                     </div>
-                    <div class="heatmap-stat-card">
+                    <div class="heatmap-stat-card heatmap-stat-card--types">
                         <div class="heatmap-stat-value">${issueTypes.size}</div>
-                        <div class="heatmap-stat-label">Issue Types</div>
+                        <div class="heatmap-stat-label" data-i18n="issueTypesCount">Issue types</div>
                     </div>
                 `;
 
-                statsPanel.style.display = 'block';
+                statsPanel.classList.remove('is-hidden');
             }
 
             function showMessage(message, type = 'info') {
                 const messageEl = document.getElementById('statusMessage');
                 messageEl.textContent = message;
-                messageEl.className = 'heatmap-status-message ' + type;
-                messageEl.style.display = 'block';
+                messageEl.className = `heatmap-status-message is-visible ${type}`;
 
-                setTimeout(() => {
-                    messageEl.style.display = 'none';
+                clearTimeout(showMessage._timer);
+                showMessage._timer = setTimeout(() => {
+                    messageEl.classList.remove('is-visible');
                 }, 5000);
             }
         });
