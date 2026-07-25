@@ -55,32 +55,33 @@ function updateLocationHints() {
 }
 
 export function showStatus(msg, type) {
-    // Support both #status (main UI) and #statusMessage (heatmap page)
     const el = statusDiv || document.getElementById('statusMessage');
     if (!el) return;
 
     if (!msg) {
         toggleVisibility(el, false);
         el.innerHTML = "";
-        el.classList.remove("status-error", "status-success", "status-info");
+        el.classList.remove("status-error", "status-success", "status-info", "is-visible", "info", "success", "error");
         return;
     }
 
     toggleVisibility(el, true);
     el.innerHTML = msg;
+
+    if (el.id === 'statusMessage') {
+        el.className = `heatmap-status-message is-visible ${type || 'info'}`;
+        clearTimeout(window._heatmapStatusTimeout);
+        window._heatmapStatusTimeout = setTimeout(() => {
+            el.classList.remove('is-visible');
+        }, 5000);
+        return;
+    }
+
     el.classList.remove("status-error", "status-success", "status-info");
 
     if (type === "error") el.classList.add("status-error");
     else if (type === "success") el.classList.add("status-success");
     else el.classList.add("status-info");
-
-    // Auto-hide after 5 seconds on heatmap page
-    if (el.id === 'statusMessage') {
-        clearTimeout(window._heatmapStatusTimeout);
-        window._heatmapStatusTimeout = setTimeout(() => {
-            toggleVisibility(el, false);
-        }, 5000);
-    }
 }
 
 export function showUploadOptions() {

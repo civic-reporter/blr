@@ -65,15 +65,20 @@
             <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
             <span class="civic-upload-icon"><i class="fab fa-x-twitter"></i></span>
           </div>
-          <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery or files. GPS location is read from the photo when available — if missing, tap the map to set it. Then confirm the photo, pick the issue type, and post.</p>
+          <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags, or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo, pick the issue type, and post.</p>
           <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a photo here</p>
-          <div class="button-group civic-button-group civic-button-group-single">
-            <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn">
+          <div class="button-group civic-button-group">
+            <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
               <i class="fas fa-image"></i>
               <span data-i18n="choosePhoto">Choose photo</span>
             </button>
+            <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
+              <i class="fas fa-camera"></i>
+              <span data-i18n="mobileCamera">Take photo</span>
+            </button>
           </div>
           <input type="file" id="imageInput" class="is-hidden" accept="image/*" />
+          <input type="file" id="cameraInput" capture="environment" class="is-hidden" accept="image/*" />
         </div>
 
         <div class="civic-media-panel">
