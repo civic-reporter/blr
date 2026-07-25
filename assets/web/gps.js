@@ -252,13 +252,26 @@ async function hasAnyExifMetadata(fileOrBuffer) {
 async function readExifFromFile(file) {
     if (!file) return { gps: null, hasExif: false };
 
-    const buffer = await readFileBuffer(file);
-    const gps = await extractGpsWithExifr(file, buffer) ||
-        await extractGpsWithPiexif(file, buffer);
-
+    // Blob first: exifr streams just the header chunk out of it, whereas an
+    // ArrayBuffer forces the whole photo into memory. Phone photos run to 10MB+.
+    let gps = await extractGpsWithExifr(file, null) ||
+        await extractGpsWithPiexif(file, null);
     if (gps) return { gps, hasExif: true };
 
-    return { gps: null, hasExif: await hasAnyExifMetadata(buffer || file) };
+    let buffer = null;
+    try {
+        buffer = await readFileBuffer(file);
+    } catch (e) {
+        console.warn('Could not read file into a buffer for EXIF:', e);
+    }
+
+    if (buffer) {
+        gps = await extractGpsWithExifr(null, buffer) ||
+            await extractGpsWithPiexif(null, buffer);
+        if (gps) return { gps, hasExif: true };
+    }
+
+    return { gps: null, hasExif: await hasAnyExifMetadata(file) };
 }
 
 async function isInGbaBbox(lat, lon) {
@@ -293,7 +306,9 @@ async function applyExtractedGps(lat, lon) {
     setGpsSource(GPS_SOURCE.PHOTO);
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
-    showStatus('', "info");
+    // The location panel says the same thing, but it lives in step 2. This is the
+    // only confirmation visible while the user is still on the photo step.
+    showStatus(`✅ Photo GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
     if (window.map) {
         window.map.setView([lat, lon], 16);
