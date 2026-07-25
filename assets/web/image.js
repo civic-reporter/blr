@@ -1,12 +1,16 @@
 import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA } from './gps.js';
-import { compressImage, isValidNumber, isInGBA } from './utils.js';
-import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState } from './ui.js';
+import { compressImage, isValidNumber } from './utils.js';
+import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
 async function processSelectedImage(file, { preferExif = true } = {}) {
     window.currentImageFile = file;
+    window.gpsFromPhotoExif = false;
+    window.gpsManuallySet = false;
     const confirmCheck = document.getElementById("confirmImageCheck");
+    const locationConfirmCheck = document.getElementById("confirmLocationCheck");
     if (confirmCheck) confirmCheck.checked = false;
+    if (locationConfirmCheck) locationConfirmCheck.checked = false;
     if (window.tweetBtn) window.tweetBtn.disabled = true;
 
     if (preferExif) {
@@ -30,18 +34,22 @@ async function processSelectedImage(file, { preferExif = true } = {}) {
                 const valid = await validateLocationForCoords(window.currentGPS);
                 if (!valid) {
                     window.currentGPS = null;
+                    window.gpsFromPhotoExif = false;
                     showStatus("❌ Photo GPS is outside GBA boundary. Use map to select location.", "error");
+                    updateLocationConfirmVisibility();
                 }
             }
 
             showLocation();
             updateTweetButtonState();
+            updateLocationConfirmVisibility();
             if (window.updateReportPreview) window.updateReportPreview();
 
             const compressedFile = await compressImage(file);
             window.currentImageFile = compressedFile;
 
             hideUploadOptions();
+            showImageConfirm();
             const imageConfirm = document.getElementById("imageConfirm");
             if (imageConfirm) imageConfirm.classList.remove("is-hidden");
 
@@ -68,8 +76,9 @@ export async function handleCameraCapture(file) {
 
     await extractGPSFromImageFile(file);
 
-    const needsGPS = !window.currentGPS || !isValidNumber(window.currentGPS.lat) ||
-        !isValidNumber(window.currentGPS.lon) || !isInGBA(window.currentGPS.lat, window.currentGPS.lon);
+    const needsGPS = !window.currentGPS ||
+        !isValidNumber(window.currentGPS.lat) ||
+        !isValidNumber(window.currentGPS.lon);
 
     if (needsGPS) {
         const liveGPS = await getLiveGPSIfInGBA();
@@ -77,6 +86,8 @@ export async function handleCameraCapture(file) {
             const valid = await validateLocationForCoords(liveGPS);
             if (valid) {
                 window.currentGPS = liveGPS;
+                window.gpsFromPhotoExif = false;
+                window.gpsManuallySet = false;
                 showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
             } else {
                 window.currentGPS = null;

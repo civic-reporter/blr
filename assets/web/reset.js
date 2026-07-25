@@ -8,6 +8,8 @@ export function resetApp() {
     // 1. Clear global state
     window.currentImageFile = null;
     window.currentGPS = null;
+    window.gpsFromPhotoExif = false;
+    window.gpsManuallySet = false;
     if (window.map && window.marker) {
         window.map.removeLayer(window.marker);
         window.marker = null;
@@ -31,6 +33,8 @@ export function resetApp() {
     }
     const confirmCheck = document.getElementById('confirmImageCheck');
     if (confirmCheck) confirmCheck.checked = false;
+    const locationConfirmCheck = document.getElementById('confirmLocationCheck');
+    if (locationConfirmCheck) locationConfirmCheck.checked = false;
 
     const whatsappCheck = document.getElementById('whatsappNotifyCheck');
     if (whatsappCheck) whatsappCheck.checked = false;
