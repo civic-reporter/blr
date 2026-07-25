@@ -2158,6 +2158,23 @@ body.civic-page {
     background: linear-gradient(135deg, var(--x-blue-dark), #3d6fb8);
 }
 
+.civic-button-group-single {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.civic-form-actions {
+    margin-top: 0.75rem;
+}
+
+.civic-whatsapp-hint {
+    margin: 0;
+}
+
+.civic-form-actions .civic-submit-btn {
+    width: 100%;
+}
+
 body.app-page:not(:has(.page-header)) .theme-toggle-btn,
 body.civic-page:not(:has(.page-header)) .theme-toggle-btn {
     top: 16px;
@@ -2207,6 +2224,18 @@ body.civic-page:not(:has(.page-header)) .language-toggle-btn {
 
     .civic-button-group {
         flex-direction: column;
+    }
+
+    .civic-form-panel .email-option {
+        margin-bottom: 0.75rem;
+    }
+
+    .civic-form-panel .whatsapp-note {
+        margin-bottom: 0;
+    }
+
+    .success-card .tweet-link-box {
+        margin: 1rem 0;
     }
 
     .civic-upload-btn,

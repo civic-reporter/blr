@@ -1,5 +1,5 @@
-import { extractGPSFromExif, getLiveGPSIfInGBA } from './gps.js';
-import { compressImage, isInGBA, isValidNumber } from './utils.js';
+import { extractGPSFromExif, extractGPSFromImageFile } from './gps.js';
+import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateTweetButtonState } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
@@ -14,6 +14,9 @@ export async function handleImageUpload(file) {
     if (confirmCheck) confirmCheck.checked = false;
     if (window.tweetBtn) window.tweetBtn.disabled = true;
 
+    // Read GPS from the original gallery/file picker image before any re-encoding.
+    await extractGPSFromImageFile(file);
+
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -23,10 +26,10 @@ export async function handleImageUpload(file) {
                 preview.classList.remove("is-hidden");
             }
 
-            // ✅ GPS FIRST
-            await extractGPSFromExif(e.target.result);
+            if (!window.currentGPS) {
+                await extractGPSFromExif(e.target.result);
+            }
 
-            // ✅ Validate GPS against actual GBA polygon boundaries
             if (window.currentGPS && isValidNumber(window.currentGPS.lat) && isValidNumber(window.currentGPS.lon)) {
                 const valid = await validateLocationForCoords(window.currentGPS);
                 if (!valid) {
@@ -35,16 +38,13 @@ export async function handleImageUpload(file) {
                 }
             }
 
-            // ✅ FORCE MAP + MARKER
-            showLocation();  // Triggers auto-marker from ui.js
+            showLocation();
             updateTweetButtonState();
             if (window.updateReportPreview) window.updateReportPreview();
 
-            // ✅ Compress AFTER GPS
             const compressedFile = await compressImage(file);
             window.currentImageFile = compressedFile;
 
-            // ✅ CRITICAL: Show imageConfirm for ALL (mobile + upload)
             hideUploadOptions();
             const imageConfirm = document.getElementById("imageConfirm");
             if (imageConfirm) imageConfirm.classList.remove("is-hidden");
@@ -61,56 +61,5 @@ export async function handleCameraCapture(file) {
         return;
     }
 
-    window.currentImageFile = file;
-    const confirmCheck = document.getElementById("confirmImageCheck");
-    if (confirmCheck) confirmCheck.checked = false;
-    if (window.tweetBtn) window.tweetBtn.disabled = true;
-
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const preview = document.getElementById("preview");
-            if (preview) {
-                preview.src = e.target.result;
-                preview.classList.remove("is-hidden");
-            }
-
-            await extractGPSFromExif(e.target.result);
-
-            const needsGPS = !window.currentGPS || !isValidNumber(window.currentGPS.lat) ||
-                !isValidNumber(window.currentGPS.lon) || !isInGBA(window.currentGPS.lat, window.currentGPS.lon);
-
-            if (needsGPS) {
-                const liveGPS = await getLiveGPSIfInGBA();
-                if (liveGPS) {
-                    // Validate live GPS against actual GBA polygon boundaries
-                    const valid = await validateLocationForCoords(liveGPS);
-                    if (valid) {
-                        window.currentGPS = liveGPS;
-                        showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
-                        showLocation();
-                        updateTweetButtonState();
-                        if (window.updateReportPreview) window.updateReportPreview();
-                    } else {
-                        window.currentGPS = null;
-                        showStatus("❌ Live GPS outside GBA boundary", "error");
-                        showLocation();
-                    }
-                } else {
-                    showStatus("ℹ️ No valid GPS. Use map/search.", "info");
-                }
-            }
-
-            const compressedFile = await compressImage(file);
-            window.currentImageFile = compressedFile;
-
-            // ✅ CRITICAL: Show imageConfirm for camera TOO
-            hideUploadOptions();
-            const imageConfirm = document.getElementById("imageConfirm");
-            if (imageConfirm) imageConfirm.classList.remove("is-hidden");
-
-            resolve();
-        };
-        reader.readAsDataURL(file);
-    });
+    await handleImageUpload(file);
 }

@@ -1,7 +1,7 @@
 console.log('📦 app.js loading...');
 import { cacheUIElements, showUploadOptions, showStatus, updateTweetButtonState } from './ui.js';
 import { initMap } from './map.js';
-import { handleImageUpload, handleCameraCapture } from './image.js';
+import { handleImageUpload } from './image.js';
 import { shareToGBA, saveCivicDraft, restoreCivicDraft } from './twitter.js';
 import { resetApp } from './reset.js';
 import { initEmailModule, isValidEmail } from './email-authorities.js';
@@ -54,9 +54,11 @@ async function handleCivicImageUpload(file) {
     await blurAndUpdatePreview();
 }
 
-async function handleCivicCameraCapture(file) {
-    await handleCameraCapture(file);
-    await blurAndUpdatePreview();
+function openPhotoPicker() {
+    const input = document.getElementById("imageInput");
+    if (!input) return;
+    input.value = '';
+    input.click();
 }
 
 function initApp() {
@@ -128,18 +130,13 @@ function initApp() {
         });
     }
 
-    document.getElementById("cameraBtn")?.addEventListener("click", () =>
-        document.getElementById("cameraInput").click());
-    document.getElementById("uploadBtn")?.addEventListener("click", () =>
-        document.getElementById("imageInput").click());
+    document.getElementById("uploadBtn")?.addEventListener("click", openPhotoPicker);
 
     document.getElementById("imageInput")?.addEventListener("change", e =>
         handleCivicImageUpload(e.target.files[0]));
-    document.getElementById("cameraInput")?.addEventListener("change", e =>
-        handleCivicCameraCapture(e.target.files[0]));
     document.getElementById("tweetBtn")?.addEventListener("click", shareToGBA);
     document.getElementById("submitAnotherBtn")?.addEventListener("click", resetApp);
-    document.getElementById("changeImageBtn")?.addEventListener("click", resetApp);
+    document.getElementById("changeImageBtn")?.addEventListener("click", openPhotoPicker);
 
     const dropZone = document.getElementById("uploadOptions");
     if (dropZone) {
