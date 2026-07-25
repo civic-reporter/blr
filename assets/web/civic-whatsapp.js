@@ -1,7 +1,7 @@
 /**
  * Civic WhatsApp notification support
- * Opens wa.me to the configured number with a pre-filled complaint message.
- * When a photo is present, saves civic-issue.jpg for the user to attach in WhatsApp.
+ * Shares photo + complaint via Web Share when supported, otherwise downloads
+ * civic-issue.jpg and opens wa.me with pre-filled text.
  */
 
 import { cityConfig } from './config.js';
@@ -38,9 +38,12 @@ export async function getWhatsAppNumber() {
 
 function toImageFile(imageFile) {
     if (!imageFile) return null;
-    if (imageFile instanceof File) return imageFile;
+    if (imageFile instanceof File) {
+        if (imageFile.type === 'image/jpeg') return imageFile;
+        return new File([imageFile], imageFile.name || 'civic-issue.jpg', { type: 'image/jpeg' });
+    }
     if (imageFile instanceof Blob) {
-        return new File([imageFile], 'civic-issue.jpg', { type: imageFile.type || 'image/jpeg' });
+        return new File([imageFile], 'civic-issue.jpg', { type: 'image/jpeg' });
     }
     return null;
 }
@@ -53,7 +56,7 @@ function isMobileDevice() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
-function buildWhatsAppMessage(reportData) {
+function buildWhatsAppMessage(reportData, { includeRecipient = false, displayNumber = '' } = {}) {
     const lines = [`Issue: ${reportData.issueType || 'Not specified'}`];
 
     if (reportData.description) {
@@ -79,6 +82,10 @@ function buildWhatsAppMessage(reportData) {
 
     if (reportData.constituency) {
         lines.push(`Constituency: ${reportData.constituency}`);
+    }
+
+    if (includeRecipient && displayNumber) {
+        lines.push('', `Send to WhatsApp: ${displayNumber}`);
     }
 
     return lines.join('\n');
@@ -108,30 +115,72 @@ function openWhatsAppChat(number, message) {
     window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-export async function shareViaWhatsApp(reportData, imageFile) {
-    const config = await loadWhatsAppConfig();
-    if (!config.enabled || !config.number) return { mode: 'disabled' };
+async function tryWebShareWithPhoto(file, message) {
+    if (!file || typeof navigator.share !== 'function') return false;
 
-    const file = toImageFile(imageFile);
-    const message = buildWhatsAppMessage(reportData);
+    const shareData = {
+        files: [file],
+        text: message,
+        title: 'Civic Issue Report'
+    };
 
+    if (typeof navigator.canShare === 'function' && !navigator.canShare({ files: [file] })) {
+        return false;
+    }
+
+    try {
+        await navigator.share(shareData);
+        return true;
+    } catch (e) {
+        if (e.name === 'AbortError') throw e;
+        console.warn('Web Share with photo failed:', e);
+        return false;
+    }
+}
+
+function openWhatsAppFallback(config, file, chatMessage) {
     if (file) {
         downloadImageFile(file);
     }
 
-    const openChat = () => openWhatsAppChat(config.number, message);
-
+    const openChat = () => openWhatsAppChat(config.number, chatMessage);
     if (file && isMobileDevice()) {
-        // Give the browser a moment to start saving the image before switching to WhatsApp.
         setTimeout(openChat, 450);
     } else {
         openChat();
     }
+}
 
-    return {
-        mode: file ? 'chat-with-photo' : 'chat',
-        hintKey: file ? 'whatsappReviewAndAttach' : 'whatsappReviewAndSend'
-    };
+export async function shareViaWhatsApp(reportData, imageFile) {
+    const config = await loadWhatsAppConfig();
+    if (!config.enabled || !config.number) return { mode: 'disabled' };
+
+    const displayNumber = await getWhatsAppDisplayNumber();
+    const file = toImageFile(imageFile);
+    const chatMessage = buildWhatsAppMessage(reportData);
+    const shareMessage = buildWhatsAppMessage(reportData, {
+        includeRecipient: true,
+        displayNumber
+    });
+
+    if (file) {
+        try {
+            const shared = await tryWebShareWithPhoto(file, shareMessage);
+            if (shared) {
+                return { mode: 'share', hintKey: 'whatsappShareWithPhoto' };
+            }
+        } catch (e) {
+            if (e.name === 'AbortError') {
+                return { mode: 'cancelled', hintKey: 'whatsappCancelled' };
+            }
+        }
+
+        openWhatsAppFallback(config, file, chatMessage);
+        return { mode: 'download', hintKey: 'whatsappDownloadAttach' };
+    }
+
+    openWhatsAppChat(config.number, chatMessage);
+    return { mode: 'text', hintKey: 'whatsappReviewAndSend' };
 }
 
 export async function renderWhatsAppSuccess(reportData, imageFile) {
@@ -143,7 +192,21 @@ export async function renderWhatsAppSuccess(reportData, imageFile) {
     if (result.mode === 'disabled') return;
 
     box.classList.remove('is-hidden');
-    box.innerHTML = `<p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>`;
+    box.innerHTML = `
+        <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${t(result.hintKey, lang)}</p>
+        <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
+            <i class="fab fa-whatsapp"></i>
+            <span>${t('sendWhatsApp', lang)}</span>
+        </button>
+    `;
+
+    document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
+        const retry = await shareViaWhatsApp(reportData, imageFile);
+        const hintEl = document.getElementById('whatsappSuccessHint');
+        if (hintEl && retry.hintKey) {
+            hintEl.textContent = t(retry.hintKey, getCurrentLanguage());
+        }
+    });
 }
 
 export async function updateCivicWhatsAppOption() {
