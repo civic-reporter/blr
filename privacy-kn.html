@@ -6,33 +6,41 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ಗೌಪ್ಯತಾ ನೀತಿ - ನಾಗರಿಕ ಧ್ವನಿ</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
-    <!-- Floating theme toggle -->
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
     <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="ಥೀಮ್ ಬದಲಾವಣೆ">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <!-- Language toggle -->
-    <a href="privacy.html" class="language-toggle-btn" style="text-decoration: none; color: inherit;"
-        title="Switch to English">
-        English
-    </a>
+    <a href="privacy.html" class="app-lang-link" title="Switch to English">English</a>
 
-    <div class="container" style="max-width: 800px; margin: 2rem auto;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="index.html" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-landmark" style="font-size: 2rem;"></i>
-                <h1>ನಾಗರಿಕ ಧ್ವನಿ</h1>
-            </a>
-        </div>
+    <header class="app-header">
+        <a href="index.html" class="home-brand nav-home">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text">ನಾಗರಿಕ ಧ್ವನಿ</span>
+        </a>
+        <span class="hero-pill app-pill">ಗೌಪ್ಯತಾ ನೀತಿ</span>
+    </header>
 
-        <h2>ಗೌಪ್ಯತಾ ನೀತಿ ಮತ್ತು ಸೇವಾ ಶರತುಗಳು</h2>
-        <p><em>ಕೊನೆಯ ನವೀಕರಣ: ಏಪ್ರಿಲ್ 2026</em></p>
+    <main class="app-main">
+        <div class="container app-shell content-prose">
+            <section class="app-hero">
+                <h1 class="app-hero-title">ಗೌಪ್ಯತಾ ನೀತಿ ಮತ್ತು ಸೇವಾ ಶರತುಗಳು</h1>
+                <p class="app-hero-desc"><em>ಕೊನೆಯ ನವೀಕರಣ: ಏಪ್ರಿಲ್ 2026</em></p>
+            </section>
 
         <h3>📋 ಸಂಕ್ಷಿಪ್ತ ವಿವರಣೆ</h3>
         <p>ನಾಗರಿಕ ಧ್ವನಿ ಬೆಂಗಳೂರು ನಾಗರಿಕರಿಗೆ X (ಪೂರ್ವತನ ಟ್ವಿಟರ್) ಮೂಲಕ ಅಧಿಕಾರಿಗಳಿಗೆ ನೇರವಾಗಿ ನಾಗರಿಕ
@@ -101,18 +109,15 @@
         <p>ಪ್ರಶ್ನೆಗಳು ಅಥವಾ ಕಾಳಜಿಗಳಿಗಾಗಿ, X ನಲ್ಲಿ <a href="https://twitter.com/zenc_civic"
                 target="_blank">@zenc_civic</a> ಮೂಲಕ ತಲುಪಿ.</p>
 
-        <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--x-border);">
-            <a href="index.html" class="upload-btn" style="display: inline-block;">
-                <i class="fas fa-home"></i> ಮನೆಗೆ ಹೋಗಿ
-            </a>
+        <div class="app-action-row">
+            <a href="index.html" class="app-action-link"><i class="fas fa-home"></i> ಮನೆಗೆ ಹೋಗಿ</a>
         </div>
 
-        <div class="app-footer" style="margin-top: 2rem;">
-            <small>© 2026 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ · <a id="howToLink" href="how-to-kn.html"
-                    style="text-decoration: none; color: var(--x-text-secondary);" data-i18n="howToLink">ಬಳಕೆಯ
-                    ವಿಧಾನ</a></small>
+        <footer class="app-footer app-footer-inline">
+            <small>© 2026 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ · <a href="how-to-kn.html">ಬಳಕೆಯ ವಿಧಾನ</a></small>
+        </footer>
         </div>
-    </div>
+    </main>
 
     <script>
         const html = document.documentElement;
@@ -129,11 +134,11 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 

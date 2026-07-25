@@ -15,7 +15,7 @@ export function isInGBA(lat, lon) {
 function corpHandleForName(name) {
     switch (name) {
         case "Central": return "@BCCCofficial";
-        case "East": return "@EASTCITYCORP";
+        case "East": return "@BECCUPDATES";
         case "West": return "@BWCCofficial";
         case "North": return "@BNCCofficial";
         case "South": return "@comm_blr_south";

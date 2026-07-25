@@ -6,111 +6,113 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Privacy Policy - Nāgarika Dhvani</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
-    <!-- Floating theme toggle -->
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
     <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <!-- Language toggle -->
-    <a href="privacy-kn.html" class="language-toggle-btn" style="text-decoration: none; color: inherit;"
-        title="Switch to Kannada">
-        ಕನ್ನಡ
-    </a>
+    <a href="privacy-kn.html" class="app-lang-link" title="Switch to Kannada">ಕನ್ನಡ</a>
 
-    <div class="container" style="max-width: 800px; margin: 2rem auto;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="index.html" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-landmark" style="font-size: 2rem;"></i>
-                <h1>Nāgarika Dhvani</h1>
+    <header class="app-header">
+        <a href="index.html" class="home-brand nav-home">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text">Nāgarika Dhvani</span>
+        </a>
+        <span class="hero-pill app-pill" data-i18n="privacyLink">Privacy</span>
+        <nav class="app-header-nav" aria-label="Page navigation">
+            <a href="how-to.html" class="app-nav-link">
+                <i class="fas fa-book"></i>
+                <span data-i18n="howToLink">How to Use</span>
             </a>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <div class="container app-shell content-prose">
+            <section class="app-hero">
+                <h1 class="app-hero-title" data-i18n="privacyTitle">Privacy Policy & Terms of Service</h1>
+                <p class="app-hero-desc"><em data-i18n="privacyLastUpdated">Last updated: April 2026</em></p>
+            </section>
+
+            <h3>Overview</h3>
+            <p>Nāgarika Dhvani is a civic reporting platform that allows Bengaluru citizens to report civic issues directly to authorities via X (formerly Twitter).</p>
+
+            <h3>Data Privacy</h3>
+            <h4>We Do NOT Store Your Data</h4>
+            <ul>
+                <li><strong>No user data collection:</strong> We do not collect, store, or retain any personal information, user accounts, or identifiable data.</li>
+                <li><strong>No image storage:</strong> Photos you upload are processed in your browser and posted directly to X. We do not store images on our servers.</li>
+                <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the map, used only for the report, and not stored by us.</li>
+                <li><strong>AI processing:</strong> Images are processed in your browser before transmission. Images are sent to AWS Rekognition for content moderation to prevent misuse. Text descriptions are analyzed using AWS Comprehend to prevent abusive language. These AWS services process data transiently for moderation purposes only and do not retain your content.</li>
+            </ul>
+
+            <h3>Public Posting</h3>
+            <p><strong>Important:</strong> When you submit a report:</p>
+            <ul>
+                <li>Your image and location details are <strong>posted publicly on X</strong> (formerly Twitter)</li>
+                <li>The post is accessible to anyone on the internet</li>
+                <li>Posts are tagged with relevant authorities (@zenc_civic)</li>
+                <li>Once posted, the content is governed by X's terms and privacy policy</li>
+            </ul>
+
+            <h3>Cookies & Local Storage</h3>
+            <p>We use browser local storage only for:</p>
+            <ul>
+                <li>Theme preference (light/dark mode)</li>
+                <li>Language preference (English/Kannada)</li>
+            </ul>
+            <p>No tracking cookies or analytics are used.</p>
+
+            <h3>User Consent</h3>
+            <p>By using Nāgarika Dhvani, you acknowledge and agree that:</p>
+            <ul>
+                <li>Images and location data you submit will be posted publicly on X</li>
+                <li>You have the right to photograph and share the reported issue</li>
+                <li>You will not post images containing sensitive personal information</li>
+                <li>You are responsible for the content you post</li>
+            </ul>
+
+            <h3>Security</h3>
+            <ul>
+                <li>All connections use HTTPS encryption</li>
+                <li>Image compression and face detection happen in your browser</li>
+                <li>API calls to X are made securely through our gateway</li>
+            </ul>
+
+            <h3>Liability</h3>
+            <p>Nāgarika Dhvani is provided "as is" without warranties. We are not responsible for:</p>
+            <ul>
+                <li>Response times or actions taken by authorities</li>
+                <li>Content posted by users</li>
+                <li>Third-party services (X platform, map providers)</li>
+            </ul>
+
+            <h3>Contact</h3>
+            <p>For questions or concerns, reach out via <a href="https://twitter.com/zenc_civic" target="_blank" rel="noopener noreferrer">@zenc_civic</a> on X.</p>
+
+            <div class="app-action-row">
+                <a href="index.html" class="app-action-link"><i class="fas fa-home"></i> <span data-i18n="backToHome">Back to Home</span></a>
+            </div>
+
+            <footer class="app-footer app-footer-inline">
+                <small>© 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a href="how-to.html" data-i18n="howToLink">How to Use</a></small>
+            </footer>
         </div>
-
-        <h2 data-i18n="privacyTitle">Privacy Policy & Terms of Service</h2>
-        <p><em data-i18n="privacyLastUpdated">Last updated: April 2026</em></p>
-
-        <h3>📋 Overview</h3>
-        <p>Nāgarika Dhvani is a civic reporting platform that allows Bengaluru citizens to report civic
-            issues directly to authorities via X (formerly Twitter).</p>
-
-        <h3>🔒 Data Privacy</h3>
-        <h4>We Do NOT Store Your Data</h4>
-        <ul>
-            <li><strong>No user data collection:</strong> We do not collect, store, or retain any personal information,
-                user accounts, or identifiable data.</li>
-            <li><strong>No image storage:</strong> Photos you upload are processed in your browser and posted directly
-                to X. We do not store images on our servers.</li>
-            <li><strong>No location tracking:</strong> GPS coordinates are extracted from your photos or selected on the
-                map, used only for the report, and not stored by us.</li>
-            <li><strong>AI processing:</strong> Images are processed in your browser before transmission. Images are
-                sent to AWS Rekognition for content moderation to prevent misuse. Text descriptions are analyzed using
-                AWS
-                Comprehend to prevent abusive language. These AWS services process data transiently for moderation
-                purposes only and do not retain your content.</li>
-        </ul>
-
-        <h3>📸 Public Posting</h3>
-        <p><strong>Important:</strong> When you submit a report:</p>
-        <ul>
-            <li>Your image and location details are <strong>posted publicly on X</strong> (formerly Twitter)</li>
-            <li>The post is accessible to anyone on the internet</li>
-            <li>Posts are tagged with relevant authorities (@zenc_civic)</li>
-            <li>Once posted, the content is governed by X's terms and privacy policy</li>
-        </ul>
-
-        <h3>🍪 Cookies & Local Storage</h3>
-        <p>We use browser local storage only for:</p>
-        <ul>
-            <li>Theme preference (light/dark mode)</li>
-            <li>Language preference (English/Kannada)</li>
-        </ul>
-        <p>No tracking cookies or analytics are used.</p>
-
-        <h3>✅ User Consent</h3>
-        <p>By using Nāgarika Dhvani, you acknowledge and agree that:</p>
-        <ul>
-            <li>Images and location data you submit will be posted publicly on X</li>
-            <li>You have the right to photograph and share the reported issue</li>
-            <li>You will not post images containing sensitive personal information</li>
-            <li>You are responsible for the content you post</li>
-        </ul>
-
-        <h3>🛡️ Security</h3>
-        <ul>
-            <li>All connections use HTTPS encryption</li>
-            <li>Image compression and face detection happen in your browser</li>
-            <li>API calls to X are made securely through our gateway</li>
-        </ul>
-
-        <h3>⚖️ Liability</h3>
-        <p>Nāgarika Dhvani is provided "as is" without warranties. We are not responsible for:</p>
-        <ul>
-            <li>Response times or actions taken by authorities</li>
-            <li>Content posted by users</li>
-            <li>Third-party services (X platform, map providers)</li>
-        </ul>
-
-        <h3>📧 Contact</h3>
-        <p>For questions or concerns, reach out via <a href="https://twitter.com/zenc_civic"
-                target="_blank">@zenc_civic</a> on X.</p>
-
-        <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--x-border);">
-            <a href="index.html" class="upload-btn" style="display: inline-block;">
-                <i class="fas fa-home"></i> <span data-i18n="backToHome">Back to Home</span>
-            </a>
-        </div>
-
-        <div class="app-footer" style="margin-top: 2rem;">
-            <small>© 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink" href="how-to.html"
-                    style="text-decoration: none; color: var(--x-text-secondary);" data-i18n="howToLink">How to
-                    Use</a></small>
-        </div>
-    </div>
+    </main>
 
     <script>
         const html = document.documentElement;
@@ -127,25 +129,23 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 
         initTheme();
 
         window.addEventListener("DOMContentLoaded", () => {
-            // Initialize language switcher
             import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
                 initLanguageSwitcher();
             });
 
             document.getElementById("themeToggle").addEventListener("click", () => {
-                const current = html.getAttribute("data-theme") || "light";
-                const next = current === "light" ? "dark" : "light";
+                const next = html.getAttribute("data-theme") === "light" ? "dark" : "light";
                 html.setAttribute("data-theme", next);
                 localStorage.setItem("theme", next);
                 updateThemeToggle(next);

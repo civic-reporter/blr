@@ -137,7 +137,12 @@ export function showLocation() {
             window.map.setView([window.currentGPS.lat, window.currentGPS.lon], 16);
             placeMarker();
             console.log("🎯 Auto-marker placed:", window.currentGPS.lat.toFixed(4));
+            if (window.updateReportPreview) window.updateReportPreview();
+            if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
         }, 100);
+    } else if (window.updateReportPreview) {
+        window.updateReportPreview();
+        if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
     }
 }
 

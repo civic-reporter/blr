@@ -6,275 +6,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nāgarika Dhvani - Leaderboard</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/styles.css" />
-
-    <style>
-        .leaderboard-section {
-            margin-bottom: 2rem;
-        }
-
-        .leaderboard-toolbar {
-            display: flex;
-            justify-content: center;
-            margin: 1.25rem 0 2rem;
-        }
-
-        .leaderboard-load-btn {
-            width: auto;
-            min-width: 220px;
-            margin-top: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-        }
-
-        .leaderboard-load-btn.loading {
-            opacity: 0.9;
-        }
-
-        .leaderboard-load-btn .spinner {
-            display: none;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: leaderboard-spin 0.8s linear infinite;
-        }
-
-        .leaderboard-load-btn.loading .spinner {
-            display: inline-block;
-        }
-
-        @keyframes leaderboard-spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .leaderboard-section h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--x-text-primary);
-            margin: 0 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--x-border);
-        }
-
-        .leaderboard-table-wrap {
-            width: 100%;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--x-border);
-            text-align: left;
-            font-size: 0.9rem;
-            color: var(--x-text-primary);
-        }
-
-        th {
-            background: var(--x-bg-secondary);
-            color: var(--x-accent);
-            font-weight: 600;
-        }
-
-        tr:hover td {
-            background: var(--x-bg-secondary);
-        }
-
-        #ward-table th:first-child,
-        #ward-table td:first-child,
-        #ward-table th:last-child,
-        #ward-table td:last-child {
-            white-space: nowrap;
-        }
-
-        #ward-table th:last-child,
-        #ward-table td:last-child {
-            text-align: right;
-            width: 1%;
-        }
-
-        .rank-cell {
-            font-weight: 700;
-            white-space: nowrap;
-            width: 1%;
-        }
-
-        .rank-cell.medal {
-            font-size: 1.1rem;
-        }
-
-        tr.top-rank td {
-            background: rgba(29, 155, 240, 0.04);
-        }
-
-        .count-cell {
-            text-align: right;
-            width: 1%;
-            white-space: nowrap;
-        }
-
-        .issue-count-badge {
-            display: inline-block;
-            background: var(--x-accent);
-            color: #fff;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 2px 9px;
-            border-radius: 999px;
-            min-width: 28px;
-            text-align: center;
-        }
-
-        td a {
-            color: var(--x-accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        td a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-
-            .leaderboard-table-wrap {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .leaderboard-table-wrap table {
-                min-width: 560px;
-            }
-
-            th,
-            td {
-                font-size: 0.8rem;
-                padding: 8px 8px;
-            }
-        }
-    </style>
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
-    <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
-        <div class="nav-left">
-            <a href="../../index.html" class="nav-home" data-i18n-title="backToHome">
-                <i class="fas fa-home"></i>
-                <span data-i18n="homeTitle">Nāgarika Dhvani</span>
-            </a>
-        </div>
-        <div class="nav-right">
-            <a href="civic.html" class="nav-switch-btn" data-i18n-title="switchToCivic" style="margin-left:8px;">
-                <i class="fas fa-landmark"></i>
-                <span data-i18n="switchToCivic">Report Civic Issue</span>
-            </a>
-            <a href="heatmap.html" class="nav-switch-btn" data-i18n-title="heatmap" style="margin-left:8px;">
-                <i class="fas fa-chart-area"></i>
-                <span data-i18n="heatmap">Heatmap</span>
-            </a>
-        </div>
-    </header>
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
 
     <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" data-i18n-title="toggleTheme">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <div class="container">
-        <h2 data-i18n="leaderboardTitle">🏆 Civic Issue Leaderboard - Bengaluru</h2>
-        <p class="header-text" data-i18n="leaderboardSubtitle">Top wards, constituencies, and MLAs by reported civic
-            issues</p>
+    <header class="app-header">
+        <a href="../../index.html" class="home-brand nav-home" data-i18n-title="backToHome">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+        </a>
 
-        <div class="leaderboard-toolbar">
-            <button id="loadLeaderboardBtn" class="leaderboard-load-btn" type="button">
-                <span class="spinner" aria-hidden="true"></span>
-                <span class="btn-label" data-i18n="leaderboardLoading">Loading leaderboard...</span>
-            </button>
-        </div>
+        <span class="hero-pill app-pill" data-i18n="leaderboard">Leaderboard</span>
 
-        <div class="leaderboard-section">
-            <h2 data-i18n="wardLeaderboard">Ward Leaderboard</h2>
-            <div class="leaderboard-table-wrap">
-                <table id="ward-table">
-                    <thead>
-                        <tr>
-                            <th data-i18n="rank">Rank</th>
-                            <th data-i18n="wardName">Ward Name</th>
-                            <th data-i18n="corporation">Corporation</th>
-                            <th data-i18n="constituency">Constituency</th>
-                            <th data-i18n="issues">Issues</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+        <nav class="app-header-nav" aria-label="Page navigation">
+            <a href="civic.html" class="app-nav-link" data-i18n-title="switchToCivic">
+                <i class="fas fa-landmark"></i>
+                <span data-i18n="switchToCivic">Report Civic Issue</span>
+            </a>
+            <a href="heatmap.html" class="app-nav-link" data-i18n-title="heatmap">
+                <i class="fas fa-chart-area"></i>
+                <span data-i18n="heatmap">Heatmap</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <div class="container app-shell">
+            <section class="app-hero">
+                <h1 class="app-hero-title" data-i18n="leaderboardTitle">Civic Issue Leaderboard - Bengaluru</h1>
+                <p class="app-hero-desc" data-i18n="leaderboardSubtitle">Top wards, constituencies, and MLAs by reported civic issues</p>
+            </section>
+
+            <div class="leaderboard-toolbar">
+                <button id="loadLeaderboardBtn" class="leaderboard-load-btn" type="button">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span class="btn-label" data-i18n="leaderboardLoading">Loading leaderboard...</span>
+                </button>
             </div>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="wardLeaderboard">Ward Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="ward-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="wardName">Ward Name</th>
+                                <th data-i18n="corporation">Corporation</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="constituencyLeaderboard">Constituency Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="constituency-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="mlaLeaderboard">MLA Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="mla-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="mlaXHandle">MLA X Handle</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="app-footer app-footer-inline">
+                <small>© Zen Citizen · <a href="../../how-to.html" data-i18n="howToLink">How to Use</a> · <a href="../../privacy.html" data-i18n="privacyLink">Privacy Policy</a></small>
+            </footer>
         </div>
-        <div class="leaderboard-section">
-            <h2 data-i18n="constituencyLeaderboard">Constituency Leaderboard</h2>
-            <div class="leaderboard-table-wrap">
-                <table id="constituency-table">
-                    <thead>
-                        <tr>
-                            <th data-i18n="rank">Rank</th>
-                            <th data-i18n="constituency">Constituency</th>
-                            <th data-i18n="issues">Issues</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-        <div class="leaderboard-section">
-            <h2 data-i18n="mlaLeaderboard">MLA Leaderboard</h2>
-            <div class="leaderboard-table-wrap">
-                <table id="mla-table">
-                    <thead>
-                        <tr>
-                            <th data-i18n="rank">Rank</th>
-                            <th data-i18n="constituency">Constituency</th>
-                            <th data-i18n="mlaXHandle">MLA X Handle</th>
-                            <th data-i18n="issues">Issues</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script>
-        // Theme toggle (matches civic.html pattern)
         const html = document.documentElement;
-        const saved = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        html.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? 'dark' : 'light');
+            html.setAttribute('data-theme', initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
+            } else {
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
+            }
+        }
+
+        initTheme();
 
         document.addEventListener('DOMContentLoaded', () => {
             import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
                 initLanguageSwitcher();
             });
 
-            const btn = document.getElementById('themeToggle');
-            const sun = btn.querySelector('.fa-sun');
-            const moon = btn.querySelector('.fa-moon');
-            const update = t => { sun.style.display = t === 'dark' ? 'none' : ''; moon.style.display = t === 'dark' ? '' : 'none'; };
-            update(html.getAttribute('data-theme'));
-            btn.addEventListener('click', () => {
+            document.getElementById('themeToggle').addEventListener('click', () => {
                 const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                 html.setAttribute('data-theme', next);
                 localStorage.setItem('theme', next);
-                update(next);
+                updateThemeToggle(next);
             });
         });
     </script>

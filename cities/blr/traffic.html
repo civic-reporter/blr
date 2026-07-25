@@ -4,50 +4,51 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Page Unavailable</title>
+    <title>Page Unavailable - Nāgarika Dhvani</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
 </head>
 
-<body>
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
     <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
         <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
+        <i class="fas fa-moon is-hidden"></i>
     </button>
 
-    <div class="container" style="max-width: 760px; margin: 2rem auto;">
-        <header class="page-header" style="border-radius: 20px; margin-bottom: 24px;">
-            <div class="nav-left">
-                <a href="../../index.html" class="nav-home" title="Back to home">
-                    <i class="fas fa-home"></i>
-                    <span>Nagarika Dhvani</span>
-                </a>
-            </div>
-        </header>
+    <header class="app-header">
+        <a href="../../index.html" class="home-brand nav-home">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text">Nāgarika Dhvani</span>
+        </a>
+        <span class="hero-pill app-pill">Unavailable</span>
+    </header>
 
-        <div class="info-box" style="padding: 24px;">
-            <h2 style="margin-top: 0;">This Page Is Currently Unavailable</h2>
-            <p>
-                This submission flow is temporarily unavailable on this website.
-                Please use civic reporting for currently supported submissions.
-            </p>
-            <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="../../index.html" class="upload-btn"
-                    style="text-decoration: none; width: auto; min-width: 170px; text-align: center;">
-                    <i class="fas fa-home"></i> Back to Home
-                </a>
-                <a href="./civic.html" class="upload-btn"
-                    style="text-decoration: none; width: auto; min-width: 210px; text-align: center;">
-                    <i class="fas fa-building"></i> Report Civic Issue
-                </a>
-            </div>
-        </div>
+    <main class="app-main">
+        <div class="container app-shell">
+            <section class="app-empty-card">
+                <h2 class="app-hero-title">This Page Is Currently Unavailable</h2>
+                <p>This submission flow is temporarily unavailable on this website. Please use civic reporting for currently supported submissions.</p>
+                <div class="app-action-row" style="border-top: none; padding-top: 0; margin-top: 0;">
+                    <a href="../../index.html" class="app-action-link app-action-link-secondary"><i class="fas fa-home"></i> Back to Home</a>
+                    <a href="./civic.html" class="app-action-link"><i class="fas fa-landmark"></i> Report Civic Issue</a>
+                </div>
+            </section>
 
-        <div class="app-footer" style="margin-top: 2rem;">
-            <small>© Zen Citizen</small>
+            <footer class="app-footer app-footer-inline">
+                <small>© Zen Citizen</small>
+            </footer>
         </div>
-    </div>
+    </main>
 
     <script>
         const html = document.documentElement;
@@ -64,19 +65,18 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 
         initTheme();
 
         document.getElementById("themeToggle").addEventListener("click", () => {
-            const current = html.getAttribute("data-theme") || "light";
-            const next = current === "light" ? "dark" : "light";
+            const next = html.getAttribute("data-theme") === "light" ? "dark" : "light";
             html.setAttribute("data-theme", next);
             localStorage.setItem("theme", next);
             updateThemeToggle(next);

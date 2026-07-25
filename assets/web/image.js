@@ -38,6 +38,7 @@ export async function handleImageUpload(file) {
             // ✅ FORCE MAP + MARKER
             showLocation();  // Triggers auto-marker from ui.js
             updateTweetButtonState();
+            if (window.updateReportPreview) window.updateReportPreview();
 
             // ✅ Compress AFTER GPS
             const compressedFile = await compressImage(file);
@@ -89,6 +90,7 @@ export async function handleCameraCapture(file) {
                         showStatus(`✅ Live GPS: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
                         showLocation();
                         updateTweetButtonState();
+                        if (window.updateReportPreview) window.updateReportPreview();
                     } else {
                         window.currentGPS = null;
                         showStatus("❌ Live GPS outside GBA boundary", "error");

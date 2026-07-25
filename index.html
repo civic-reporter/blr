@@ -6,118 +6,126 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>🏛️ Nāgarika Dhvani - Bengaluru Civic Platform</title>
 
-    <!-- Modern fonts + icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <link rel="stylesheet" href="assets/css/styles.css" />
 
-    <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#28a745">
+    <meta name="theme-color" content="#5b9bd5">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
 <body class="home-page">
-    <!-- Floating theme toggle -->
-    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
-        <i class="fas fa-sun"></i>
-        <i class="fas fa-moon" style="display:none;"></i>
-    </button>
-
     <div class="home-bg-orb orb-1" aria-hidden="true"></div>
     <div class="home-bg-orb orb-2" aria-hidden="true"></div>
-    <div class="hero-container">
-        <div class="hero-content">
-            <div class="hero-pill" data-i18n="builtForCitizens">Built for Bengaluru citizens</div>
-            <div class="logo">
-                <i class="fas fa-landmark"></i>
-                <h1 data-i18n="homeTitle">Nāgarika Dhvani</h1>
-            </div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
 
-            <div class="tagline">
-                <p data-i18n="homeSubtitle">Bengaluru's fastest civic reporting platform</p>
-                <div class="stats">
-                    <span data-i18n="gpsPhotos">📸 GPS Photos</span>
-                    <span data-i18n="instantTweets">⚡ Instant Tweets</span>
-                    <span data-i18n="wardMapping">🗺️ Ward Mapping</span>
-                </div>
-            </div>
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon is-hidden"></i>
+    </button>
 
-            <!-- Modern card buttons -->
-            <div class="action-cards single-card">
-                <a href="cities/blr/civic.html" class="action-card civic-card" data-category="civic">
-                    <div class="card-icon">🏗️</div>
-                    <div class="card-content">
-                        <h3 data-i18n="civicIssues">Civic Issues</h3>
-                        <p data-i18n="civicDesc">Potholes, drainage, streetlights</p>
-                        <div class="card-footer">
-                            <span data-i18n="greaterBengaluruAuthority">Click here to tweet to Greater Bengaluru
-                                Authority</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Secondary navigation -->
-            <div class="home-bottom-actions">
-                <a href="cities/blr/heatmap.html" class="nav-switch-btn">
-                    <i class="fas fa-chart-area"></i>
-                    <span>View Heatmap</span>
-                </a>
-                <a href="cities/blr/leaderboard.html" class="nav-switch-btn">
-                    <i class="fas fa-trophy"></i>
-                    <span>Leaderboard</span>
-                </a>
-            </div>
-
-            <!-- Quick stats + social proof -->
-            <div class="features-grid">
-                <div class="feature-item">
-                    <i class="fas fa-camera"></i>
-                    <span data-i18n="photoToPost">Photo → Post in 10s</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span data-i18n="gpsAutoDetect">GPS Auto-detect</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fab fa-x-twitter"></i>
-                    <span data-i18n="directToAuthorities">Direct to authorities</span>
-                </div>
-            </div>
-
-            <!-- CTA -->
-            <div class="cta-section">
-                <p data-i18n="builtForCitizens">Built for Bengaluru citizens 🇮🇳</p>
-            </div>
+    <header class="home-header">
+        <div class="home-brand">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
         </div>
-    </div>
+        <div class="hero-pill" data-i18n="builtForCitizens">Built for Bengaluru citizens</div>
+    </header>
 
-    <!-- Footer -->
-    <footer class="app-footer">
+    <main class="home-main">
+        <section class="home-hero">
+            <h1 class="home-hero-title">
+                <span class="home-hero-line" data-i18n="homeTitle">Nāgarika Dhvani</span>
+                <span class="home-hero-accent" data-i18n="homeSubtitle">Namma Bengaluru, Namma Dhvani</span>
+            </h1>
+
+            <ul class="hero-stats" aria-label="Platform highlights">
+                <li><span data-i18n="gpsPhotos">📸 GPS Photos</span></li>
+                <li><span data-i18n="instantTweets">⚡ Instant Tweets</span></li>
+                <li><span data-i18n="wardMapping">🗺️ Ward Mapping</span></li>
+            </ul>
+        </section>
+
+        <section class="home-actions" aria-label="Quick actions">
+            <a href="cities/blr/civic.html" class="home-primary-card animate-in" data-category="civic">
+                <div class="home-primary-card-top">
+                    <span class="home-card-badge" data-i18n="civicIssues">Civic Issues</span>
+                    <span class="home-card-icon" aria-hidden="true">🏗️</span>
+                </div>
+                <div class="home-primary-card-body">
+                    <h2 data-i18n="civicIssues">Civic Issues</h2>
+                    <p data-i18n="civicDesc">Potholes, drainage, streetlights</p>
+                </div>
+                <div class="home-primary-card-footer">
+                    <span data-i18n="greaterBengaluruAuthority">Click here to tweet to Greater Bengaluru Authority</span>
+                    <span class="home-card-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <div class="home-secondary-grid">
+                <a href="cities/blr/heatmap.html" class="home-secondary-card">
+                    <span class="home-secondary-icon"><i class="fas fa-chart-area"></i></span>
+                    <div>
+                        <strong data-i18n="heatmap">Heatmap</strong>
+                        <span data-i18n="homeHeatmapDesc">See where issues cluster across the city</span>
+                    </div>
+                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+                </a>
+                <a href="cities/blr/leaderboard.html" class="home-secondary-card">
+                    <span class="home-secondary-icon"><i class="fas fa-trophy"></i></span>
+                    <div>
+                        <strong data-i18n="leaderboard">Leaderboard</strong>
+                        <span data-i18n="homeLeaderboardDesc">Top constituencies where issues were identified</span>
+                    </div>
+                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="home-steps" aria-label="How it works">
+            <h2 class="home-section-title" data-i18n="homeHowItWorks">How it works</h2>
+            <ol class="home-steps-list">
+                <li class="home-step">
+                    <span class="home-step-num">1</span>
+                    <strong data-i18n="photoToPost">Photo → Post in 10s</strong>
+                </li>
+                <li class="home-step">
+                    <span class="home-step-num">2</span>
+                    <strong data-i18n="gpsAutoDetect">GPS Auto-detect</strong>
+                </li>
+                <li class="home-step">
+                    <span class="home-step-num">3</span>
+                    <strong data-i18n="directToAuthorities">Direct to authorities</strong>
+                </li>
+            </ol>
+        </section>
+
+        <section class="home-trust">
+            <p data-i18n="builtForCitizens">Built for Bengaluru citizens 🇮🇳</p>
+        </section>
+    </main>
+
+    <footer class="app-footer home-footer">
         <div class="footer-content">
             <small data-i18n="footerText">&copy; 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
-                    href="how-to.html" style="text-decoration: none; color: var(--x-text-secondary);"
-                    data-i18n="howToLink">How to Use</a></small>
+                    href="how-to.html" data-i18n="howToLink">How to Use</a></small>
             <div class="social-links">
-                <a id="privacyLink" href="privacy.html"
-                    style="margin-right: 1rem; text-decoration: none; color: var(--x-text-secondary);">
+                <a id="privacyLink" href="privacy.html">
                     <i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span>
                 </a>
-                <a href="https://twitter.com/zenc_civic" target="_blank" aria-label="X (formerly Twitter)">
+                <a href="https://twitter.com/zenc_civic" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)">
                     <i class="fab fa-x-twitter"></i>
                 </a>
             </div>
         </div>
     </footer>
 
-    <!-- Enhanced theme script -->
     <script>
         const html = document.documentElement;
 
@@ -133,38 +141,34 @@
             const sun = document.querySelector('#themeToggle .fa-sun');
             const moon = document.querySelector('#themeToggle .fa-moon');
             if (theme === 'dark') {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
             } else {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
             }
         }
 
-        // Initialize
         initTheme();
 
         window.addEventListener("DOMContentLoaded", () => {
-            // Initialize language switcher
             import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
                 initLanguageSwitcher();
             });
 
             const btn = document.getElementById("themeToggle");
-            if (!btn) return;
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    const current = html.getAttribute("data-theme") || "light";
+                    const next = current === "light" ? "dark" : "light";
+                    html.setAttribute("data-theme", next);
+                    localStorage.setItem("theme", next);
+                    updateThemeToggle(next);
+                });
+            }
 
-            btn.addEventListener("click", () => {
-                const current = html.getAttribute("data-theme") || "light";
-                const next = current === "light" ? "dark" : "light";
-                html.setAttribute("data-theme", next);
-                localStorage.setItem("theme", next);
-                updateThemeToggle(next);
-            });
-
-            // Animate cards on load
-            document.querySelectorAll('.action-card').forEach((card, i) => {
-                card.style.animationDelay = `${i * 0.1}s`;
-                card.classList.add('animate-in');
+            document.querySelectorAll('.animate-in').forEach((el, i) => {
+                el.style.animationDelay = `${i * 0.12}s`;
             });
         });
     </script>

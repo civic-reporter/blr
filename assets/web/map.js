@@ -128,6 +128,8 @@ async function setupGoogleAutocomplete(searchInput) {
             setMapRestrictionVisibility(false);
             showStatus('', 'success');
             setTimeout(updateTweetButtonState, 50);
+            if (window.updateReportPreview) window.updateReportPreview();
+            if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
         } else {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.currentGPS = null;
@@ -159,11 +161,16 @@ export async function handleMapClick(e) {
     showStatus('', 'success');
     updateTweetButtonState();
 
+    if (window.updateReportPreview) window.updateReportPreview();
+
     // Update email recipients based on flow type
     if (window.isTrafficFlow && window.updateEmailRecipients) {
         setTimeout(() => window.updateEmailRecipients(), 100);
     } else if (window.isCivicFlow && window.updateCivicEmailRecipients) {
         setTimeout(() => window.updateCivicEmailRecipients(), 100);
+    }
+    if (window.isCivicFlow && window.updateCivicWhatsAppOption) {
+        setTimeout(() => window.updateCivicWhatsAppOption(), 100);
     }
 }
 
@@ -206,12 +213,16 @@ export function placeMarker() {
             updateGpsDisplay();
             showStatus('', 'success');
             updateTweetButtonState();
+            if (window.updateReportPreview) window.updateReportPreview();
 
             // Update email recipients when marker is dragged
             if (window.isTrafficFlow && window.updateEmailRecipients) {
                 setTimeout(() => window.updateEmailRecipients(), 100);
             } else if (window.isCivicFlow && window.updateCivicEmailRecipients) {
                 setTimeout(() => window.updateCivicEmailRecipients(), 100);
+            }
+            if (window.isCivicFlow && window.updateCivicWhatsAppOption) {
+                setTimeout(() => window.updateCivicWhatsAppOption(), 100);
             }
         } else {
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
