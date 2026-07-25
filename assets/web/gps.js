@@ -2,6 +2,8 @@
 import { getConfig } from './config.js';
 import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
 
+const EXIF_HEAD_BYTES = 256 * 1024;
+
 function bufferToBinary(buffer) {
     const bytes = new Uint8Array(buffer);
     const chunkSize = 0x8000;
@@ -24,6 +26,51 @@ function parseExifGps(exif) {
     const lat = piexif.GPSHelper.dmsRationalToDeg(latArr, latRef);
     const lon = piexif.GPSHelper.dmsRationalToDeg(lonArr, lonRef);
     return { lat, lon };
+}
+
+async function extractGpsWithExifr(fileOrBlob) {
+    if (typeof exifr === 'undefined' || !fileOrBlob) return null;
+
+    try {
+        const gps = await exifr.gps(fileOrBlob);
+        if (gps &&
+            typeof gps.latitude === 'number' &&
+            typeof gps.longitude === 'number' &&
+            Number.isFinite(gps.latitude) &&
+            Number.isFinite(gps.longitude)) {
+            return { lat: gps.latitude, lon: gps.longitude };
+        }
+    } catch (e) {
+        console.warn('exifr GPS parse failed:', e);
+    }
+
+    return null;
+}
+
+async function extractGpsWithPiexif(file) {
+    if (!file || typeof piexif === 'undefined') return null;
+
+    const tryParse = (buffer) => {
+        try {
+            return parseExifGps(piexif.load(bufferToBinary(buffer)));
+        } catch (e) {
+            return null;
+        }
+    };
+
+    try {
+        const headBuffer = await file.slice(0, EXIF_HEAD_BYTES).arrayBuffer();
+        let gps = tryParse(headBuffer);
+        if (gps) return gps;
+
+        if (file.size > EXIF_HEAD_BYTES) {
+            gps = tryParse(await file.arrayBuffer());
+        }
+    } catch (e) {
+        console.warn('piexif GPS parse failed:', e);
+    }
+
+    return null;
 }
 
 async function isInGbaBbox(lat, lon) {
@@ -80,16 +127,16 @@ async function applyExtractedGps(lat, lon) {
 }
 
 export async function extractGPSFromImageFile(file) {
-    if (!file || typeof piexif === 'undefined') return null;
+    if (!file) return null;
 
-    try {
-        const buffer = await file.arrayBuffer();
-        const gps = parseExifGps(piexif.load(bufferToBinary(buffer)));
-        if (gps) {
-            return applyExtractedGps(gps.lat, gps.lon);
-        }
-    } catch (e) {
-        console.warn('EXIF parse from file failed:', e);
+    const exifrGps = await extractGpsWithExifr(file);
+    if (exifrGps) {
+        return applyExtractedGps(exifrGps.lat, exifrGps.lon);
+    }
+
+    const piexifGps = await extractGpsWithPiexif(file);
+    if (piexifGps) {
+        return applyExtractedGps(piexifGps.lat, piexifGps.lon);
     }
 
     return null;
@@ -99,14 +146,18 @@ export async function extractGPSFromExif(dataUrl) {
     console.log("🔍 EXIF parse start");
 
     try {
-        if (typeof piexif === 'undefined') {
-            throw new Error("piexif not available");
+        const blob = await fetch(dataUrl).then(res => res.blob());
+        const exifrGps = await extractGpsWithExifr(blob);
+        if (exifrGps) {
+            return applyExtractedGps(exifrGps.lat, exifrGps.lon);
         }
 
-        const exif = piexif.load(dataUrl);
-        const gps = parseExifGps(exif);
-        if (gps) {
-            return applyExtractedGps(gps.lat, gps.lon);
+        if (typeof piexif !== 'undefined') {
+            const exif = piexif.load(dataUrl);
+            const gps = parseExifGps(exif);
+            if (gps) {
+                return applyExtractedGps(gps.lat, gps.lon);
+            }
         }
     } catch (e) {
         console.error("🚨 EXIF error:", e);

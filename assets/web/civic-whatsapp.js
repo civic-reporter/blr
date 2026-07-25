@@ -36,14 +36,24 @@ export async function getWhatsAppNumber() {
     return config.number || '';
 }
 
+function buildUniqueImageFilename(baseName = 'civic-issue') {
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+    return `${baseName}-${stamp}.jpg`;
+}
+
 function toImageFile(imageFile) {
+    const filename = buildUniqueImageFilename();
     if (!imageFile) return null;
     if (imageFile instanceof File) {
-        if (imageFile.type === 'image/jpeg') return imageFile;
-        return new File([imageFile], imageFile.name || 'civic-issue.jpg', { type: 'image/jpeg' });
+        if (imageFile.type === 'image/jpeg') {
+            return new File([imageFile], filename, { type: 'image/jpeg' });
+        }
+        return new File([imageFile], filename, { type: 'image/jpeg' });
     }
     if (imageFile instanceof Blob) {
-        return new File([imageFile], 'civic-issue.jpg', { type: 'image/jpeg' });
+        return new File([imageFile], filename, { type: 'image/jpeg' });
     }
     return null;
 }
@@ -95,7 +105,7 @@ function downloadImageFile(file) {
     const url = URL.createObjectURL(file);
     const link = document.createElement('a');
     link.href = url;
-    link.download = file.name || 'civic-issue.jpg';
+    link.download = file.name || buildUniqueImageFilename();
     link.style.display = 'none';
     document.body.appendChild(link);
     link.click();

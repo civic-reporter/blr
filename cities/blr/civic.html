@@ -16,6 +16,7 @@
   <meta name="theme-color" content="#5b9bd5">
 
   <script src="../../assets/js/piexif.min.js"></script>
+  <script src="../../assets/js/full.umd.min.js"></script>
   <script src="../../assets/js/leaflet.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.js"></script>
 </head>
@@ -80,7 +81,7 @@
               <span data-i18n="Mobile Camera">Take photo</span>
             </button>
           </div>
-          <input type="file" id="imageInput" class="is-hidden" />
+          <input type="file" id="imageInput" class="is-hidden" accept="image/*" />
           <input type="file" id="cameraInput" capture="environment" class="is-hidden" accept="image/*" />
         </div>
 
@@ -206,7 +207,7 @@
               <strong id="whatsappNumberDisplay">9480685700</strong>
             </p>
             <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
-              complaint text ready — attach civic-issue.jpg and tap Send.</p>
+              complaint text ready — attach the downloaded photo and tap Send.</p>
           </div>
 
           <div class="civic-form-actions">
