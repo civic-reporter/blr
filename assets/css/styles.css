@@ -1683,8 +1683,7 @@ body.heatmap-page {
 .app-header,
 .civic-header,
 .app-main,
-.civic-main,
-.success-container {
+.civic-main {
     position: relative;
     z-index: 1;
 }

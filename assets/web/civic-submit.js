@@ -167,6 +167,11 @@ export async function shareToGBA() {
         showStatus("", "");
         showSuccessScreen();
 
+        const successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            successMessage.textContent = formatWhatsAppHint('issuePostedDesc', displayNumber);
+        }
+
         window.currentGPS = savedGPS;
 
         if (window.displaySuccessLocationInfo) {
@@ -199,14 +204,11 @@ export async function shareToGBA() {
         attachRetryHandler();
         console.error("WhatsApp submit error:", e);
     } finally {
-        const successVisible = document.getElementById("successScreen") &&
-            !document.getElementById("successScreen").classList.contains('is-hidden');
-
-        if (!wasSuccess && submitBtn && !successVisible) {
+        if (submitBtn) {
             submitBtn.classList.remove("loading");
             submitBtn.textContent = t('postIssue', lang);
-            submitBtn.disabled = false;
-            updateSubmitButtonState();
+            submitBtn.disabled = true;
+            if (!wasSuccess) updateSubmitButtonState();
         }
     }
 }
