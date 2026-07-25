@@ -42,6 +42,7 @@ async function tryLiveGpsFallback({ showMissingHint = false } = {}) {
 
 async function processSelectedImage(file, { preferExif = true, useLiveGpsFallback = false } = {}) {
     window.currentImageFile = file;
+    window.currentGPS = null;
     window.gpsFromPhotoExif = false;
     window.gpsManuallySet = false;
     const confirmCheck = document.getElementById("confirmImageCheck");
@@ -51,6 +52,7 @@ async function processSelectedImage(file, { preferExif = true, useLiveGpsFallbac
     if (window.submitBtn) window.submitBtn.disabled = true;
 
     if (preferExif) {
+        showStatus("ℹ️ Reading GPS from photo…", "info");
         await extractGPSFromImageFile(file);
     }
 
@@ -68,6 +70,7 @@ async function processSelectedImage(file, { preferExif = true, useLiveGpsFallbac
             }
 
             if (useLiveGpsFallback && needsGps()) {
+                showStatus("ℹ️ No photo GPS found. Trying live location…", "info");
                 await tryLiveGpsFallback({ showMissingHint: true });
             }
 
@@ -117,11 +120,5 @@ export async function handleCameraCapture(file) {
         return;
     }
 
-    await extractGPSFromImageFile(file);
-
-    if (needsGps()) {
-        await tryLiveGpsFallback({ showMissingHint: true });
-    }
-
-    await processSelectedImage(file, { preferExif: false, useLiveGpsFallback: false });
+    await processSelectedImage(file, { preferExif: true, useLiveGpsFallback: true });
 }
