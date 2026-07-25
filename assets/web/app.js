@@ -15,6 +15,8 @@ console.log('✅ app.js imports loaded');
 
 window.currentImageFile = null;
 window.currentGPS = null;
+window.gpsFromPhotoExif = false;
+window.gpsManuallySet = false;
 window.isCivicFlow = true;
 
 console.log('📋 Document ready state:', document.readyState);
@@ -89,6 +91,12 @@ function initApp() {
     if (checkbox) {
         checkbox.addEventListener("change", updateTweetButtonState);
         console.log("✅ Checkbox listener added");
+    }
+
+    const locationCheckbox = document.getElementById("confirmLocationCheck");
+    if (locationCheckbox) {
+        locationCheckbox.addEventListener("change", updateTweetButtonState);
+        console.log("✅ Location checkbox listener added");
     }
 
     const emailCheckbox = document.getElementById("emailAuthoritiesCheck");

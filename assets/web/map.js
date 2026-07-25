@@ -1,6 +1,7 @@
 import { getConfig } from './config.js';
 import { pointInRing, isValidNumber } from './utils.js';
-import { showStatus, updateTweetButtonState, ensureLocationVisible } from './ui.js';
+import { showStatus, updateTweetButtonState, ensureLocationVisible, showImageConfirm } from './ui.js';
+import { markManualGps } from './gps.js';
 import { validateLocationForCoords } from './validation.js';
 
 let mapInstance, markerInstance;
@@ -122,11 +123,13 @@ async function setupGoogleAutocomplete(searchInput) {
         const valid = await validateLocationForCoords(gps);
         if (valid && window.map) {
             window.currentGPS = gps;
+            markManualGps();
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.placeMarker();
             window.map.setView([gps.lat, gps.lon], 16);
             setMapRestrictionVisibility(false);
             showStatus('', 'success');
+            showImageConfirm();
             setTimeout(updateTweetButtonState, 50);
             if (window.updateReportPreview) window.updateReportPreview();
             if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
@@ -155,9 +158,11 @@ export async function handleMapClick(e) {
     }
 
     window.currentGPS = testGPS;
+    markManualGps();
     setMapRestrictionVisibility(false);
     window.placeMarker();  // ✅ USE GLOBAL
     ensureLocationVisible();
+    showImageConfirm();
     showStatus('', 'success');
     updateTweetButtonState();
 
@@ -209,8 +214,10 @@ export function placeMarker() {
         const valid = await validateLocationForCoords(testGPS);
         if (valid) {
             window.currentGPS = testGPS;
+            markManualGps();
             setMapRestrictionVisibility(false);
             updateGpsDisplay();
+            showImageConfirm();
             showStatus('', 'success');
             updateTweetButtonState();
             if (window.updateReportPreview) window.updateReportPreview();
