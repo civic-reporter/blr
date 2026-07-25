@@ -3,6 +3,14 @@ import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
 
+function isSupportedImageFile(file) {
+    if (!file) return false;
+    if (file.type && file.type.startsWith('image/')) return true;
+
+    const name = (file.name || '').toLowerCase();
+    return /\.(jpe?g|png|gif|webp|heic|heif)$/i.test(name);
+}
+
 function needsGps() {
     return !window.currentGPS ||
         !isValidNumber(window.currentGPS.lat) ||
@@ -28,7 +36,7 @@ async function tryLiveGpsFallback({ showMissingHint = false } = {}) {
     }
 
     if (showMissingHint) {
-        showStatus("ℹ️ No valid GPS. Use map/search.", "info");
+        showStatus("ℹ️ No photo GPS found. Allow location access or set the pin on the map.", "info");
     }
 }
 
@@ -60,15 +68,17 @@ async function processSelectedImage(file, { preferExif = true, useLiveGpsFallbac
             }
 
             if (useLiveGpsFallback && needsGps()) {
-                await tryLiveGpsFallback();
+                await tryLiveGpsFallback({ showMissingHint: true });
             }
 
-            if (window.currentGPS && isValidNumber(window.currentGPS.lat) && isValidNumber(window.currentGPS.lon)) {
+            if (window.currentGPS &&
+                isValidNumber(window.currentGPS.lat) &&
+                isValidNumber(window.currentGPS.lon) &&
+                !window.gpsFromPhotoExif) {
                 const valid = await validateLocationForCoords(window.currentGPS);
                 if (!valid) {
                     window.currentGPS = null;
-                    window.gpsFromPhotoExif = false;
-                    showStatus("❌ Photo GPS is outside GBA boundary. Use map to select location.", "error");
+                    showStatus("❌ Location is outside GBA boundary. Use map to select location.", "error");
                     updateLocationConfirmVisibility();
                 }
             }
@@ -93,7 +103,7 @@ async function processSelectedImage(file, { preferExif = true, useLiveGpsFallbac
 }
 
 export async function handleImageUpload(file) {
-    if (!file || !file.type.startsWith("image/")) {
+    if (!isSupportedImageFile(file)) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
@@ -102,7 +112,7 @@ export async function handleImageUpload(file) {
 }
 
 export async function handleCameraCapture(file) {
-    if (!file || !file.type.startsWith("image/")) {
+    if (!isSupportedImageFile(file)) {
         showStatus("❌ Please capture a photo.", "error");
         return;
     }
@@ -113,5 +123,5 @@ export async function handleCameraCapture(file) {
         await tryLiveGpsFallback({ showMissingHint: true });
     }
 
-    await processSelectedImage(file, { preferExif: false });
+    await processSelectedImage(file, { preferExif: false, useLiveGpsFallback: false });
 }

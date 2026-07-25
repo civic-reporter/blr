@@ -2,7 +2,8 @@
 import { getConfig } from './config.js';
 import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
 
-const EXIF_HEAD_BYTES = 256 * 1024;
+const EXIF_HEAD_BYTES = 512 * 1024;
+const EXIFR_OPTIONS = { gps: true, reviveValues: true, mergeOutput: false };
 
 function bufferToBinary(buffer) {
     const bytes = new Uint8Array(buffer);
@@ -12,6 +13,29 @@ function bufferToBinary(buffer) {
         binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
     }
     return binary;
+}
+
+function normalizeGpsResult(result) {
+    if (!result) return null;
+
+    const lat = Number(
+        result.latitude ??
+        result.lat ??
+        result.GPSLatitude ??
+        result[0]
+    );
+    const lon = Number(
+        result.longitude ??
+        result.lon ??
+        result.GPSLongitude ??
+        result[1]
+    );
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        return null;
+    }
+
+    return { lat, lon };
 }
 
 function parseExifGps(exif) {
@@ -31,46 +55,63 @@ function parseExifGps(exif) {
 async function extractGpsWithExifr(fileOrBlob) {
     if (typeof exifr === 'undefined' || !fileOrBlob) return null;
 
-    try {
-        const gps = await exifr.gps(fileOrBlob);
-        if (gps &&
-            typeof gps.latitude === 'number' &&
-            typeof gps.longitude === 'number' &&
-            Number.isFinite(gps.latitude) &&
-            Number.isFinite(gps.longitude)) {
-            return { lat: gps.latitude, lon: gps.longitude };
+    const attempts = [
+        () => exifr.gps(fileOrBlob),
+        () => exifr.parse(fileOrBlob, EXIFR_OPTIONS),
+        () => exifr.parse(fileOrBlob, { ...EXIFR_OPTIONS, tiff: true, ifd0: false, exif: true })
+    ];
+
+    for (const attempt of attempts) {
+        try {
+            const result = await attempt();
+            const gps = normalizeGpsResult(result);
+            if (gps) {
+                console.log('✅ exifr GPS parsed:', gps.lat.toFixed(5), gps.lon.toFixed(5));
+                return gps;
+            }
+        } catch (e) {
+            console.warn('exifr GPS parse attempt failed:', e);
         }
-    } catch (e) {
-        console.warn('exifr GPS parse failed:', e);
     }
 
     return null;
 }
 
+async function extractGpsWithPiexifFromBuffer(buffer) {
+    if (!buffer || typeof piexif === 'undefined') return null;
+
+    try {
+        return parseExifGps(piexif.load(bufferToBinary(buffer)));
+    } catch (e) {
+        return null;
+    }
+}
+
 async function extractGpsWithPiexif(file) {
     if (!file || typeof piexif === 'undefined') return null;
 
-    const tryParse = (buffer) => {
-        try {
-            return parseExifGps(piexif.load(bufferToBinary(buffer)));
-        } catch (e) {
-            return null;
-        }
-    };
-
     try {
         const headBuffer = await file.slice(0, EXIF_HEAD_BYTES).arrayBuffer();
-        let gps = tryParse(headBuffer);
+        let gps = await extractGpsWithPiexifFromBuffer(headBuffer);
         if (gps) return gps;
 
         if (file.size > EXIF_HEAD_BYTES) {
-            gps = tryParse(await file.arrayBuffer());
+            gps = await extractGpsWithPiexifFromBuffer(await file.arrayBuffer());
         }
     } catch (e) {
         console.warn('piexif GPS parse failed:', e);
     }
 
     return null;
+}
+
+async function readExifGpsFromFile(file) {
+    if (!file) return null;
+
+    const exifrGps = await extractGpsWithExifr(file);
+    if (exifrGps) return exifrGps;
+
+    return extractGpsWithPiexif(file);
 }
 
 async function isInGbaBbox(lat, lon) {
@@ -102,7 +143,7 @@ async function applyExtractedGps(lat, lon) {
     window.gpsManuallySet = false;
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
-    showStatus('', "success");
+    showStatus(`✅ Photo GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
 
     if (window.map) {
         window.map.setView([lat, lon], 16);
@@ -129,38 +170,28 @@ async function applyExtractedGps(lat, lon) {
 export async function extractGPSFromImageFile(file) {
     if (!file) return null;
 
-    const exifrGps = await extractGpsWithExifr(file);
-    if (exifrGps) {
-        return applyExtractedGps(exifrGps.lat, exifrGps.lon);
+    console.log('🔍 EXIF parse from file:', file.name, file.type, file.size);
+    const gps = await readExifGpsFromFile(file);
+    if (!gps) {
+        console.warn('⚠️ No GPS metadata found in uploaded file');
+        return null;
     }
 
-    const piexifGps = await extractGpsWithPiexif(file);
-    if (piexifGps) {
-        return applyExtractedGps(piexifGps.lat, piexifGps.lon);
-    }
-
-    return null;
+    return applyExtractedGps(gps.lat, gps.lon);
 }
 
 export async function extractGPSFromExif(dataUrl) {
-    console.log("🔍 EXIF parse start");
+    console.log("🔍 EXIF parse from data URL fallback");
 
     try {
-        const blob = await fetch(dataUrl).then(res => res.blob());
-        const exifrGps = await extractGpsWithExifr(blob);
-        if (exifrGps) {
-            return applyExtractedGps(exifrGps.lat, exifrGps.lon);
-        }
-
         if (typeof piexif !== 'undefined') {
-            const exif = piexif.load(dataUrl);
-            const gps = parseExifGps(exif);
+            const gps = parseExifGps(piexif.load(dataUrl));
             if (gps) {
                 return applyExtractedGps(gps.lat, gps.lon);
             }
         }
     } catch (e) {
-        console.error("🚨 EXIF error:", e);
+        console.error("🚨 EXIF data URL parse error:", e);
     }
 
     showLocation();
@@ -181,7 +212,7 @@ export async function getLiveGPSIfInGBA() {
                 else resolve(null);
             },
             () => resolve(null),
-            { enableHighAccuracy: true, timeout: 8000 }
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     });
 }
