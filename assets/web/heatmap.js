@@ -1,10 +1,12 @@
 /**
  * Heat Map Module
- * Retrieves logs from S3 via Lambda and displays heat map on the map
+ * Loads report data from static submissions.json and aggregates client-side.
  */
 
 import { getConfig } from './config.js';
 import { showStatus } from './ui.js';
+import { fetchStaticHeatMapData, renderDataLastUpdated, showStaticDataLastUpdated } from './heatmap-aggregate.js';
+import { getCurrentLanguage } from '../js/i18n.js';
 
 let CONFIG = null;
 let heatmapLayer = null;
@@ -14,6 +16,10 @@ let markerClusterGroup = null;
 export async function initHeatMap() {
     CONFIG = await getConfig();
     console.log('🔥 Heat map module initialized');
+
+    if (CONFIG.HEATMAP_DATA_URL) {
+        await showStaticDataLastUpdated(CONFIG, 'dataLastUpdated', getCurrentLanguage());
+    }
 }
 
 /**
@@ -22,6 +28,18 @@ export async function initHeatMap() {
  * @returns {Promise<Object>} Heat map data
  */
 export async function fetchHeatMapData(filters = {}) {
+    if (!CONFIG) {
+        CONFIG = await getConfig();
+    }
+
+    if (CONFIG.HEATMAP_DATA_URL) {
+        return fetchStaticHeatMapData(CONFIG, filters);
+    }
+
+    if (!CONFIG.HEATMAP_API_URL) {
+        throw new Error('Heatmap data source is not configured');
+    }
+
     const {
         type = 'both',
         start_date = null,
@@ -32,7 +50,6 @@ export async function fetchHeatMapData(filters = {}) {
     } = filters;
 
     try {
-        // Build query parameters
         const params = new URLSearchParams();
         params.append('type', type);
 
@@ -52,7 +69,6 @@ export async function fetchHeatMapData(filters = {}) {
             params.append('ward', ward);
         }
 
-        // Call Lambda endpoint (configure in config.js)
         const response = await fetch(`${CONFIG.HEATMAP_API_URL}?${params.toString()}`);
 
         if (!response.ok) {
@@ -315,6 +331,9 @@ export async function loadHeatMap(filters = {}) {
         // Hide loading message after rendering
         const countForDisplay = filters.wardRings ? heatMapPoints.length : data.count;
         showStatus(`✅ Loaded ${countForDisplay} submissions`, 'success');
+        if (data.updated_at) {
+            renderDataLastUpdated(data.updated_at, 'dataLastUpdated', getCurrentLanguage());
+        }
         if (loadBtn) loadBtn.disabled = false;
 
         window.dispatchEvent(new CustomEvent('heatMapLoaded', {

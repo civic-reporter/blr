@@ -66,12 +66,21 @@ export async function loadCorpPolygons() {
 
 export async function validateLocationForCoords(testGPS) {
     if (!testGPS || !isValidNumber(testGPS.lat) || !isValidNumber(testGPS.lon)) return false;
+    if (!CONFIG) CONFIG = await getConfig();
+
+    if (!isInGBA(testGPS.lat, testGPS.lon)) {
+        return false;
+    }
+
     try {
         const polys = await loadCorpPolygons();
+        if (!polys.length) {
+            return true;
+        }
         return polys.some(p => p.ring && p.ring.length >= 3 && pointInRing(testGPS.lon, testGPS.lat, p.ring));
     } catch (e) {
-        console.warn("Location validation failed:", e);
-        return false;
+        console.warn("Location validation failed, falling back to bbox:", e);
+        return isInGBA(testGPS.lat, testGPS.lon);
     }
 }
 

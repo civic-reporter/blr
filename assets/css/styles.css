@@ -2461,6 +2461,21 @@ body.heatmap-page .app-main-wide {
     gap: 1rem;
 }
 
+.heatmap-hero-desc,
+.app-hero-desc {
+    margin-bottom: 0.35rem;
+}
+
+.data-last-updated {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    color: var(--x-text-secondary);
+}
+
+.data-last-updated.is-hidden {
+    display: none;
+}
+
 .heatmap-hero-visual {
     display: flex;
     justify-content: center;
