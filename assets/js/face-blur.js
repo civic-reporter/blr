@@ -29,8 +29,10 @@ export async function loadFaceDetectionModels() {
     try {
         const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model';
 
-        // Load only the tiny model for speed
-        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL)
+        ]);
         faceApiLoaded = true;
         console.log('✅ Face detection models loaded');
         return true;
@@ -40,9 +42,54 @@ export async function loadFaceDetectionModels() {
     }
 }
 
+function isLikelyFace(detection, imageWidth, imageHeight) {
+    const score = detection.detection.score;
+    const box = detection.detection.box;
+
+    if (score < 0.45) return false;
+    if (!detection.landmarks || !detection.landmarks.positions?.length) return false;
+
+    if (box.width < 28 || box.height < 28) return false;
+
+    const areaRatio = (box.width * box.height) / (imageWidth * imageHeight);
+    if (areaRatio > 0.45) return false;
+
+    const aspectRatio = box.width / box.height;
+    if (aspectRatio < 0.55 || aspectRatio > 1.8) return false;
+
+    return true;
+}
+
+function getLandmarkFaceBox(landmarks, imageWidth, imageHeight) {
+    const points = landmarks.positions.slice(0, 27);
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    points.forEach((point) => {
+        minX = Math.min(minX, point.x);
+        minY = Math.min(minY, point.y);
+        maxX = Math.max(maxX, point.x);
+        maxY = Math.max(maxY, point.y);
+    });
+
+    const padX = (maxX - minX) * 0.08;
+    const padY = (maxY - minY) * 0.08;
+
+    const x = Math.max(0, Math.floor(minX - padX));
+    const y = Math.max(0, Math.floor(minY - padY));
+    const width = Math.min(imageWidth - x, Math.ceil(maxX - minX + padX * 2));
+    const height = Math.min(imageHeight - y, Math.ceil(maxY - minY + padY * 2));
+
+    if (width < 20 || height < 20) return null;
+
+    return { x, y, width, height };
+}
+
 export async function blurFacesInImage(imageFile) {
     try {
-        // Wait for face-api to be available (max 5 seconds)
         if (typeof faceapi === 'undefined') {
             console.log('⏳ Waiting for face-api.js to load...');
             const available = await waitForFaceApi(5000);
@@ -52,191 +99,89 @@ export async function blurFacesInImage(imageFile) {
             }
         }
 
-        // Load models if not already loaded
         const modelsLoaded = await loadFaceDetectionModels();
         if (!modelsLoaded) return imageFile;
 
-        // Create image element
         const img = await createImageFromFile(imageFile);
 
-        // Multi-pass detection with different settings to catch more faces
-        const allDetections = [];
+        const detections = await faceapi
+            .detectAllFaces(
+                img,
+                new faceapi.TinyFaceDetectorOptions({
+                    inputSize: 416,
+                    scoreThreshold: 0.45
+                })
+            )
+            .withFaceLandmarks(true);
 
-        // Pass 1: High sensitivity with max size
-        const detections1 = await faceapi.detectAllFaces(
-            img,
-            new faceapi.TinyFaceDetectorOptions({
-                inputSize: 608,
-                scoreThreshold: 0.1   // High sensitivity but balanced
-            })
+        const faces = detections.filter((detection) =>
+            isLikelyFace(detection, img.width, img.height)
         );
-        allDetections.push(...detections1);
 
-        // Pass 2: Medium size for smaller/distant faces
-        const detections2 = await faceapi.detectAllFaces(
-            img,
-            new faceapi.TinyFaceDetectorOptions({
-                inputSize: 416,
-                scoreThreshold: 0.1
-            })
-        );
-        allDetections.push(...detections2);
-
-        // Pass 3: Smaller size for very tiny faces
-        const detections3 = await faceapi.detectAllFaces(
-            img,
-            new faceapi.TinyFaceDetectorOptions({
-                inputSize: 224,
-                scoreThreshold: 0.15
-            })
-        );
-        allDetections.push(...detections3);
-
-        // Remove duplicate detections (faces detected in multiple passes)
-        const uniqueDetections = removeDuplicateDetections(allDetections);
-
-        if (!uniqueDetections || uniqueDetections.length === 0) {
+        if (!faces.length) {
             console.log('✅ No faces detected');
             return imageFile;
         }
 
-        console.log(`🔍 Detected ${uniqueDetections.length} face(s) across multiple passes, blurring facial features...`);
+        console.log(`🔍 Detected ${faces.length} face(s), blurring face regions only...`);
 
-        // Create canvas and blur faces
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
 
-        // Draw original image
         ctx.drawImage(img, 0, 0);
 
-        // Apply blur only to facial features (eyes area) for each detected face
-        uniqueDetections.forEach(detection => {
-            const box = detection.box;
+        faces.forEach((face) => {
+            const box = getLandmarkFaceBox(face.landmarks, canvas.width, canvas.height);
+            if (!box) return;
 
-            // Only blur the upper-middle portion where eyes are located
-            // This preserves helmet/no-helmet visibility while protecting identity
-            const eyeRegionHeight = box.height * 0.4; // Upper 40% of face (eyes/forehead area)
-            const eyeRegionY = box.y + box.height * 0.15; // Start slightly below top
-
-            const x = Math.max(0, box.x);
-            const y = Math.max(0, eyeRegionY);
-            const width = Math.min(canvas.width - x, box.width);
-            const height = Math.min(canvas.height - y, eyeRegionHeight);
-
-            // Extract eye region only
-            const faceData = ctx.getImageData(x, y, width, height);
-
-            // Apply strong blur to eyes area
-            blurImageData(faceData, 20);
-
-            // Put blurred region back
-            ctx.putImageData(faceData, x, y);
+            blurRect(ctx, canvas, box.x, box.y, box.width, box.height);
         });
 
-        // Convert canvas back to blob
-        const blurredBlob = await new Promise(resolve => {
+        const blurredBlob = await new Promise((resolve) => {
             canvas.toBlob(resolve, 'image/jpeg', 0.85);
         });
 
-        console.log(`✅ Blurred ${uniqueDetections.length} face(s)`);
+        console.log(`✅ Blurred ${faces.length} face(s)`);
         return blurredBlob;
-
     } catch (e) {
         console.error('Face blur error:', e);
-        // Return original image if blur fails
         return imageFile;
     }
 }
 
-function removeDuplicateDetections(detections) {
-    const unique = [];
+function blurRect(ctx, canvas, x, y, width, height) {
+    const sx = Math.max(0, Math.floor(x));
+    const sy = Math.max(0, Math.floor(y));
+    const sw = Math.min(canvas.width - sx, Math.floor(width));
+    const sh = Math.min(canvas.height - sy, Math.floor(height));
 
-    for (const detection of detections) {
-        const box = detection.box;
-        let isDuplicate = false;
+    if (sw < 1 || sh < 1) return;
 
-        // Check if this face overlaps significantly with any already added face
-        for (const existing of unique) {
-            const existingBox = existing.box;
-            const overlap = calculateOverlap(box, existingBox);
+    const source = document.createElement('canvas');
+    source.width = sw;
+    source.height = sh;
+    source.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
 
-            // If overlap > 50%, consider it a duplicate
-            if (overlap > 0.5) {
-                isDuplicate = true;
-                break;
-            }
-        }
+    const blurred = document.createElement('canvas');
+    blurred.width = sw;
+    blurred.height = sh;
+    const blurredCtx = blurred.getContext('2d');
+    blurredCtx.filter = 'blur(10px)';
+    blurredCtx.drawImage(source, 0, 0);
 
-        if (!isDuplicate) {
-            unique.push(detection);
-        }
-    }
-
-    return unique;
-}
-
-function calculateOverlap(box1, box2) {
-    const x1 = Math.max(box1.x, box2.x);
-    const y1 = Math.max(box1.y, box2.y);
-    const x2 = Math.min(box1.x + box1.width, box2.x + box2.width);
-    const y2 = Math.min(box1.y + box1.height, box2.y + box2.height);
-
-    if (x2 < x1 || y2 < y1) return 0;
-
-    const intersectionArea = (x2 - x1) * (y2 - y1);
-    const box1Area = box1.width * box1.height;
-    const box2Area = box2.width * box2.height;
-    const unionArea = box1Area + box2Area - intersectionArea;
-
-    return intersectionArea / unionArea;
+    ctx.drawImage(blurred, 0, 0, sw, sh, sx, sy, sw, sh);
 }
 
 function createImageFromFile(file) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => resolve(img);
+        img.onload = () => {
+            URL.revokeObjectURL(img.src);
+            resolve(img);
+        };
         img.onerror = reject;
         img.src = URL.createObjectURL(file);
     });
-}
-
-function blurImageData(imageData, radius) {
-    // Simple box blur implementation
-    const width = imageData.width;
-    const height = imageData.height;
-    const data = imageData.data;
-
-    // Apply multiple passes for stronger blur
-    for (let pass = 0; pass < 3; pass++) {
-        const tempData = new Uint8ClampedArray(data);
-
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                let r = 0, g = 0, b = 0, count = 0;
-
-                // Sample surrounding pixels
-                for (let dy = -radius; dy <= radius; dy += 2) {
-                    for (let dx = -radius; dx <= radius; dx += 2) {
-                        const nx = x + dx;
-                        const ny = y + dy;
-
-                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            const idx = (ny * width + nx) * 4;
-                            r += tempData[idx];
-                            g += tempData[idx + 1];
-                            b += tempData[idx + 2];
-                            count++;
-                        }
-                    }
-                }
-
-                const idx = (y * width + x) * 4;
-                data[idx] = r / count;
-                data[idx + 1] = g / count;
-                data[idx + 2] = b / count;
-            }
-        }
-    }
 }
