@@ -288,6 +288,15 @@ export function markManualGps() {
     updateLocationConfirmVisibility();
 }
 
+// Live GPS is the device's location, not the photo's, so it still needs the
+// "does this pin match the photo?" confirmation that manual pins get.
+export function markLiveGps() {
+    window.gpsFromPhotoExif = false;
+    window.gpsManuallySet = true;
+    setGpsSource(GPS_SOURCE.LIVE);
+    updateLocationConfirmVisibility();
+}
+
 async function applyExtractedGps(lat, lon) {
     if (!(await isInGbaBbox(lat, lon))) {
         window.currentGPS = null;
@@ -412,9 +421,7 @@ export async function requestLiveGpsFromUser() {
     }
 
     window.currentGPS = { lat, lon };
-    window.gpsFromPhotoExif = false;
-    window.gpsManuallySet = true;
-    setGpsSource(GPS_SOURCE.LIVE);
+    markLiveGps();
 
     if (window.map) {
         window.map.setView([lat, lon], 17);

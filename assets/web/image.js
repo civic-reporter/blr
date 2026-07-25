@@ -1,4 +1,4 @@
-import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA, resetGpsSource } from './gps.js';
+import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA, markLiveGps, resetGpsSource } from './gps.js';
 import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
@@ -23,8 +23,8 @@ async function tryLiveGpsFallback() {
 
     if (await validateLocationForCoords(liveGPS)) {
         window.currentGPS = liveGPS;
-        window.gpsFromPhotoExif = false;
-        window.gpsManuallySet = false;
+        markLiveGps();
+        showStatus(`✅ Using current location: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
     } else {
         window.currentGPS = null;
         showStatus("❌ Live GPS outside GBA boundary", "error");
@@ -97,13 +97,16 @@ async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
     if (imageConfirm) imageConfirm.classList.remove("is-hidden");
 }
 
+// Live GPS fallback is on by default: Android and iOS strip location EXIF from
+// photos handed to the browser (picker redaction / camera capture without
+// geotag), so on mobile the device's own location is usually the only source.
 export async function handleImageUpload(file, options = {}) {
     if (!isSupportedImageFile(file)) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
 
-    await processSelectedImage(file, options);
+    await processSelectedImage(file, { useLiveGpsFallback: true, ...options });
 }
 
 export async function handleCameraCapture(file, options = {}) {
@@ -112,5 +115,5 @@ export async function handleCameraCapture(file, options = {}) {
         return;
     }
 
-    await processSelectedImage(file, options);
+    await processSelectedImage(file, { useLiveGpsFallback: true, ...options });
 }
