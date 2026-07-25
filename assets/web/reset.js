@@ -1,4 +1,4 @@
-import { showUploadOptions, showStatus } from './ui.js';
+import { showUploadOptions, showStatus, showWorkflow } from './ui.js';
 import { clearCivicDraft } from './civic-submit.js';
 import { clearReportPreview } from './civic-preview.js';
 import { resetGpsSource } from './gps.js';
@@ -75,6 +75,7 @@ export function resetApp() {
 
     // 5. Show upload screen
     showStatus('', '');
+    showWorkflow();
     showUploadOptions();
     if (window.resetCivicSteps) window.resetCivicSteps();
 }

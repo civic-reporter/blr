@@ -1,4 +1,4 @@
-import { extractGPSFromImageFile, getLiveGPSIfInGBA, resetGpsSource } from './gps.js';
+import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA, resetGpsSource } from './gps.js';
 import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
@@ -60,6 +60,12 @@ async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
     if (preview && dataUrl) {
         preview.src = dataUrl;
         preview.classList.remove("is-hidden");
+    }
+
+    // piexif sometimes finds a GPS block in the base64 payload after both the
+    // Blob and ArrayBuffer paths come up empty.
+    if (needsGps() && dataUrl) {
+        await extractGPSFromExif(dataUrl);
     }
 
     if (useLiveGpsFallback && needsGps()) {

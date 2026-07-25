@@ -122,6 +122,16 @@ export function showSuccessScreen() {
     toggleVisibility(successScreen, true);
     toggleVisibility(previewImg, false);
     toggleVisibility(imageConfirm, false);
+
+    // The civic page keeps its form outside #locationInfo, so hide the whole
+    // wizard rather than leaving a half-submitted step behind the overlay.
+    const workflow = document.querySelector('.civic-workflow');
+    if (workflow) toggleVisibility(workflow, false);
+}
+
+export function showWorkflow() {
+    const workflow = document.querySelector('.civic-workflow');
+    if (workflow) toggleVisibility(workflow, true, 'is-flex');
 }
 
 // ✅ SINGLE showLocation - WITH AUTO-MARKER
