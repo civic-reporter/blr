@@ -191,7 +191,7 @@ export function formatEmailBody(reportData) {
         trafficPS,
         timestamp,
         coordinates,
-        tweetUrl
+        reportUrl
     } = reportData;
 
     let body = `Traffic Issue Report\n`;
@@ -207,7 +207,7 @@ export function formatEmailBody(reportData) {
     if (wardNo && wardName) body += `- Ward: ${wardNo} (${wardName})\n`;
     if (trafficPS) body += `- Traffic PS: ${trafficPS}\n`;
     body += `\nReported: ${timestamp || new Date().toLocaleString()}\n`;
-    if (tweetUrl) body += `\nTwitter Post: ${tweetUrl}\n`;
+    if (reportUrl) body += `\nReport link: ${reportUrl}\n`;
     body += `\n---\n`;
     body += `This report was submitted via Nāgarika Dhvani civic platform.\n`;
 

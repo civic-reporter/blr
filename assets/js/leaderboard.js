@@ -98,7 +98,7 @@ function renderMlaLeaderboard(data, mlaHandles) {
         const constituency = row.constituency || tr('unknown');
         const handle = normalizeHandle(mlaHandles?.[constituency] || '');
         const handleCell = handle
-            ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer"><i class="fab fa-x-twitter" style="margin-right:4px;font-size:0.85em;"></i>${handle}</a>`
+            ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt" style="margin-right:4px;font-size:0.85em;"></i>${handle}</a>`
             : '<span style="color:var(--x-text-secondary)">—</span>';
 
         const tr = document.createElement('tr');

@@ -1,6 +1,6 @@
 import { getConfig } from './config.js';
 import { pointInRing, isValidNumber } from './utils.js';
-import { showStatus, updateTweetButtonState, ensureLocationVisible, showImageConfirm } from './ui.js';
+import { showStatus, updateSubmitButtonState, ensureLocationVisible, showImageConfirm } from './ui.js';
 import { markManualGps } from './gps.js';
 import { validateLocationForCoords } from './validation.js';
 
@@ -130,7 +130,7 @@ async function setupGoogleAutocomplete(searchInput) {
             setMapRestrictionVisibility(false);
             showStatus('', 'success');
             showImageConfirm();
-            setTimeout(updateTweetButtonState, 50);
+            setTimeout(updateSubmitButtonState, 50);
             if (window.updateReportPreview) window.updateReportPreview();
             if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
         } else {
@@ -138,7 +138,7 @@ async function setupGoogleAutocomplete(searchInput) {
             window.currentGPS = null;
             setMapRestrictionVisibility(true);
             showStatus('❌ Outside GBA boundary', 'error');
-            updateTweetButtonState();
+            updateSubmitButtonState();
         }
     });
 }
@@ -153,7 +153,7 @@ export async function handleMapClick(e) {
         window.currentGPS = null;
         setMapRestrictionVisibility(true);
         showStatus("❌ Outside GBA - click inside boundary", "error");
-        updateTweetButtonState();
+        updateSubmitButtonState();
         return;
     }
 
@@ -164,7 +164,7 @@ export async function handleMapClick(e) {
     ensureLocationVisible();
     showImageConfirm();
     showStatus('', 'success');
-    updateTweetButtonState();
+    updateSubmitButtonState();
 
     if (window.updateReportPreview) window.updateReportPreview();
 
@@ -219,7 +219,7 @@ export function placeMarker() {
             updateGpsDisplay();
             showImageConfirm();
             showStatus('', 'success');
-            updateTweetButtonState();
+            updateSubmitButtonState();
             if (window.updateReportPreview) window.updateReportPreview();
 
             // Update email recipients when marker is dragged

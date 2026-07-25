@@ -598,7 +598,7 @@ h2 {
     font-size: 12px;
 }
 
-#tweetLinkContainer {
+#reportLinkContainer {
     margin: 1rem 0;
     padding: 1rem;
     background: rgba(23, 191, 99, 0.1);
@@ -693,7 +693,7 @@ h2 {
     line-height: 1.6;
 }
 
-.tweet-link-box {
+.success-link-box {
     background: var(--x-bg-card);
     border: 1px solid var(--x-border);
     border-radius: 12px;
@@ -703,29 +703,29 @@ h2 {
     transition: all 0.3s ease;
 }
 
-.tweet-link-box:hover {
+.success-link-box:hover {
     box-shadow: var(--shadow-hover);
 }
 
-.tweet-link-box h3 {
+.success-link-box h3 {
     color: var(--x-text-primary);
     margin-top: 0;
     font-weight: 600;
 }
 
-.tweet-link-box p {
+.success-link-box p {
     color: var(--x-text-primary);
     line-height: 1.6;
 }
 
-.tweet-link-box a {
+.success-link-box a {
     color: var(--x-accent);
     text-decoration: none;
     font-weight: 500;
     word-break: break-all;
 }
 
-.tweet-link-box a:hover {
+.success-link-box a:hover {
     text-decoration: underline;
 }
 
@@ -1619,7 +1619,7 @@ body.app-page {
         font-size: 0.875rem;
     }
 
-    .tweet-link-box {
+    .success-link-box {
         padding: 0.875rem;
         margin: 1.5rem 0;
         font-size: 0.9rem;
@@ -2236,7 +2236,7 @@ body.heatmap-page:not(:has(.page-header)) .language-toggle-btn {
         margin-bottom: 0;
     }
 
-    .success-card .tweet-link-box {
+    .success-card .success-link-box {
         margin: 1rem 0;
     }
 

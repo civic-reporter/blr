@@ -135,7 +135,7 @@ export async function submitTraffic() {
 
         if (res.ok && data.success) {
             wasSuccess = true;
-            const url = data.tweetUrl || data.tweet_url || "";
+            const url = data.reportUrl || data.report_url || data.tweetUrl || data.tweet_url || "";
 
             // Save GPS data before clearing for success screen display
             const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
@@ -176,19 +176,18 @@ export async function submitTraffic() {
             // Display location and PS info on success screen
             displayTrafficSuccessInfo();
 
-            // Display tweet link if available
-            if (url && document.getElementById("tweetLinkContainer")) {
-                document.getElementById("tweetLinkContainer").innerHTML = `
-                    <p class="map-message">Traffic issue reported! <a href="${url}" target="_blank">View on X</a></p>
-                    <button id="copyTweetBtn" class="copy-btn">📋 Copy Tweet URL</button>
+            if (url && document.getElementById("reportLinkContainer")) {
+                document.getElementById("reportLinkContainer").innerHTML = `
+                    <p class="map-message">Traffic issue reported! <a href="${url}" target="_blank">View report</a></p>
+                    <button id="copyReportBtn" class="copy-btn">📋 Copy report URL</button>
                 `;
                 setTimeout(() => {
-                    const copyBtn = document.getElementById('copyTweetBtn');
+                    const copyBtn = document.getElementById('copyReportBtn');
                     if (copyBtn) {
                         copyBtn.addEventListener('click', () => {
                             navigator.clipboard.writeText(url).then(() => {
                                 copyBtn.textContent = '✅ Copied!';
-                                setTimeout(() => copyBtn.textContent = '📋 Copy Tweet URL', 2000);
+                                setTimeout(() => copyBtn.textContent = '📋 Copy report URL', 2000);
                             });
                         });
                     }

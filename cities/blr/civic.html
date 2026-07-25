@@ -55,8 +55,7 @@
     <div class="container app-shell civic-shell">
       <section class="app-hero civic-hero">
         <h1 class="app-hero-title civic-hero-title" data-i18n="civicReporterTitle">Nāgarika Dhvani - Civic</h1>
-        <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Report potholes, drainage, streetlights
-          to Greater Bengaluru Authority</p>
+        <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Upload a photo, confirm location, and we identify ward, corporation, and constituency before opening WhatsApp to the grievance desk.</p>
       </section>
 
       <section class="civic-workflow" aria-label="Report workflow">
@@ -68,7 +67,7 @@
           </div>
           <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags,
             or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo,
-            pick the issue type, and post.</p>
+            pick the issue type, describe it, and send via WhatsApp.</p>
           <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a
             photo here</p>
           <div class="button-group civic-button-group">
@@ -211,8 +210,8 @@
           </div>
 
           <div class="civic-form-actions">
-            <button id="tweetBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
-              Post Issue via @zenc_civic
+            <button id="submitBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
+              Send via WhatsApp
             </button>
           </div>
         </div>
@@ -233,8 +232,7 @@
       <h2 class="success-title" data-i18n="issuePostedSuccess">Report sent to WhatsApp!</h2>
       <p class="success-message" data-i18n="issuePostedDesc">WhatsApp opened with your complaint ready — attach the photo and tap Send.</p>
 
-      <div id="tweetLinkContainer" class="tweet-link-box is-hidden"></div>
-      <div id="whatsappSuccessBox" class="tweet-link-box is-hidden"></div>
+      <div id="whatsappSuccessBox" class="success-link-box is-hidden"></div>
       <div id="successLocationInfo" class="success-location-info is-hidden"></div>
 
       <div class="success-actions">

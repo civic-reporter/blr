@@ -1,8 +1,8 @@
 console.log('📦 app.js loading...');
-import { cacheUIElements, showUploadOptions, showStatus, updateTweetButtonState } from './ui.js';
+import { cacheUIElements, showUploadOptions, showStatus, updateSubmitButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
-import { shareToGBA, saveCivicDraft, restoreCivicDraft } from './twitter.js';
+import { shareToGBA, saveCivicDraft, restoreCivicDraft } from './civic-submit.js';
 import { resetApp } from './reset.js';
 import { initEmailModule, isValidEmail } from './email-authorities.js';
 import { updateCivicEmailRecipients, displaySuccessLocationInfo, prepareCivicEmailData } from './civic-email.js';
@@ -89,13 +89,13 @@ function initApp() {
 
     const checkbox = document.getElementById("confirmImageCheck");
     if (checkbox) {
-        checkbox.addEventListener("change", updateTweetButtonState);
+        checkbox.addEventListener("change", updateSubmitButtonState);
         console.log("✅ Checkbox listener added");
     }
 
     const locationCheckbox = document.getElementById("confirmLocationCheck");
     if (locationCheckbox) {
-        locationCheckbox.addEventListener("change", updateTweetButtonState);
+        locationCheckbox.addEventListener("change", updateSubmitButtonState);
         console.log("✅ Location checkbox listener added");
     }
 
@@ -138,7 +138,7 @@ function initApp() {
                 showStatus("", "");
             }
             saveCivicDraft();
-            updateTweetButtonState();
+            updateSubmitButtonState();
         });
     }
 
@@ -151,7 +151,7 @@ function initApp() {
                 statusDiv.textContent = "";
             }
             saveCivicDraft();
-            updateTweetButtonState();
+            updateSubmitButtonState();
         });
     }
 
@@ -162,7 +162,7 @@ function initApp() {
         handleCivicImageUpload(e.target.files[0]));
     document.getElementById("cameraInput")?.addEventListener("change", e =>
         handleCivicCameraCapture(e.target.files[0]));
-    document.getElementById("tweetBtn")?.addEventListener("click", shareToGBA);
+    document.getElementById("submitBtn")?.addEventListener("click", shareToGBA);
     document.getElementById("submitAnotherBtn")?.addEventListener("click", resetApp);
     document.getElementById("changeImageBtn")?.addEventListener("click", openPhotoPicker);
 
