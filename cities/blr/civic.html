@@ -55,7 +55,8 @@
     <div class="container app-shell civic-shell">
       <section class="app-hero civic-hero">
         <h1 class="app-hero-title civic-hero-title" data-i18n="civicReporterTitle">Nāgarika Dhvani - Civic</h1>
-        <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Report potholes, drainage, streetlights to Greater Bengaluru Authority</p>
+        <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Report potholes, drainage, streetlights
+          to Greater Bengaluru Authority</p>
       </section>
 
       <section class="civic-workflow" aria-label="Report workflow">
@@ -65,19 +66,22 @@
             <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
             <span class="civic-upload-icon"><i class="fab fa-x-twitter"></i></span>
           </div>
-          <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags, or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo, pick the issue type, and post.</p>
-          <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a photo here</p>
+          <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS tags,
+            or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm the photo,
+            pick the issue type, and post.</p>
+          <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a
+            photo here</p>
           <div class="button-group civic-button-group">
             <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
               <i class="fas fa-image"></i>
-              <span data-i18n="choosePhoto">Choose photo</span>
+              <span data-i18n="Choose a Photo">Choose photo</span>
             </button>
             <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
               <i class="fas fa-camera"></i>
-              <span data-i18n="mobileCamera">Take photo</span>
+              <span data-i18n="Mobile Camera">Take photo</span>
             </button>
           </div>
-          <input type="file" id="imageInput" class="is-hidden" accept="image/*" />
+          <input type="file" id="imageInput" class="is-hidden" />
           <input type="file" id="cameraInput" capture="environment" class="is-hidden" accept="image/*" />
         </div>
 
@@ -159,7 +163,8 @@
 
               <label class="civic-field issue-desc-wrap">
                 <span class="civic-field-label" data-i18n="issueDetails">Extra details (optional)</span>
-                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Extra details (optional)" maxlength="120" />
+                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Extra details (optional)"
+                  maxlength="120" />
                 <small id="issueDescCount" class="char-count">0 / 120</small>
               </label>
             </div>
@@ -182,8 +187,8 @@
                   <input type="checkbox" id="ccMeCheck" />
                   <span data-i18n="ccMe">Would you like to receive a copy of this email?</span>
                 </label>
-                <input type="email" id="userEmailInput" class="email-input is-hidden" placeholder="your.email@example.com"
-                  data-i18n-placeholder="yourEmail" maxlength="100" />
+                <input type="email" id="userEmailInput" class="email-input is-hidden"
+                  placeholder="your.email@example.com" data-i18n-placeholder="yourEmail" maxlength="100" />
                 <small id="emailValidationMsg" class="validation-msg is-hidden"></small>
               </div>
             </div>
@@ -198,13 +203,14 @@
               <small data-i18n="whatsappWillBeSentTo">Will open WhatsApp to send details to:</small>
               <strong id="whatsappNumberDisplay">9480685700</strong>
             </p>
-            <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your complaint text ready — attach civic-issue.jpg and tap Send.</p>
+            <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
+              complaint text ready — attach civic-issue.jpg and tap Send.</p>
           </div>
 
           <div class="civic-form-actions">
-          <button id="tweetBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
-            Post Issue via @zenc_civic
-          </button>
+            <button id="tweetBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
+              Post Issue via @zenc_civic
+            </button>
           </div>
         </div>
 
@@ -212,7 +218,8 @@
       </section>
 
       <footer class="app-footer app-footer-inline civic-footer">
-        <small>© Zen Citizen · <a id="howToLink" href="../../how-to.html" data-i18n="howToLink">How to Use</a> · <a id="privacyLink" href="../../privacy.html" data-i18n="privacyLink">Privacy Policy</a></small>
+        <small>© Zen Citizen · <a id="howToLink" href="../../how-to.html" data-i18n="howToLink">How to Use</a> · <a
+            id="privacyLink" href="../../privacy.html" data-i18n="privacyLink">Privacy Policy</a></small>
       </footer>
     </div>
   </main>
@@ -221,7 +228,9 @@
     <div class="success-card civic-success-card">
       <div class="success-icon-large">🏛️</div>
       <h2 class="success-title" data-i18n="issuePostedSuccess">Civic Issue Reported!</h2>
-      <p class="success-message" data-i18n="issuePostedDesc">Your civic issue has been posted successfully via <strong>@zenc_civic</strong></p>
+      <p class="success-message" data-i18n="issuePostedDesc">Your civic issue has been posted successfully via
+        <strong>@zenc_civic</strong>
+      </p>
 
       <div id="tweetLinkContainer" class="tweet-link-box"></div>
       <div id="whatsappSuccessBox" class="tweet-link-box is-hidden"></div>
