@@ -66,7 +66,8 @@ function isMobileDevice() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
-export const WHATSAPP_MESSAGE_MAX = 1024;
+// WhatsApp standard text message limit (per Google/WhatsApp docs).
+export const WHATSAPP_MESSAGE_MAX = 65536;
 
 function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
     const lines = [`Issue: ${reportData.issueType || 'Not specified'}`];
