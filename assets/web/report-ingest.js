@@ -24,12 +24,13 @@ export async function recordCivicReport(reportData) {
     const submission = buildCivicSubmission(reportData);
     const config = await getConfig();
 
-    if (!config.SUBMISSIONS_INGEST_URL) {
+    const ingestUrl = config.SUBMISSIONS_INGEST_URL || config.API_GATEWAY_URL;
+    if (!ingestUrl) {
         return { recorded: false, reason: 'not-configured' };
     }
 
     try {
-        const response = await fetch(config.SUBMISSIONS_INGEST_URL, {
+        const response = await fetch(ingestUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(submission),
