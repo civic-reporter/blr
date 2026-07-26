@@ -86,15 +86,14 @@ export async function shareToGBA() {
         return;
     }
 
-    const submitBtn = window.submitBtn;
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = t('sendingWhatsApp', lang);
-        submitBtn.classList.add("loading");
-    }
-    showStatus(t('openingWhatsApp', lang), "info");
-
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    const reportDataPreview = {
+        issueType,
+        description: desc,
+        coordinates: {
+            lat: window.currentGPS.lat.toFixed(6),
+            lon: window.currentGPS.lon.toFixed(6)
+        }
+    };
 
     const [
         { acName },
@@ -106,20 +105,31 @@ export async function shareToGBA() {
         findWardForCurrentGPS()
     ]);
 
-    const reportData = {
-        issueType,
-        description: desc,
-        wardNo,
-        wardName,
-        oldWardNo,
-        oldWardName,
-        corpName,
-        constituency: acName,
-        coordinates: {
-            lat: window.currentGPS.lat.toFixed(6),
-            lon: window.currentGPS.lon.toFixed(6)
-        }
-    };
+    reportDataPreview.wardNo = wardNo;
+    reportDataPreview.wardName = wardName;
+    reportDataPreview.oldWardNo = oldWardNo;
+    reportDataPreview.oldWardName = oldWardName;
+    reportDataPreview.corpName = corpName;
+    reportDataPreview.constituency = acName;
+
+    const { validateWhatsAppMessageLength } = await import('./civic-whatsapp.js');
+    const messageCheck = validateWhatsAppMessageLength(reportDataPreview);
+    if (!messageCheck.ok) {
+        showStatus(`❌ ${t('issueDetailsTooLong', lang).replace('{max}', String(messageCheck.maxDescription))}`, "error");
+        return;
+    }
+
+    const submitBtn = window.submitBtn;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = t('sendingWhatsApp', lang);
+        submitBtn.classList.add("loading");
+    }
+    showStatus(t('openingWhatsApp', lang), "info");
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    const reportData = { ...reportDataPreview };
 
     const savedImageFile = window.currentImageFile;
     const savedGPS = window.currentGPS ? { ...window.currentGPS } : null;
@@ -248,9 +258,8 @@ export function restoreCivicDraft() {
         if (issueTypeEl && draft.issueType) issueTypeEl.value = draft.issueType;
         if (issueDescEl && draft.issueDesc) {
             issueDescEl.value = draft.issueDesc;
-            const countEl = document.getElementById('issueDescCount');
-            if (countEl) countEl.textContent = `${draft.issueDesc.length} / 120`;
         }
+        import('./civic-whatsapp.js').then(({ updateIssueDescriptionLimit }) => updateIssueDescriptionLimit());
 
         return !!(draft.issueType || draft.issueDesc);
     } catch (e) {

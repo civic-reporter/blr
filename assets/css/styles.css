@@ -2765,6 +2765,10 @@ body.heatmap-page:not(:has(.page-header)) .language-toggle-btn {
     color: var(--x-red);
 }
 
+.char-count-total {
+    text-align: left;
+}
+
 /* Utility Classes for State Management */
 .is-hidden {
     display: none !important;
@@ -3052,10 +3056,84 @@ body.heatmap-page .app-main-wide {
     color: var(--x-text-secondary);
 }
 
-.heatmap-controls-panel,
-.heatmap-map-panel,
+.heatmap-stats-panel,
 .heatmap-legend-panel,
-.heatmap-stats-panel {
+.heatmap-recent-panel {
+    padding: 1.25rem;
+    border-radius: 20px;
+    background: var(--x-bg-secondary);
+    border: 1px solid var(--x-border);
+    margin-bottom: 0;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.heatmap-recent-panel h3 {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--x-text-primary);
+}
+
+.heatmap-issue-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.heatmap-issue-item {
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: var(--x-bg-card);
+    border: 1px solid var(--x-border);
+}
+
+.heatmap-issue-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    margin-bottom: 0.35rem;
+}
+
+.heatmap-issue-rank {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--x-text-secondary);
+}
+
+.heatmap-issue-type {
+    font-size: 0.88rem;
+    color: var(--x-text-primary);
+}
+
+.heatmap-issue-time {
+    margin-left: auto;
+    font-size: 0.72rem;
+    color: var(--x-text-secondary);
+}
+
+.heatmap-issue-desc {
+    margin: 0 0 0.45rem;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--x-text-secondary);
+    word-break: break-word;
+}
+
+.heatmap-issue-link {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--x-accent);
+    text-decoration: none;
+}
+
+.heatmap-controls-panel,
+.heatmap-map-panel {
     padding: 1.25rem;
     border-radius: 20px;
     background: var(--x-bg-secondary);
@@ -3441,6 +3519,18 @@ body.heatmap-page .app-main-wide {
 
 .content-prose a {
     color: var(--x-accent);
+}
+
+.content-prose a.app-action-link,
+.content-prose a.app-action-link:hover,
+.content-prose a.app-action-link:focus-visible {
+    color: #fff;
+    text-decoration: none;
+}
+
+.content-prose a.app-action-link span,
+.content-prose a.app-action-link i {
+    color: inherit;
 }
 
 .content-tip-box {

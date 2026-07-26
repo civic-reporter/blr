@@ -66,11 +66,14 @@ function isMobileDevice() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
-function buildWhatsAppMessage(reportData) {
+// WhatsApp standard text message limit (per Google/WhatsApp docs).
+export const WHATSAPP_MESSAGE_MAX = 65536;
+
+function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
     const lines = [`Issue: ${reportData.issueType || 'Not specified'}`];
 
-    if (reportData.description) {
-        lines.push(`Details: ${reportData.description}`);
+    if (includeDetailsLine || reportData.description) {
+        lines.push(`Details: ${reportData.description || ''}`);
     }
 
     if (reportData.coordinates) {
@@ -95,6 +98,107 @@ function buildWhatsAppMessage(reportData) {
     }
 
     return lines.join('\n');
+}
+
+export function getWhatsAppMessageLength(reportData) {
+    return buildWhatsAppMessage(reportData).length;
+}
+
+export function getWhatsAppDescriptionLimit(reportData) {
+    const overhead = buildWhatsAppMessage({ ...reportData, description: '' }, { includeDetailsLine: true }).length;
+    return Math.max(0, WHATSAPP_MESSAGE_MAX - overhead);
+}
+
+export function validateWhatsAppMessageLength(reportData) {
+    const message = buildWhatsAppMessage(reportData);
+    if (message.length <= WHATSAPP_MESSAGE_MAX) {
+        return { ok: true, length: message.length, limit: WHATSAPP_MESSAGE_MAX };
+    }
+
+    return {
+        ok: false,
+        length: message.length,
+        limit: WHATSAPP_MESSAGE_MAX,
+        maxDescription: getWhatsAppDescriptionLimit(reportData)
+    };
+}
+
+export async function buildReportDataPreview(description = '') {
+    const issueType = document.getElementById('issueType')?.value || '';
+    const coords = window.currentGPS
+        ? {
+            lat: window.currentGPS.lat.toFixed(6),
+            lon: window.currentGPS.lon.toFixed(6)
+        }
+        : null;
+
+    const reportData = {
+        issueType,
+        description,
+        coordinates: coords,
+        wardNo: '',
+        wardName: '',
+        oldWardNo: '',
+        oldWardName: '',
+        corpName: '',
+        constituency: ''
+    };
+
+    if (coords) {
+        try {
+            const { findConstituencyForCurrentGPS } = await import('./civic-submit.js');
+            const { findCorpForCurrentGPS, findWardForCurrentGPS } = await import('./validation.js');
+            const [
+                { acName },
+                { corpName },
+                { wardNo, wardName, oldWardNo, oldWardName }
+            ] = await Promise.all([
+                findConstituencyForCurrentGPS(),
+                findCorpForCurrentGPS(),
+                findWardForCurrentGPS()
+            ]);
+            Object.assign(reportData, {
+                wardNo,
+                wardName,
+                oldWardNo,
+                oldWardName,
+                corpName,
+                constituency: acName
+            });
+        } catch (error) {
+            console.warn('Could not resolve ward preview for WhatsApp limit:', error);
+        }
+    }
+
+    return reportData;
+}
+
+export async function updateIssueDescriptionLimit() {
+    const issueDesc = document.getElementById('issueDesc');
+    const issueDescCount = document.getElementById('issueDescCount');
+    if (!issueDesc || !issueDescCount) return;
+
+    const reportData = await buildReportDataPreview(issueDesc.value);
+    const maxDescription = getWhatsAppDescriptionLimit(reportData);
+    const messageLength = getWhatsAppMessageLength(reportData);
+
+    issueDesc.maxLength = maxDescription;
+    const descLength = issueDesc.value.length;
+    if (descLength > maxDescription) {
+        issueDesc.value = issueDesc.value.slice(0, maxDescription);
+    }
+
+    issueDescCount.textContent = `${issueDesc.value.length} / ${maxDescription}`;
+    issueDescCount.classList.toggle('char-count-warn', messageLength > WHATSAPP_MESSAGE_MAX - 40 || issueDesc.value.length > maxDescription * 0.85);
+
+    const totalCounter = document.getElementById('issueDescTotalCount');
+    if (totalCounter) {
+        const lang = getCurrentLanguage();
+        totalCounter.textContent = t('whatsappMessageTotal', lang)
+            .replace('{current}', String(messageLength))
+            .replace('{max}', String(WHATSAPP_MESSAGE_MAX));
+        totalCounter.classList.toggle('char-count-warn', messageLength > WHATSAPP_MESSAGE_MAX);
+    }
 }
 
 export function formatWhatsAppHint(key, displayNumber) {

@@ -244,11 +244,12 @@
                   <span class="civic-required-mark" aria-hidden="true">*</span>
                 </span>
                 <input id="issueDesc" required data-i18n-placeholder="issueDetailsPlaceholder"
-                  placeholder="Describe the issue" maxlength="120" aria-describedby="issueDescHint issueDescCount" />
+                  placeholder="Describe the issue" aria-describedby="issueDescHint issueDescCount issueDescTotalCount" />
                 <small id="issueDescHint" class="civic-field-hint" data-i18n="issueDetailsHint">
-                  Required. Max 120 characters to fit WhatsApp message limits.
+                  Required. Description length is limited so the full WhatsApp message stays within WhatsApp limits.
                 </small>
-                <small id="issueDescCount" class="char-count">0 / 120</small>
+                <small id="issueDescCount" class="char-count">0 / —</small>
+                <small id="issueDescTotalCount" class="char-count char-count-total">WhatsApp message: 0 / 65536</small>
               </label>
             </div>
           </div>
