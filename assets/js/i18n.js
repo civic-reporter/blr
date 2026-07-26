@@ -115,8 +115,13 @@ export const translations = {
 
         postIssue: "Send via WhatsApp",
         resetBtn: "🔁 Reset",
-        issuePostedSuccess: "Report sent to WhatsApp!",
+        issuePostedSuccess: "WhatsApp opened!",
         issuePostedDesc: "WhatsApp opened to {number} with your complaint ready — review and tap Send.",
+        whatsappConfirmSentHint: "After you tap Send in WhatsApp, confirm below so we can add your report to the public heatmap.",
+        whatsappConfirmSent: "I sent it on WhatsApp",
+        whatsappLoggedSuccess: "Thanks — your report was recorded for the heatmap.",
+        whatsappLogging: "Recording…",
+        whatsappLogFailed: "Could not record the report. Try confirming again.",
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
 
@@ -363,8 +368,13 @@ export const translations = {
 
         postIssue: "WhatsApp ಮೂಲಕ ಕಳುಹಿಸಿ",
         resetBtn: "🔁 ಮರುಹೊಂದಿಸಿ",
-        issuePostedSuccess: "WhatsApp ಗೆ ವರದಿ ಕಳುಹಿಸಲಾಗಿದೆ!",
+        issuePostedSuccess: "WhatsApp ತೆರೆಯಲಾಗಿದೆ!",
         issuePostedDesc: "WhatsApp {number} ಗೆ ನಿಮ್ಮ ದೂರು ಸಿದ್ಧವಾಗಿ ತೆರೆಯಲಾಗಿದೆ — ಪರಿಶೀಲಿಸಿ Send ಒತ್ತಿರಿ.",
+        whatsappConfirmSentHint: "WhatsApp ನಲ್ಲಿ Send ಒತ್ತಿದ ನಂತರ, ಸಾರ್ವಜನಿಕ ಹೀಟ್‌ಮ್ಯಾಪ್‌ಗೆ ಸೇರಿಸಲು ಕೆಳಗೆ ದೃಢೀಕರಿಸಿ.",
+        whatsappConfirmSent: "ನಾನು WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿದೆ",
+        whatsappLoggedSuccess: "ಧನ್ಯವಾದಗಳು — ನಿಮ್ಮ ವರದಿಯನ್ನು ಹೀಟ್‌ಮ್ಯಾಪ್‌ಗೆ ದಾಖಲಿಸಲಾಗಿದೆ.",
+        whatsappLogging: "ದಾಖಲಿಸಲಾಗುತ್ತಿದೆ…",
+        whatsappLogFailed: "ವರದಿಯನ್ನು ದಾಖಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ದೃಢೀಕರಿಸಿ.",
         submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
 
