@@ -2510,6 +2510,84 @@ body.heatmap-page {
     color: var(--x-text-secondary);
 }
 
+.civic-gps-privacy-note {
+    margin: 0 0 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    background: rgba(91, 155, 213, 0.1);
+    border: 1px solid rgba(91, 155, 213, 0.2);
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--x-text-secondary);
+}
+
+.civic-loc-paste {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    width: 100%;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--x-border);
+}
+
+.civic-loc-paste-label {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--x-text-primary);
+}
+
+.civic-loc-paste-row {
+    display: flex;
+    gap: 0.55rem;
+    align-items: stretch;
+}
+
+.civic-loc-paste-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
+    font-size: 0.9rem;
+}
+
+.civic-loc-paste-input:focus {
+    outline: 2px solid rgba(91, 155, 213, 0.35);
+    border-color: rgba(91, 155, 213, 0.45);
+}
+
+.civic-loc-paste-btn {
+    flex: 0 0 auto;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(91, 155, 213, 0.25);
+    background: var(--x-blue-soft);
+    color: var(--x-civic);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.civic-loc-paste-btn:hover:not(:disabled) {
+    background: rgba(91, 155, 213, 0.18);
+    border-color: rgba(91, 155, 213, 0.35);
+}
+
+.civic-loc-paste-btn:disabled {
+    opacity: 0.65;
+    cursor: progress;
+}
+
+.civic-loc-paste-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--x-text-secondary);
+}
+
 body.app-page:not(:has(.page-header)) .theme-toggle-btn,
 body.civic-page:not(:has(.page-header)) .theme-toggle-btn {
     top: 16px;
