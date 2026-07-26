@@ -69,26 +69,33 @@ function helpTipKeys() {
 }
 
 function buildPasteSection(lang) {
+    const examples = ['pasteCoordinatesExample1', 'pasteCoordinatesExample2', 'pasteCoordinatesExample3']
+        .map((key) => `<li><code>${escapeHtml(t(key, lang))}</code></li>`)
+        .join('');
+
     return `
         <div class="civic-loc-paste">
             <label class="civic-loc-paste-label" for="pasteCoordinatesInput">
                 ${escapeHtml(t('pasteCoordinatesLabel', lang))}
             </label>
-            <div class="civic-loc-paste-row">
-                <input
-                    type="text"
-                    id="pasteCoordinatesInput"
-                    class="civic-loc-paste-input"
-                    inputmode="decimal"
-                    autocomplete="off"
-                    spellcheck="false"
-                    placeholder="${escapeHtml(t('pasteCoordinatesPlaceholder', lang))}"
-                />
-                <button type="button" id="pasteCoordinatesBtn" class="civic-loc-paste-btn">
-                    ${escapeHtml(t('pasteCoordinatesApply', lang))}
-                </button>
-            </div>
+            <input
+                type="text"
+                id="pasteCoordinatesInput"
+                class="civic-loc-paste-input"
+                inputmode="decimal"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="${escapeHtml(t('pasteCoordinatesPlaceholder', lang))}"
+            />
+            <button type="button" id="pasteCoordinatesBtn" class="civic-loc-btn civic-loc-paste-btn">
+                <i class="fas fa-location-dot" aria-hidden="true"></i>
+                <span>${escapeHtml(t('pasteCoordinatesApply', lang))}</span>
+            </button>
             <p class="civic-loc-paste-hint">${escapeHtml(t('pasteCoordinatesHint', lang))}</p>
+            <div class="civic-loc-paste-examples">
+                <p class="civic-loc-paste-examples-title">${escapeHtml(t('pasteCoordinatesExamplesTitle', lang))}</p>
+                <ul class="civic-loc-paste-examples-list">${examples}</ul>
+            </div>
         </div>
     `;
 }
