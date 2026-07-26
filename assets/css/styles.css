@@ -2164,8 +2164,10 @@ body.heatmap-page {
 
 .civic-field select,
 .civic-field input,
+.civic-field textarea,
 .civic-issue-row select,
-.civic-issue-row input {
+.civic-issue-row input,
+.civic-issue-row textarea {
     padding: 0.75rem 0.85rem;
     border-radius: 12px;
     border: 1px solid var(--x-border);
@@ -2175,10 +2177,23 @@ body.heatmap-page {
     font-size: 0.95rem;
 }
 
+.civic-issue-desc {
+    width: 100%;
+    min-height: 5.5rem;
+    max-height: 14rem;
+    resize: none;
+    overflow-y: auto;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 .civic-field select:focus,
 .civic-field input:focus,
+.civic-field textarea:focus,
 .civic-issue-row select:focus,
-.civic-issue-row input:focus {
+.civic-issue-row input:focus,
+.civic-issue-row textarea:focus {
     outline: none;
     border-color: var(--x-civic);
     box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.15);

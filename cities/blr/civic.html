@@ -243,8 +243,9 @@
                   <span data-i18n="issueDetailsLabel">Describe the issue</span>
                   <span class="civic-required-mark" aria-hidden="true">*</span>
                 </span>
-                <input id="issueDesc" required data-i18n-placeholder="issueDetailsPlaceholder"
-                  placeholder="Describe the issue" aria-describedby="issueDescHint issueDescCount issueDescTotalCount" />
+                <textarea id="issueDesc" class="civic-issue-desc" required rows="3"
+                  data-i18n-placeholder="issueDetailsPlaceholder" placeholder="Describe the issue"
+                  aria-describedby="issueDescHint issueDescCount issueDescTotalCount"></textarea>
                 <small id="issueDescHint" class="civic-field-hint" data-i18n="issueDetailsHint">
                   Required. Description length is limited so the full WhatsApp message stays within WhatsApp limits.
                 </small>

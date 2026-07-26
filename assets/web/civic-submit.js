@@ -260,6 +260,7 @@ export function restoreCivicDraft() {
             issueDescEl.value = draft.issueDesc;
         }
         import('./civic-whatsapp.js').then(({ updateIssueDescriptionLimit }) => updateIssueDescriptionLimit());
+        window.resizeIssueDescField?.();
 
         return !!(draft.issueType || draft.issueDesc);
     } catch (e) {
