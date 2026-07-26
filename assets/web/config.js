@@ -21,7 +21,9 @@ function startConfigLoad() {
                 TRAFFIC_API_URL: apis.trafficApi,
                 GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
                 HEATMAP_API_URL: apis.heatmapApi || null,
-                HEATMAP_DATA_URL: apis.heatmapData ? basePath + apis.heatmapData : null,
+                HEATMAP_DATA_URL: apis.heatmapApi
+                    ? null
+                    : (apis.heatmapData ? basePath + apis.heatmapData : null),
                 SUBMISSIONS_INGEST_URL: apis.submissionsIngestUrl || null,
 
                 MAP_KML_URL: basePath + boundaries.mapKml,

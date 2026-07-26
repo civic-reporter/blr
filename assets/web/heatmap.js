@@ -1,11 +1,11 @@
 /**
  * Heat Map Module
- * Loads report data from static submissions.json and aggregates client-side.
+ * Loads report data from the AWS heatmap API (or static submissions.json fallback).
  */
 
 import { getConfig } from './config.js';
 import { showStatus } from './ui.js';
-import { fetchStaticHeatMapData, renderDataLastUpdated, showStaticDataLastUpdated } from './heatmap-aggregate.js';
+import { fetchStaticHeatMapData, renderDataLastUpdated, showApiDataLastUpdated, showStaticDataLastUpdated } from './heatmap-aggregate.js';
 import { getCurrentLanguage } from '../js/i18n.js';
 
 let CONFIG = null;
@@ -32,14 +32,18 @@ export async function fetchHeatMapData(filters = {}) {
         CONFIG = await getConfig();
     }
 
+    if (CONFIG.HEATMAP_API_URL) {
+        return fetchHeatMapDataFromApi(CONFIG, filters);
+    }
+
     if (CONFIG.HEATMAP_DATA_URL) {
         return fetchStaticHeatMapData(CONFIG, filters);
     }
 
-    if (!CONFIG.HEATMAP_API_URL) {
-        throw new Error('Heatmap data source is not configured');
-    }
+    throw new Error('Heatmap data source is not configured');
+}
 
+async function fetchHeatMapDataFromApi(config, filters = {}) {
     const {
         type = 'both',
         start_date = null,
@@ -49,43 +53,28 @@ export async function fetchHeatMapData(filters = {}) {
         ward = null
     } = filters;
 
-    try {
-        const params = new URLSearchParams();
-        params.append('type', type);
+    const params = new URLSearchParams();
+    params.append('type', type);
 
-        if (start_date) {
-            params.append('start_date', start_date);
-        }
-        if (end_date) {
-            params.append('end_date', end_date);
-        }
-        if (issue_type) {
-            params.append('issue_type', issue_type);
-        }
-        if (corporation) {
-            params.append('corporation', corporation);
-        }
-        if (ward) {
-            params.append('ward', ward);
-        }
+    if (start_date) params.append('start_date', start_date);
+    if (end_date) params.append('end_date', end_date);
+    if (issue_type) params.append('issue_type', issue_type);
+    if (corporation) params.append('corporation', corporation);
+    if (ward) params.append('ward', ward);
 
-        const response = await fetch(`${CONFIG.HEATMAP_API_URL}?${params.toString()}`);
+    const response = await fetch(`${config.HEATMAP_API_URL}?${params.toString()}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.error || 'Failed to fetch heat map data');
-        }
-
-        return data;
-    } catch (error) {
-        console.error('❌ Error fetching heat map data:', error);
-        throw error;
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+
+    const data = await response.json();
+
+    if (!data.success) {
+        throw new Error(data.error || data.message || 'Failed to fetch heat map data');
+    }
+
+    return data;
 }
 
 /**
@@ -331,8 +320,8 @@ export async function loadHeatMap(filters = {}) {
         // Hide loading message after rendering
         const countForDisplay = filters.wardRings ? heatMapPoints.length : data.count;
         showStatus(`✅ Loaded ${countForDisplay} submissions`, 'success');
-        if (data.updated_at) {
-            renderDataLastUpdated(data.updated_at, 'dataLastUpdated', getCurrentLanguage());
+        if (data.updated_at || data.date_range?.end) {
+            showApiDataLastUpdated(data, 'dataLastUpdated', getCurrentLanguage());
         }
         if (loadBtn) loadBtn.disabled = false;
 

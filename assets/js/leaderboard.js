@@ -1,6 +1,7 @@
 import { getConfig, getMlaHandles } from '../web/config.js';
 import { t, getCurrentLanguage } from './i18n.js';
-import { fetchStaticHeatMapData, showStaticDataLastUpdated } from '../web/heatmap-aggregate.js';
+import { fetchHeatMapData } from '../web/heatmap.js';
+import { showApiDataLastUpdated, showStaticDataLastUpdated } from '../web/heatmap-aggregate.js';
 
 function tr(key) {
     return t(key, getCurrentLanguage());
@@ -120,7 +121,17 @@ async function fetchAndRenderLeaderboards() {
     try {
         const [config, mlaHandles] = await Promise.all([getConfig(), getMlaHandles()]);
 
+        if (config.HEATMAP_API_URL) {
+            const data = await fetchHeatMapData({ type: 'civic' });
+            renderWardLeaderboard(data.ward_leaderboard);
+            renderConstituencyLeaderboard(data.constituency_leaderboard);
+            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+            showApiDataLastUpdated(data, 'dataLastUpdated', getCurrentLanguage());
+            return;
+        }
+
         if (config.HEATMAP_DATA_URL) {
+            const { fetchStaticHeatMapData } = await import('../web/heatmap-aggregate.js');
             const data = await fetchStaticHeatMapData(config, { type: 'civic' });
             renderWardLeaderboard(data.ward_leaderboard);
             renderConstituencyLeaderboard(data.constituency_leaderboard);
@@ -131,24 +142,7 @@ async function fetchAndRenderLeaderboards() {
             return;
         }
 
-        if (!config.HEATMAP_API_URL) {
-            throw new Error('Leaderboard data source is not configured');
-        }
-
-        const response = await fetch(`${config.HEATMAP_API_URL}?type=civic`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        if (!data.success) {
-            throw new Error(data.error || 'Failed to load leaderboard data');
-        }
-
-        renderWardLeaderboard(data.ward_leaderboard);
-        renderConstituencyLeaderboard(data.constituency_leaderboard);
-        renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+        throw new Error('Leaderboard data source is not configured');
     } catch (error) {
         renderEmptyState('ward-table', 5, tr('failedToLoadData'));
         renderEmptyState('constituency-table', 3, tr('failedToLoadData'));

@@ -95,6 +95,12 @@ export function renderDataLastUpdated(updatedAt, elementId = 'dataLastUpdated', 
     el.classList.remove('is-hidden');
 }
 
+export function showApiDataLastUpdated(apiPayload, elementId = 'dataLastUpdated', lang = 'en') {
+    const updatedAt = apiPayload?.updated_at || apiPayload?.date_range?.end || null;
+    renderDataLastUpdated(updatedAt, elementId, lang);
+    return updatedAt;
+}
+
 export async function showStaticDataLastUpdated(config, elementId = 'dataLastUpdated', lang = 'en') {
     const payload = await loadSubmissionsPayload(config);
     renderDataLastUpdated(payload.updated_at, elementId, lang);
