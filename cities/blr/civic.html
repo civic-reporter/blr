@@ -239,9 +239,15 @@
               </label>
 
               <label class="civic-field issue-desc-wrap">
-                <span class="civic-field-label" data-i18n="issueDetails">Describe the issue</span>
-                <input id="issueDesc" data-i18n-placeholder="issueDetails" placeholder="Describe the issue"
-                  maxlength="120" />
+                <span class="civic-field-label">
+                  <span data-i18n="issueDetailsLabel">Describe the issue</span>
+                  <span class="civic-required-mark" aria-hidden="true">*</span>
+                </span>
+                <input id="issueDesc" required data-i18n-placeholder="issueDetailsPlaceholder"
+                  placeholder="Describe the issue" maxlength="120" aria-describedby="issueDescHint issueDescCount" />
+                <small id="issueDescHint" class="civic-field-hint" data-i18n="issueDetailsHint">
+                  Required. Max 120 characters to fit WhatsApp message limits.
+                </small>
                 <small id="issueDescCount" class="char-count">0 / 120</small>
               </label>
             </div>
