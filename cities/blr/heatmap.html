@@ -161,6 +161,11 @@
                         <h2 data-i18n="statistics">Statistics</h2>
                         <div class="heatmap-stats-grid" id="statsGrid"></div>
                     </section>
+
+                    <section class="heatmap-recent-panel is-hidden" id="topIssuesPanel">
+                        <h3 data-i18n="heatmapTopIssues">Recent issue details</h3>
+                        <ol id="topIssuesList" class="heatmap-issue-list"></ol>
+                    </section>
                 </aside>
             </div>
 
@@ -297,6 +302,8 @@
                 clearHeatMap();
                 focusSelectedBoundary();
                 document.getElementById('statsPanel')?.classList.add('is-hidden');
+                document.getElementById('topIssuesPanel')?.classList.add('is-hidden');
+                document.getElementById('topIssuesList') && (document.getElementById('topIssuesList').innerHTML = '');
             });
 
             async function populateIssueTypes() {

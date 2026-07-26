@@ -6,6 +6,10 @@ import { validateLocationForCoords } from './validation.js';
 const EXIF_HEAD_BYTES = 512 * 1024;
 const EXIFR_OPTIONS = { gps: true, reviveValues: true, mergeOutput: false, translateKeys: true };
 
+function notifyCivicLocationUpdated() {
+    window.dispatchEvent(new CustomEvent('civicLocationUpdated'));
+}
+
 // Why the photo did or did not yield coordinates. Drives the location panel copy,
 // which has to explain platform behaviour the parser cannot work around.
 export const GPS_SOURCE = {
@@ -316,6 +320,7 @@ async function applyExtractedGps(lat, lon) {
     setGpsSource(GPS_SOURCE.PHOTO);
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
+    notifyCivicLocationUpdated();
     // The location panel says the same thing, but it lives in step 2. This is the
     // only confirmation visible while the user is still on the photo step.
     showStatus(`✅ Photo GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, "success");
@@ -456,6 +461,7 @@ export async function applyPastedCoordinates(text) {
     showLocation();
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
+    notifyCivicLocationUpdated();
 
     if (window.updateReportPreview) window.updateReportPreview();
     if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
@@ -498,6 +504,7 @@ export async function requestLiveGpsFromUser() {
     showLocation();
     updateSubmitButtonState();
     updateLocationConfirmVisibility();
+    notifyCivicLocationUpdated();
 
     if (window.updateReportPreview) window.updateReportPreview();
     if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();

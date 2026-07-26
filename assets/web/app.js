@@ -130,21 +130,29 @@ function initApp() {
 
     const issueDesc = document.getElementById("issueDesc");
     const issueDescCount = document.getElementById("issueDescCount");
+    const issueType = document.getElementById("issueType");
+
+    const refreshIssueDescLimit = async () => {
+        if (!issueDesc) return;
+        const { updateIssueDescriptionLimit } = await import('./civic-whatsapp.js');
+        await updateIssueDescriptionLimit();
+    };
+
     if (issueDesc && issueDescCount) {
         issueDesc.addEventListener("input", () => {
-            const len = issueDesc.value.length;
-            issueDescCount.textContent = `${len} / 120`;
-            issueDescCount.classList.toggle("char-count-warn", len > 100);
             const statusDiv = document.getElementById("status");
             if (statusDiv && statusDiv.textContent.includes(t('issueDetailsRequired', getCurrentLanguage()))) {
                 showStatus("", "");
             }
             saveCivicDraft();
             updateSubmitButtonState();
+            refreshIssueDescLimit();
         });
+
+        window.addEventListener('civicLocationUpdated', refreshIssueDescLimit);
+        refreshIssueDescLimit();
     }
 
-    const issueType = document.getElementById("issueType");
     if (issueType) {
         issueType.addEventListener("change", () => {
             const statusDiv = document.getElementById("status");
@@ -154,6 +162,7 @@ function initApp() {
             }
             saveCivicDraft();
             updateSubmitButtonState();
+            refreshIssueDescLimit();
         });
     }
 

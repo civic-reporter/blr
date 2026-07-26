@@ -6,7 +6,7 @@
 import { getConfig } from './config.js';
 import { showStatus } from './ui.js';
 import { fetchStaticHeatMapData, renderDataLastUpdated, showApiDataLastUpdated, showStaticDataLastUpdated } from './heatmap-aggregate.js';
-import { getCurrentLanguage } from '../js/i18n.js';
+import { getCurrentLanguage, t } from '../js/i18n.js';
 
 let CONFIG = null;
 let heatmapLayer = null;
@@ -20,6 +20,73 @@ export async function initHeatMap() {
     if (CONFIG.HEATMAP_DATA_URL) {
         await showStaticDataLastUpdated(CONFIG, 'dataLastUpdated', getCurrentLanguage());
     }
+}
+
+/**
+ * Flatten submissions from heatmap points and return the most recent entries.
+ */
+export function collectTopIssueDetails(heatMapPoints, limit = 20) {
+    const all = [];
+
+    for (const point of heatMapPoints || []) {
+        for (const submission of point.submissions || []) {
+            all.push({
+                ...submission,
+                lat: point.lat,
+                lon: point.lon
+            });
+        }
+    }
+
+    return all
+        .sort((left, right) => new Date(right.timestamp) - new Date(left.timestamp))
+        .slice(0, limit);
+}
+
+export function renderTopIssueDetails(heatMapPoints, limit = 20) {
+    const panel = document.getElementById('topIssuesPanel');
+    const listEl = document.getElementById('topIssuesList');
+    if (!panel || !listEl) return;
+
+    const issues = collectTopIssueDetails(heatMapPoints, limit);
+
+    if (!issues.length) {
+        panel.classList.add('is-hidden');
+        listEl.innerHTML = '';
+        return;
+    }
+
+    const lang = getCurrentLanguage();
+    const noDescription = t('heatmapNoDescription', lang);
+    const viewOnMap = t('heatmapViewOnMap', lang);
+
+    listEl.innerHTML = issues.map((issue, index) => {
+        const description = issue.description?.trim() || noDescription;
+        const when = issue.timestamp ? new Date(issue.timestamp).toLocaleString() : '—';
+        const mapsUrl = `https://www.google.com/maps?q=${issue.lat},${issue.lon}`;
+
+        return `
+            <li class="heatmap-issue-item">
+                <div class="heatmap-issue-head">
+                    <span class="heatmap-issue-rank">#${index + 1}</span>
+                    <strong class="heatmap-issue-type">${issue.issue_type || 'Other'}</strong>
+                    <time class="heatmap-issue-time">${when}</time>
+                </div>
+                <p class="heatmap-issue-desc">${escapeHtml(description)}</p>
+                <a class="heatmap-issue-link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${viewOnMap}</a>
+            </li>
+        `;
+    }).join('');
+
+    panel.classList.remove('is-hidden');
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 /**
@@ -328,6 +395,8 @@ export async function loadHeatMap(filters = {}) {
         window.dispatchEvent(new CustomEvent('heatMapLoaded', {
             detail: heatMapPoints
         }));
+
+        renderTopIssueDetails(heatMapPoints, 20);
 
         return {
             ...data,
