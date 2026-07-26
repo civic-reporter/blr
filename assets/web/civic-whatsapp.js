@@ -31,6 +31,14 @@ export async function getWhatsAppDisplayNumber() {
     return config.displayNumber || config.number?.replace(/^91/, '') || '';
 }
 
+export async function getWhatsAppTargetLabel() {
+    const config = await loadWhatsAppConfig();
+    const number = await getWhatsAppDisplayNumber();
+    const lang = getCurrentLanguage();
+    const label = t('whatsappTargetName', lang) || config.displayLabel || 'GBA Grievance Desk Report';
+    return number ? `${label} (${number})` : label;
+}
+
 export async function getWhatsAppNumber() {
     const config = await loadWhatsAppConfig();
     return config.number || '';
@@ -374,6 +382,6 @@ export async function updateCivicWhatsAppOption() {
     whatsappOption.classList.remove('is-hidden');
     whatsappOption.style.display = 'block';
     if (numberDisplay) {
-        numberDisplay.textContent = await getWhatsAppDisplayNumber();
+        numberDisplay.textContent = await getWhatsAppTargetLabel();
     }
 }

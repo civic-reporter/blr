@@ -99,6 +99,7 @@
     "whatsapp": {
         "enabled": true,
         "number": "919480685700",
-        "displayNumber": "9480685700"
+        "displayNumber": "9480685700",
+        "displayLabel": "GBA Grievance Desk Report"
     }
 }
