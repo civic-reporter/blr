@@ -58,7 +58,7 @@ export async function findConstituencyForCurrentGPS() {
 
 export async function shareToGBA() {
     const lang = getCurrentLanguage();
-    const { isWhatsAppEnabled, shareViaWhatsApp, formatWhatsAppHint, getWhatsAppDisplayNumber } = await import('./civic-whatsapp.js');
+    const { isWhatsAppEnabled, shareViaWhatsApp, formatWhatsAppHint, getWhatsAppDisplayNumber, setupWhatsAppSuccessBox } = await import('./civic-whatsapp.js');
 
     if (!(await isWhatsAppEnabled())) {
         showStatus(`❌ ${t('whatsappDisabled', lang)}`, "error");
@@ -137,9 +137,6 @@ export async function shareToGBA() {
         wasSuccess = true;
         clearCivicDraft();
 
-        const { recordCivicReport } = await import('./report-ingest.js');
-        recordCivicReport(reportData);
-
         ['uploadOptions', 'locationInfo', 'imageConfirm'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
@@ -178,27 +175,16 @@ export async function shareToGBA() {
             window.displaySuccessLocationInfo();
         }
 
-        const box = document.getElementById('whatsappSuccessBox');
-        if (box) {
-            box.classList.remove('is-hidden');
-            box.innerHTML = `
-                <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(result.hintKey, displayNumber)}</p>
-                <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>${t('sendWhatsApp', lang)}</span>
-                </button>
-            `;
-            document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
-                const retry = await shareViaWhatsApp(reportData, savedImageFile);
-                const hintEl = document.getElementById('whatsappSuccessHint');
-                if (hintEl && retry.hintKey) {
-                    hintEl.textContent = formatWhatsAppHint(
-                        retry.hintKey,
-                        retry.displayNumber || displayNumber
-                    );
-                }
-            });
-        }
+        setupWhatsAppSuccessBox({
+            reportData,
+            imageFile: savedImageFile,
+            hintKey: result.hintKey,
+            displayNumber,
+            onConfirmed: async (data) => {
+                const { recordCivicReport } = await import('./report-ingest.js');
+                return recordCivicReport(data);
+            }
+        });
     } catch (e) {
         showStatus(`❌ ${e.message}<br>${getTryAgainButtonText()}`, "error");
         attachRetryHandler();
