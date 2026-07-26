@@ -1,6 +1,7 @@
 // GPS module - SYNTAX FIXED
 import { getConfig } from './config.js';
 import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
+import { validateLocationForCoords } from './validation.js';
 
 const EXIF_HEAD_BYTES = 512 * 1024;
 const EXIFR_OPTIONS = { gps: true, reviveValues: true, mergeOutput: false, translateKeys: true };
@@ -397,6 +398,72 @@ function readCurrentPosition() {
             { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     });
+}
+
+function isValidCoordinatePair(lat, lon) {
+    return Number.isFinite(lat) && Number.isFinite(lon) &&
+        Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+}
+
+export function parseCoordinateInput(text) {
+    if (!text || typeof text !== 'string') return null;
+
+    const trimmed = text.trim();
+    if (!trimmed) return null;
+
+    const labeled = trimmed.match(
+        /lat(?:itude)?\s*[:=]?\s*(-?\d+(?:\.\d+)?)[^\d-]+lon(?:gitude)?\s*[:=]?\s*(-?\d+(?:\.\d+)?)/i
+    );
+    if (labeled) {
+        const lat = parseFloat(labeled[1]);
+        const lon = parseFloat(labeled[2]);
+        if (isValidCoordinatePair(lat, lon)) return { lat, lon };
+    }
+
+    const decimal = trimmed.match(/(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)/);
+    if (decimal) {
+        const lat = parseFloat(decimal[1]);
+        const lon = parseFloat(decimal[2]);
+        if (isValidCoordinatePair(lat, lon)) return { lat, lon };
+    }
+
+    return null;
+}
+
+export async function applyPastedCoordinates(text) {
+    const coords = parseCoordinateInput(text);
+    if (!coords) {
+        return { ok: false, reason: 'invalid' };
+    }
+
+    const { lat, lon } = coords;
+    if (!(await isInGbaBbox(lat, lon))) {
+        return { ok: false, reason: 'outside' };
+    }
+
+    if (!(await validateLocationForCoords(coords))) {
+        return { ok: false, reason: 'outside' };
+    }
+
+    window.currentGPS = { lat, lon };
+    markManualGps();
+
+    if (window.map) {
+        window.map.setView([lat, lon], 17);
+        if (window.placeMarker) window.placeMarker();
+    }
+
+    showLocation();
+    updateSubmitButtonState();
+    updateLocationConfirmVisibility();
+
+    if (window.updateReportPreview) window.updateReportPreview();
+    if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
+    if (window.isCivicFlow && window.updateCivicEmailRecipients) {
+        window.updateCivicEmailRecipients();
+    }
+
+    return { ok: true, coords: { lat, lon } };
 }
 
 export async function getLiveGPSIfInGBA() {
