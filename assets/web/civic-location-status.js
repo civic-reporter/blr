@@ -121,6 +121,10 @@ export function renderLocationStatus() {
     const state = stateForSource(getGpsSource());
     const presentation = STATE_PRESENTATION[state] || STATE_PRESENTATION[GPS_SOURCE.NONE];
     const [titleKey, bodyKey] = STATE_COPY[state] || STATE_COPY[GPS_SOURCE.NONE];
+    let bodyText = t(bodyKey, lang);
+    if (state === GPS_SOURCE.LIVE && Number.isFinite(window.currentGPSAccuracy)) {
+        bodyText = `${bodyText} ${t('locationAccuracyNote', lang).replace('{meters}', String(Math.round(window.currentGPSAccuracy)))}`;
+    }
 
     const showLiveButton = state !== GPS_SOURCE.PHOTO && state !== 'awaiting-photo';
     const showHelp = MISSING_GPS_STATES.has(state);
@@ -132,7 +136,7 @@ export function renderLocationStatus() {
             <span class="civic-loc-icon" aria-hidden="true"><i class="fas ${presentation.icon}"></i></span>
             <div class="civic-loc-copy">
                 <p class="civic-loc-title">${escapeHtml(t(titleKey, lang))}</p>
-                <p class="civic-loc-body">${escapeHtml(t(bodyKey, lang))}</p>
+                <p class="civic-loc-body">${escapeHtml(bodyText)}</p>
             </div>
         </div>
         ${showLiveButton ? `
@@ -208,16 +212,24 @@ async function handleUseLiveLocation(event) {
         const result = await requestLiveGpsFromUser();
         if (result.ok) {
             renderLocationStatus();
+            if (result.lowAccuracy) {
+                const meters = Math.round(result.accuracy);
+                showInlineError(t('locationLowAccuracyManual', lang).replace('{meters}', String(meters)));
+            }
             return;
         }
 
         const reasonKey = {
             denied: 'locationDenied',
             outside: 'locationOutsideGba',
-            unsupported: 'locationUnsupported'
+            unsupported: 'locationUnsupported',
+            'low-accuracy': 'locationLowAccuracy'
         }[result.reason] || 'locationUnavailable';
 
-        showInlineError(t(reasonKey, lang));
+        const message = result.reason === 'low-accuracy' && result.accuracy
+            ? t(reasonKey, lang).replace('{meters}', String(Math.round(result.accuracy)))
+            : t(reasonKey, lang);
+        showInlineError(message);
     } finally {
         const stillMounted = document.body.contains(button);
         if (stillMounted) {
