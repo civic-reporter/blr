@@ -2,6 +2,8 @@ import cityConfig from '../../config/city-config.js';
 
 let CONFIG = null;
 let MLA_HANDLES = null;
+let MLA_NAMES = null;
+let CITY_FEATURES = null;
 let configPromise = null;
 
 function startConfigLoad() {
@@ -41,10 +43,14 @@ function startConfigLoad() {
                 MAP_DEFAULTS: cityConfig.getMapDefaults(),
 
                 GBA_BBOX: cityConfig.getBBox(),
-                WHATSAPP: cityConfig.getWhatsApp()
+                WHATSAPP: cityConfig.getWhatsApp(),
+                CITY_FEATURES: config.features || {}
             };
 
             MLA_HANDLES = config.socialMedia.mlaHandles;
+            MLA_NAMES = config.socialMedia.mlaNames || {};
+            CITY_FEATURES = config.features || {};
+            window.__cityFeatures = CITY_FEATURES;
 
             console.log('✅ CONFIG initialized:');
             console.log('  MAP_KML_URL:', CONFIG.MAP_KML_URL);
@@ -76,4 +82,18 @@ export async function getMlaHandles() {
     return MLA_HANDLES;
 }
 
-export { CONFIG, MLA_HANDLES, cityConfig, configPromise };
+export async function getMlaNames() {
+    if (!MLA_NAMES) {
+        await startConfigLoad();
+    }
+    return MLA_NAMES;
+}
+
+export async function getCityFeatures() {
+    if (!CITY_FEATURES) {
+        await startConfigLoad();
+    }
+    return CITY_FEATURES || {};
+}
+
+export { CONFIG, MLA_HANDLES, MLA_NAMES, CITY_FEATURES, cityConfig, configPromise };
