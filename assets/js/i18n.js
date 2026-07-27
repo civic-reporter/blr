@@ -194,6 +194,7 @@ export const translations = {
         confirmLocation: "Confirm Location",
         confirmLocationText: "I confirm this map pin matches where the photo was taken.",
         searchAddress: "Search address",
+        mapSearchPlaceholder: "Search within Greater Bengaluru Authority",
         noResultsFound: "No results found",
         processing: "Processing...",
         success: "Success!",
@@ -513,17 +514,186 @@ export const translations = {
         noDataAvailable: "ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ",
         failedToLoadData: "ಡೇಟಾ ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
         unknown: "ಅಜ್ಞಾತ",
+    },
+
+    ml: {
+        heatmap: "ഹീറ്റ്‌മാപ്പ്",
+        leaderboard: "ലീഡർബോർഡ്",
+        homeTitle: "നമ്മുടെ സ്വരം",
+        homeSubtitle: "നമ്മുടെ നഗരം, നമ്മുടെ സ്വരം",
+        gpsPhotos: "📸 GPS ഫോട്ടോ",
+        instantWhatsApp: "⚡ WhatsApp റിപ്പോർട്ടുകൾ",
+        wardMapping: "🗺️ വാർഡ് മാപ്പിംഗ്",
+        civicIssues: "നാഗരിക പ്രശ്നങ്ങൾ",
+        civicDesc: "കുഴി, drainage, തെരുവ് വിളക്കുകൾ",
+        greaterBengaluruAuthority: "വാർഡ് കണ്ടെത്തി WhatsApp വഴി അയയ്ക്കുക",
+        photoToPost: "ഫോട്ടോ → WhatsApp 10 സെക്കൻഡിൽ",
+        gpsAutoDetect: "GPS ഓട്ടോ-ഡിറ്റക്റ്റ്",
+        directToAuthorities: "WhatsApp ദൂരവിഭാഗം",
+        homeHowItWorks: "ഇത് എങ്ങനെ പ്രവർത്തിക്കുന്നു",
+        homeHeatmapDesc: "നഗരത്തിൽ പ്രശ്നങ്ങൾ എവിടെ കൂടുന്നുണ്ടെന്ന് കാണുക",
+        homeLeaderboardDesc: "പ്രശ്നങ്ങൾ റിപ്പോർട്ട് ചെയ്ത പ്രധാന വാർഡുകൾ",
+        builtForCitizens: "നാഗരികർക്കായി 🇮🇳",
+        footerText: "© 2026 Zen Citizen.",
+        civicReporterTitle: "🏛️ നമ്മുടെ സ്വരം - നാഗരിക",
+        civicReporterDesc: "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
+        uploadInstructions: "GPS ടാഗുകൾ നിലനിർത്താൻ ഗ്യാലറിയിൽ നിന്ന് ഫോട്ടോ തിരഞ്ഞെടുക്കുക. സ്ഥലം ഇല്ലെങ്കിൽ മാപ്പിൽ സജ്ജമാക്കുക.",
+        choosePhoto: "ഫോട്ടോ തിരഞ്ഞെടുക്കുക",
+        mobileCamera: "ഫോട്ടോ എടുക്കുക",
+        uploadPhoto: "ഫോട്ടോ അപ്‌ലോഡ്",
+        isPhotoCorrect: "ഈ ഫോട്ടോ ശരിയാണോ?",
+        chooseAnotherPhoto: "മറ്റൊരു ഫോട്ടോ തിരഞ്ഞെടുക്കുക",
+        confirmPhotoText: "ഈ ഫോട്ടോ പ്രശ്നം വ്യക്തമായി കാണിക്കുന്നു എന്ന് ഞാൻ സ്ഥിരീകരിക്കുന്നു.",
+        locationLabel: "📍 സ്ഥലം:",
+        mapRestrictionMsg: "⚠️ തിരഞ്ഞെടുത്ത സ്ഥലം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+        issueCategory: "പ്രശ്ന വിഭാഗം",
+        issueDetails: "പ്രശ്നം വിവരിക്കുക",
+        issueDetailsLabel: "പ്രശ്നം വിവരിക്കുക",
+        issueDetailsPlaceholder: "പ്രശ്നം വിവരിക്കുക",
+        issueDetailsHint: "ആവശ്യമാണ്. WhatsApp സന്ദേശ പരിധിക്കുള്ളിൽ വിവരണം സൂക്ഷിക്കുക.",
+        issueDetailsRequired: "ദയവായി പ്രശ്നം വിവരിക്കുക (ആവശ്യം).",
+        issueDetailsTooLong: "WhatsApp സന്ദേശം വളരെ നീളമാണ്. {max} അക്ഷരങ്ങളിൽ കുറയ്ക്കുക.",
+        whatsappMessageTotal: "WhatsApp സന്ദേശം: {current} / {max}",
+        pothole: "കുഴി",
+        footpath: "നടപ്പാത",
+        drainageIssue: "drainage പ്രശ്നം",
+        streetlight: "തെരുവ് വിളക്ക്",
+        garbage: "മാലിന്യം",
+        manhole: "മാൻഹോൾ",
+        roadRepair: "റോഡ് നന്നാക്കൽ",
+        other: "മറ്റുള്ളവ",
+        selectCivicIssue: "നാഗരിക പ്രശ്നം തിരഞ്ഞെടുക്കുക...",
+        dragMarkerInstruction: "🔧 GPS കണ്ടെത്തിയില്ല. സ്ഥലം സജ്ജമാക്കാൻ മാപ്പിൽ ക്ലിക്ക് ചെയ്യുക.",
+        stepPhoto: "ഫോട്ടോ",
+        stepLocation: "സ്ഥലം",
+        stepDetails: "വിവരങ്ങൾ",
+        stepPhotoTitle: "പ്രശ്നത്തിന്റെ ഫോട്ടോ ചേർക്കുക",
+        stepPhotoSub: "വ്യക്തമായ ഫോട്ടോ ഉദ്യോഗസ്ഥനെ വേഗം പ്രവർത്തിക്കാൻ സഹായിക്കും.",
+        stepLocationTitle: "ഇത് എവിടെയാണെന്ന് സ്ഥിരീകരിക്കുക",
+        stepLocationSub: "ഈ പിൻ ഉപയോഗിച്ച് പരാതി അയയ്ക്കും, അത് ഫോട്ടോയുടെ സ്ഥലവുമായി പൊരുത്തപ്പെടണം.",
+        stepDetailsTitle: "പ്രശ്നം വിവരിക്കുക",
+        stepDetailsSub: "പിന്നീട് WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കുക.",
+        stepNextLocation: "അടുത്തത്: സ്ഥലം",
+        stepNextDetails: "അടുത്തത്: വിവരങ്ങൾ",
+        stepBack: "പിന്നോട്ട്",
+        locStatusTitleNoPhoto: "ആദ്യം ഫോട്ടോ ചേർക്കുക",
+        locStatusBodyNoPhoto: "ഫോട്ടോ തിരഞ്ഞെടുത്താൽ സ്ഥലം ഓട്ടോമാറ്റിക്കായി വായിക്കാൻ ശ്രമിക്കും.",
+        locStatusTitleNone: "സ്ഥലം ഇതുവരെ സജ്ജമാക്കിയിട്ടില്ല",
+        locStatusBodyNone: "നിങ്ങളുടെ നിലവിലെ സ്ഥലം ഉപയോഗിക്കുക അല്ലെങ്കിൽ മാപ്പിൽ പിൻ ഇടുക.",
+        locStatusTitlePhoto: "ഫോട്ടോയിൽ നിന്ന് സ്ഥലം വായിച്ചു",
+        locStatusBodyPhoto: "ഫോട്ടോയിലെ GPS ടാഗ് ഉപയോഗിച്ചു. തെറ്റാണെങ്കിൽ പിൻ നീക്കുക.",
+        locStatusTitleLive: "നിങ്ങളുടെ നിലവിലെ സ്ഥലം ഉപയോഗിക്കുന്നു",
+        locStatusBodyLive: "പിൻ ഫോട്ടോ എടുത്ത സ്ഥലവുമായി പൊരുത്തപ്പെടുന്നുണ്ടോ പരിശോധിക്കുക.",
+        locStatusTitleManual: "ഇന്നെ സ്വയം സജ്ജമാക്കി ഇട്ടത്തെ പിൺ",
+        locStatusBodyManual: "പിൻ ഫോട്ടോ എടുത്ത സ്ഥലവുമായി പൊരുത്തപ്പെടുന്നുണ്ടോ പരിശോധിക്കുക.",
+        locStatusTitleStripped: "ബ്രൗസർ ഫോട്ടോയുടെ സ്ഥലം നീക്കം ചെയ്തു",
+        locStatusBodyStripped: "ഈ ഫോട്ടോയിൽ മെറ്റാഡാറ്റ ഇല്ല. താഴെ സ്ഥലം സജ്ജമാക്കുക.",
+        locStatusTitleNoTag: "ഈ ഫോട്ടോയിൽ സ്ഥല ടാഗ് ഇല്ല",
+        locStatusBodyNoTag: "GPS ടാഗ് ഇല്ലാത്ത ഫോട്ടോ. താഴെ സ്ഥലം സജ്ജമാക്കുക.",
+        locStatusTitleOutside: "ഫോട്ടോയുടെ സ്ഥലം പരിധിക്ക് പുറത്താണ്",
+        locStatusBodyOutside: "GPS ടാഗ് കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. തുടരാൻ നഗരത്തിനുള്ളിൽ സ്ഥലം സജ്ജമാക്കുക.",
+        useMyLocation: "എന്റെ നിലവിലെ സ്ഥലം ഉപയോഗിക്കുക",
+        locatingNow: "സ്ഥലം കണ്ടെത്തുന്നു…",
+        orSetPinManually: "അല്ലെങ്കിൽ മാപ്പിൽ ടാപ്പ് ചെയ്ത് പിൻ ഇടുക.",
+        pasteCoordinatesLabel: "നിർദേശാങ്കങ്ങൾ ഒട്ടിക്കുക",
+        pasteCoordinatesPlaceholder: "8.5241, 76.9366",
+        pasteCoordinatesApply: "നിർദേശാങ്കങ്ങൾ പ്രയോഗിക്കുക",
+        pasteCoordinatesHint: "ഗ്യാലറിയിൽ നിന്ന് latitude, longitude പകർത്തി ഒട്ടിക്കുക.",
+        pasteCoordinatesInvalid: "നിർദേശാങ്കങ്ങൾ വായിക്കാൻ കഴിഞ്ഞില്ല.",
+        pasteCoordinatesOutside: "നിർദേശാങ്കങ്ങൾ പരിധിക്ക് പുറത്താണ്.",
+        locationDenied: "ലൊക്കേഷൻ ആക്സസ് തടഞ്ഞിരിക്കുന്നു.",
+        locationUnavailable: "സ്ഥലം കണ്ടെത്താൻ കഴിഞ്ഞില്ല.",
+        locationOutsideGba: "നിങ്ങളുടെ സ്ഥലം പരിധിക്ക് പുറത്താണ്.",
+        locationUnsupported: "ഈ ബ്രൗസർ ലൊക്കേഷൻ പങ്കിടാൻ കഴിയില്ല.",
+        postIssue: "WhatsApp വഴി അയയ്ക്കുക",
+        resetBtn: "🔁 റീസെറ്റ്",
+        issuePostedSuccess: "WhatsApp തുറന്നു!",
+        issuePostedDesc: "WhatsApp {number} ലേക്ക് പരാതിയോടെ തുറന്നു — അവലോകനം ചെയ്ത് അയയ്ക്കുക.",
+        whatsappConfirmSentHint: "WhatsApp-ൽ അയച്ച ശേഷം താഴെ സ്ഥിരീകരിക്കുക.",
+        whatsappConfirmSent: "ഞാൻ WhatsApp-ൽ അയച്ചു",
+        whatsappLoggedSuccess: "നന്ദി — റിപ്പോർട്ട് ഹീറ്റ്‌മാപ്പിനായി രേഖപ്പെടുത്തി.",
+        whatsappLogging: "രേഖപ്പെടുത്തുന്നു…",
+        whatsappLogFailed: "റിപ്പോർട്ട് രേഖപ്പെടുത്താൻ കഴിഞ്ഞില്ല.",
+        submitAnotherIssue: "മറ്റൊരു പ്രശ്നം സമർപ്പിക്കുക",
+        successThankYou: "നഗരം മെച്ചപ്പെടുത്തിയതിന് നന്ദി!",
+        whatsappTargetName: "കോർപ്പറേഷൻ ദൂരവിഭാഗം",
+        toggleLanguage: "English",
+        toggleTheme: "തീം മാറ്റുക",
+        backToHome: "ഹോമിലേക്ക്",
+        previewWardLabel: "വാർഡ്",
+        previewCorpLabel: "കോർപ്പറേഷൻ",
+        previewConstituencyLabel: "നിയമസഭാ മണ്ഡലം",
+        previewMlaLabel: "MLA",
+        previewUnavailable: "ഈ സ്ഥലത്ത് ലഭ്യമല്ല",
+        confirmLocation: "സ്ഥലം സ്ഥിരീകരിക്കുക",
+        confirmLocationText: "ഈ മാപ്പ് പിൻ ഫോട്ടോ എടുത്ത സ്ഥലവുമായി പൊരുത്തപ്പെടുന്നു.",
+        searchAddress: "വിലാസം തിരയുക",
+        mapSearchPlaceholder: "കോർപ്പറേഷനിൽ തിരയുക",
+        howToLink: "എങ്ങനെ ഉപയോഗിക്കാം",
+        privacyLink: "സ്വകാര്യത",
+        heatMapTitle: "ഹീറ്റ് മാപ്പ്",
+        heatMapSubtitle: "നഗരത്തിലെ നാഗരിക പ്രശ്നങ്ങൾ",
+        filters: "ഫിൽട്ടറുകൾ",
+        allWards: "എല്ലാ വാർഡുകളും",
+        allCorporations: "എല്ലാ കോർപ്പറേഷനുകളും",
+        loadHeatMapBtn: "ഹീറ്റ് മാപ്പ് ലോഡ് ചെയ്യുക",
+        resetFiltersBtn: "ഫിൽട്ടറുകൾ റീസെറ്റ്",
+        statistics: "സ്ഥിതിവിവരങ്ങൾ",
+        heatmapTopIssues: "ഏറ്റവും പുതിയ പ്രശ്നങ്ങൾ (20)",
+        heatmapNoDescription: "വിവരണം ഇല്ല",
+        heatmapViewOnMap: "മാപ്പിൽ കാണുക",
+        totalReports: "ആകെ റിപ്പോർട്ടുകൾ",
+        leaderboardTitle: "🏆 നാഗരിക പ്രശ്ന ലീഡർബോർഡ്",
+        leaderboardSubtitle: "റിപ്പോർട്ട് ചെയ്ത പ്രശ്നങ്ങൾ അനുസരിച്ച്",
+        wardLeaderboard: "വാർഡ് ലീഡർബോർഡ്",
+        constituencyLeaderboard: "നിയമസഭാ മണ്ഡല ലീഡർബോർഡ്",
+        rank: "റാങ്ക്",
+        wardName: "വാർഡ് പേര്",
+        corporation: "കോർപ്പറേഷൻ",
+        constituency: "നിയമസഭാ മണ്ഡലം",
+        issues: "പ്രശ്നങ്ങൾ",
+        noDataAvailable: "ഡാറ്റ ലഭ്യമല്ല",
+        failedToLoadData: "ഡാറ്റ ലോഡ് ചെയ്യാൻ പരാജയപ്പെട്ടു",
+        unknown: "അജ്ഞാതം",
     }
 };
 
+function cityString(key, lang) {
+    return window.__cityStrings?.[lang]?.[key] || window.__cityStrings?.en?.[key] || null;
+}
+
 // Get translation text
-export function t(key, lang = 'en') {
-    return translations[lang]?.[key] || translations.en[key] || key;
+export function t(key, lang = null) {
+    const resolvedLang = lang || getCurrentLanguage();
+    const override = cityString(key, resolvedLang);
+    if (override) return override;
+    return translations[resolvedLang]?.[key] || translations.en[key] || key;
 }
 
 // Get current language
 export function getCurrentLanguage() {
-    return localStorage.getItem('language') || 'en';
+    const stored = localStorage.getItem('language');
+    if (stored) return stored;
+    return window.__cityDefaultLang || 'en';
+}
+
+export function getAvailableLanguages() {
+    return window.__cityLanguages || ['en', 'kn'];
+}
+
+export function getAlternateLanguage(currentLang = null) {
+    const lang = currentLang || getCurrentLanguage();
+    const available = getAvailableLanguages();
+    if (available.length < 2) return available[0] || 'en';
+    return available.find(code => code !== lang) || available[0];
+}
+
+export function getLanguageToggleLabel(currentLang = null) {
+    const lang = currentLang || getCurrentLanguage();
+    const next = getAlternateLanguage(lang);
+    if (next === 'kn') return 'ಕನ್ನಡ';
+    if (next === 'ml') return 'മലയാളം';
+    return 'English';
 }
 
 // Set language

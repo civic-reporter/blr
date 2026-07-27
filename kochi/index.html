@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="ml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>🏛️ Nammude Swaram - Kochi Civic Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
+</head>
+
+<body class="home-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon is-hidden"></i>
+    </button>
+
+    <header class="home-header">
+        <div class="home-brand">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nammude Swaram</span>
+        </div>
+        <div class="hero-pill" data-i18n="builtForCitizens">Built for Kochi citizens</div>
+    </header>
+
+    <main class="home-main">
+        <section class="home-hero">
+            <h1 class="home-hero-title">
+                <span class="home-hero-line" data-i18n="homeTitle">Nammude Swaram</span>
+                <span class="home-hero-accent" data-i18n="homeSubtitle">Namma Kochi, Nammude Swaram</span>
+            </h1>
+            <ul class="hero-stats" aria-label="Platform highlights">
+                <li><span data-i18n="gpsPhotos">📸 GPS Photos</span></li>
+                <li><span data-i18n="instantWhatsApp">⚡ WhatsApp Reports</span></li>
+                <li><span data-i18n="wardMapping">🗺️ Ward Mapping</span></li>
+            </ul>
+        </section>
+
+        <section class="home-actions" aria-label="Quick actions">
+            <a href="../cities/kochi/civic.html" class="home-primary-card animate-in" data-category="civic">
+                <div class="home-primary-card-top">
+                    <span class="home-card-badge" data-i18n="civicIssues">Civic Issues</span>
+                    <span class="home-card-icon" aria-hidden="true">🏗️</span>
+                </div>
+                <div class="home-primary-card-body">
+                    <h2 data-i18n="civicIssues">Civic Issues</h2>
+                    <p data-i18n="civicDesc">Potholes, drainage, streetlights</p>
+                </div>
+                <div class="home-primary-card-footer">
+                    <span data-i18n="greaterBengaluruAuthority">Identify ward & send via WhatsApp</span>
+                    <span class="home-card-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <div class="home-secondary-grid">
+                <a href="../cities/kochi/heatmap.html" class="home-secondary-card">
+                    <span class="home-secondary-icon"><i class="fas fa-chart-area"></i></span>
+                    <div>
+                        <strong data-i18n="heatmap">Heatmap</strong>
+                        <span data-i18n="homeHeatmapDesc">See where issues cluster across the city</span>
+                    </div>
+                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+                </a>
+                <a href="../cities/kochi/leaderboard.html" class="home-secondary-card">
+                    <span class="home-secondary-icon"><i class="fas fa-trophy"></i></span>
+                    <div>
+                        <strong data-i18n="leaderboard">Leaderboard</strong>
+                        <span data-i18n="homeLeaderboardDesc">Top wards where issues were identified</span>
+                    </div>
+                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="home-steps" aria-label="How it works">
+            <h2 class="home-section-title" data-i18n="homeHowItWorks">How it works</h2>
+            <ol class="home-steps-list">
+                <li class="home-step"><span class="home-step-num">1</span><strong data-i18n="photoToPost">Photo → WhatsApp in 10s</strong></li>
+                <li class="home-step"><span class="home-step-num">2</span><strong data-i18n="gpsAutoDetect">GPS Auto-detect</strong></li>
+                <li class="home-step"><span class="home-step-num">3</span><strong data-i18n="directToAuthorities">WhatsApp grievance desk</strong></li>
+            </ol>
+        </section>
+
+        <section class="home-trust">
+            <p data-i18n="builtForCitizens">Built for Kochi citizens 🇮🇳</p>
+        </section>
+    </main>
+
+    <footer class="app-footer home-footer">
+        <div class="footer-content">
+            <small data-i18n="footerText">&copy; 2026 Zen Citizen · <a id="howToLink" href="../how-to.html" data-i18n="howToLink">How to Use</a></small>
+            <div class="social-links">
+                <a id="privacyLink" href="../privacy.html"><i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span></a>
+                <a href="https://wa.me/919446411516" target="_blank" rel="noopener noreferrer" aria-label="Kochi Corporation WhatsApp grievance desk"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const html = document.documentElement;
+        function initTheme() {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? "dark" : "light");
+            html.setAttribute("data-theme", initial);
+            updateThemeToggle(initial);
+        }
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') { sun.classList.add('is-hidden'); moon.classList.remove('is-hidden'); }
+            else { sun.classList.remove('is-hidden'); moon.classList.add('is-hidden'); }
+        }
+        initTheme();
+        window.addEventListener("DOMContentLoaded", () => {
+            import('../assets/web/config.js').then(() =>
+                import('../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => initLanguageSwitcher())
+            );
+            document.getElementById("themeToggle")?.addEventListener("click", () => {
+                const current = html.getAttribute("data-theme") || "light";
+                const next = current === "light" ? "dark" : "light";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+                updateThemeToggle(next);
+            });
+            document.querySelectorAll('.animate-in').forEach((el, i) => { el.style.animationDelay = `${i * 0.12}s`; });
+        });
+    </script>
+</body>
+</html>

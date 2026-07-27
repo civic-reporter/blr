@@ -1,18 +1,26 @@
 // Language Switcher Module
-import { t, getCurrentLanguage, setLanguage } from './i18n.js';
+import {
+    t,
+    getCurrentLanguage,
+    setLanguage,
+    getAlternateLanguage,
+    getLanguageToggleLabel,
+    getAvailableLanguages
+} from './i18n.js';
 
 export function initLanguageSwitcher() {
+    const available = getAvailableLanguages();
+    if (available.length < 2) return;
+
     const currentLang = getCurrentLanguage();
 
-    // Create language toggle button
     const langToggle = document.createElement('button');
     langToggle.id = 'languageToggle';
     langToggle.className = 'language-toggle-btn';
     langToggle.setAttribute('aria-label', 'Toggle language');
-    langToggle.setAttribute('title', 'Switch between English and Kannada');
-    langToggle.textContent = currentLang === 'en' ? 'ಕನ್ನಡ' : 'English';
+    langToggle.setAttribute('title', 'Switch language');
+    langToggle.textContent = getLanguageToggleLabel(currentLang);
 
-    // Insert next to theme toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle && themeToggle.parentNode) {
         themeToggle.parentNode.insertBefore(langToggle, themeToggle.nextSibling);
@@ -20,57 +28,49 @@ export function initLanguageSwitcher() {
         document.body.appendChild(langToggle);
     }
 
-    // Add click handler
     langToggle.addEventListener('click', () => {
         toggleLanguage();
     });
 
-    // Set initial page language
     setPageLanguage(currentLang);
 }
 
 export function toggleLanguage() {
     const currentLang = getCurrentLanguage();
-    const newLang = currentLang === 'en' ? 'kn' : 'en';
+    const newLang = getAlternateLanguage(currentLang);
     setLanguage(newLang);
     setPageLanguage(newLang);
 
-    // Update button text
     const langToggle = document.getElementById('languageToggle');
     if (langToggle) {
-        langToggle.textContent = newLang === 'en' ? 'ಕನ್ನಡ' : 'English';
+        langToggle.textContent = getLanguageToggleLabel(newLang);
     }
 }
 
 export function setPageLanguage(lang) {
     const html = document.documentElement;
-    html.setAttribute('lang', lang === 'kn' ? 'kn' : 'en');
+    html.setAttribute('lang', lang === 'kn' ? 'kn' : lang === 'ml' ? 'ml' : 'en');
 
-    // Update all elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         element.textContent = t(key, lang);
     });
 
-    // Update placeholder attributes
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
         const key = element.getAttribute('data-i18n-placeholder');
         element.placeholder = t(key, lang);
     });
 
-    // Update title attributes
     document.querySelectorAll('[data-i18n-title]').forEach(element => {
         const key = element.getAttribute('data-i18n-title');
         element.title = t(key, lang);
     });
 
-    // Update aria-label attributes
     document.querySelectorAll('[data-i18n-aria]').forEach(element => {
         const key = element.getAttribute('data-i18n-aria');
         element.setAttribute('aria-label', t(key, lang));
     });
 
-    // Special handling for select options
     document.querySelectorAll('select[data-i18n-options]').forEach(select => {
         const options = select.getAttribute('data-i18n-options');
         if (options) {
@@ -83,22 +83,28 @@ export function setPageLanguage(lang) {
         }
     });
 
-    // Update privacy and how-to page links based on language
     const privacyLink = document.getElementById('privacyLink');
     if (privacyLink) {
         const currentHref = privacyLink.getAttribute('href');
         const prefix = currentHref.includes('../../') ? '../../' : '';
-        privacyLink.href = prefix + (lang === 'kn' ? 'privacy-kn.html' : 'privacy.html');
+        if (lang === 'kn') {
+            privacyLink.href = prefix + 'privacy-kn.html';
+        } else {
+            privacyLink.href = prefix + 'privacy.html';
+        }
     }
 
     const howToLink = document.getElementById('howToLink');
     if (howToLink) {
         const currentHref = howToLink.getAttribute('href');
         const prefix = currentHref.includes('../../') ? '../../' : '';
-        howToLink.href = prefix + (lang === 'kn' ? 'how-to-kn.html' : 'how-to.html');
+        if (lang === 'kn') {
+            howToLink.href = prefix + 'how-to-kn.html';
+        } else {
+            howToLink.href = prefix + 'how-to.html';
+        }
     }
 
-    // Dispatch custom event for pages that need dynamic translation
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
 }
 

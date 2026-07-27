@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="constituencies" id="constituencies">
+	<SimpleField name="AC_NAME" type="string"></SimpleField>
+</Schema>
+<Folder><name>constituencies</name></Folder>
+</Document>
+</kml>

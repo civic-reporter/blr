@@ -1,0 +1,109 @@
+{
+    "cityId": "tvm",
+    "cityName": "Thiruvananthapuram",
+    "cityNameLocal": "തിരുവനന്തപുരം",
+    "tagline": "Thiruvananthapuram's civic reporting platform",
+    "taglineLocal": "തിരുവനന്തപുരത്തിന്റെ നാഗരിക വരദി വേദിക",
+    "boundaries": {
+        "bbox": {
+            "south": 8.362,
+            "north": 8.609,
+            "west": 76.856,
+            "east": 77.024
+        },
+        "mapKml": "data/cities/tvm/map.kml",
+        "constKml": "data/cities/tvm/const.kml",
+        "wardKml": "data/cities/tvm/wards.kml"
+    },
+    "pages": {
+        "civic": "cities/tvm/civic.html",
+        "home": "tvm/index.html"
+    },
+    "apis": {
+        "civicApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
+        "heatmapApi": "https://n54j3iscjk.execute-api.ap-south-1.amazonaws.com/heatmap",
+        "submissionsIngestUrl": "",
+        "heatmapData": "data/cities/tvm/submissions.json",
+        "googleMapsKey": "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0"
+    },
+    "socialMedia": {
+        "defaultHandle": "@TvmCorp",
+        "mlaHandles": {}
+    },
+    "issueCategories": {
+        "civic": [
+            "potholes",
+            "drainage",
+            "streetlights",
+            "garbage",
+            "water",
+            "parks",
+            "roads",
+            "other"
+        ]
+    },
+    "localization": {
+        "defaultLanguage": "ml",
+        "availableLanguages": [
+            "en",
+            "ml"
+        ],
+        "strings": {
+            "en": {
+                "homeTitle": "Nammude Swaram",
+                "homeSubtitle": "Namma Thiruvananthapuram, Nammude Swaram",
+                "builtForCitizens": "Built for Thiruvananthapuram citizens 🇮🇳",
+                "footerText": "© 2026 Zen Citizen. Made with ❤️ for Thiruvananthapuram",
+                "civicReporterTitle": "🏛️ Nammude Swaram - Civic",
+                "civicReporterDesc": "Upload a photo, confirm location, and we identify ward and corporation before opening WhatsApp to the Thiruvananthapuram Corporation grievance desk.",
+                "mapRestrictionMsg": "⚠️ Selected location is outside Thiruvananthapuram Corporation limits. Please choose a point within the city.",
+                "dragMarkerInstruction": "🔧 GPS not detected. Click map or drag marker to set location (within Thiruvananthapuram Corporation only).",
+                "locStatusTitleOutside": "Photo location is outside Thiruvananthapuram",
+                "locStatusBodyOutside": "The GPS tag in this photo points outside corporation limits. Set a location inside Thiruvananthapuram to continue.",
+                "pasteCoordinatesOutside": "Those coordinates are outside Thiruvananthapuram Corporation limits. Check the values or pin the map instead.",
+                "locationOutsideGba": "Your current location is outside corporation limits. Tap the map to set the pin.",
+                "greaterBengaluruAuthority": "Identify ward & send via WhatsApp",
+                "successThankYou": "Thank you for making Thiruvananthapuram better!",
+                "whatsappTargetName": "Thiruvananthapuram Corporation Grievance Desk (9447481498)",
+                "previewWardLabel": "Ward",
+                "previewCorpLabel": "Corporation",
+                "heatMapSubtitle": "Visualize civic issues across Thiruvananthapuram",
+                "leaderboardTitle": "🏆 Civic Issue Leaderboard - Thiruvananthapuram",
+                "mapSearchPlaceholder": "Search within Thiruvananthapuram Corporation"
+            },
+            "ml": {
+                "homeTitle": "നമ്മുടെ സ്വരം",
+                "homeSubtitle": "നമ്മുടെ തിരുവനന്തപുരം, നമ്മുടെ സ്വരം",
+                "builtForCitizens": "തിരുവനന്തപുരം നാഗരികർക്കായി 🇮🇳",
+                "footerText": "© 2026 Zen Citizen. തിരുവനന്തപുരത്തിനായി ❤️യോടെ",
+                "civicReporterTitle": "🏛️ നമ്മുടെ സ്വരം - നാഗരിക",
+                "civicReporterDesc": "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കോർപ്പറേഷനും കണ്ടെത്തി തിരുവനന്തപുരം കോർപ്പറേഷൻ WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
+                "mapRestrictionMsg": "⚠️ തിരഞ്ഞെടുത്ത സ്ഥലം തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "dragMarkerInstruction": "🔧 GPS കണ്ടെത്തിയില്ല. സ്ഥലം സജ്ജമാക്കാൻ മാപ്പിൽ ക്ലിക്ക് ചെയ്യുക (കോർപ്പറേഷൻ പരിധിക്കുള്ളിൽ മാത്രം).",
+                "locStatusTitleOutside": "ഫോട്ടോയുടെ സ്ഥലം തിരുവനന്തപുരത്തിന് പുറത്താണ്",
+                "locStatusBodyOutside": "ഈ ഫോട്ടോയിലെ GPS ടാഗ് കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. തുടരാൻ നഗരത്തിനുള്ളിൽ സ്ഥലം സജ്ജമാക്കുക.",
+                "pasteCoordinatesOutside": "ആ നിർദേശാങ്കങ്ങൾ കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "locationOutsideGba": "നിങ്ങളുടെ നിലവിലെ സ്ഥലം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "greaterBengaluruAuthority": "വാർഡ് കണ്ടെത്തി WhatsApp വഴി അയയ്ക്കുക",
+                "successThankYou": "തിരുവനന്തപുരം മെച്ചപ്പെടുത്തിയതിന് നന്ദി!",
+                "whatsappTargetName": "തിരുവനന്തപുരം കോർപ്പറേഷൻ ദൂരവിഭാഗം (9447481498)",
+                "previewWardLabel": "വാർഡ്",
+                "previewCorpLabel": "കോർപ്പറേഷൻ",
+                "heatMapSubtitle": "തിരുവനന്തപുരത്തിലെ നാഗരിക പ്രശ്നങ്ങൾ ദർശിക്കുക",
+                "leaderboardTitle": "🏆 നാഗരിക പ്രശ്ന ലീഡർബോർഡ് - തിരുവനന്തപുരം",
+                "mapSearchPlaceholder": "തിരുവനന്തപുരം കോർപ്പറേഷനിൽ തിരയുക"
+            }
+        }
+    },
+    "whatsapp": {
+        "enabled": true,
+        "number": "919447481498",
+        "displayNumber": "9447481498",
+        "displayLabel": "Thiruvananthapuram Corporation Grievance Desk"
+    },
+    "mapDefaults": {
+        "lat": 8.5241,
+        "lon": 76.9366,
+        "zoom": 12
+    }
+}

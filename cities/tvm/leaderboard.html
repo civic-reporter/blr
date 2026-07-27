@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nāgarika Dhvani - Leaderboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
+</head>
+
+<body class="app-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
+    <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" data-i18n-title="toggleTheme">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon is-hidden"></i>
+    </button>
+
+    <header class="app-header">
+        <a href="../../tvm/index.html" class="home-brand nav-home" data-i18n-title="backToHome">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+        </a>
+
+        <span class="hero-pill app-pill" data-i18n="leaderboard">Leaderboard</span>
+
+        <nav class="app-header-nav" aria-label="Page navigation">
+            <a href="civic.html" class="app-nav-link" data-i18n-title="switchToCivic">
+                <i class="fas fa-landmark"></i>
+                <span data-i18n="switchToCivic">Report Civic Issue</span>
+            </a>
+            <a href="heatmap.html" class="app-nav-link" data-i18n-title="heatmap">
+                <i class="fas fa-chart-area"></i>
+                <span data-i18n="heatmap">Heatmap</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <div class="container app-shell">
+            <section class="app-hero">
+                <h1 class="app-hero-title" data-i18n="leaderboardTitle">Civic Issue Leaderboard - Bengaluru</h1>
+                <p class="app-hero-desc" data-i18n="leaderboardSubtitle">Top wards, constituencies, and MLAs by reported civic issues</p>
+                <p id="dataLastUpdated" class="data-last-updated is-hidden" data-i18n="dataLastUpdated">Last updated: —</p>
+            </section>
+
+            <div class="leaderboard-toolbar">
+                <button id="loadLeaderboardBtn" class="leaderboard-load-btn" type="button">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span class="btn-label" data-i18n="leaderboardLoading">Loading leaderboard...</span>
+                </button>
+            </div>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="wardLeaderboard">Ward Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="ward-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="wardName">Ward Name</th>
+                                <th data-i18n="corporation">Corporation</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="constituencyLeaderboard">Constituency Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="constituency-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="leaderboard-section">
+                <h2 data-i18n="mlaLeaderboard">MLA Leaderboard</h2>
+                <div class="leaderboard-table-wrap">
+                    <table id="mla-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="rank">Rank</th>
+                                <th data-i18n="constituency">Constituency</th>
+                                <th data-i18n="mlaContact">MLA Contact</th>
+                                <th data-i18n="issues">Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="app-footer app-footer-inline">
+                <small>© Zen Citizen · <a href="../../how-to.html" data-i18n="howToLink">How to Use</a> · <a href="../../privacy.html" data-i18n="privacyLink">Privacy Policy</a></small>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        const html = document.documentElement;
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? 'dark' : 'light');
+            html.setAttribute('data-theme', initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (theme === 'dark') {
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
+            } else {
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
+            }
+        }
+
+        initTheme();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+                initLanguageSwitcher();
+            });
+
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeToggle(next);
+            });
+        });
+    </script>
+    <script type="module" src="../../assets/js/leaderboard.js"></script>
+</body>
+
+</html>
