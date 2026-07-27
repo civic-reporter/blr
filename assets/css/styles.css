@@ -1403,6 +1403,15 @@ body.app-page {
     line-height: 1;
 }
 
+.home-city-thumb {
+    width: 72px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--x-border);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
 .home-city-name {
     margin: 0;
     font-size: 1.35rem;
