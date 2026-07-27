@@ -4,6 +4,10 @@
     "cityNameLocal": "ಬೆಂಗಳೂರು",
     "tagline": "Bengaluru's fastest civic reporting platform",
     "taglineLocal": "ಬೆಂಗಳೂರಿನ ವೇಗದ ನಾಗರಿಕ ವರದಿ ವೇದಿಕೆ",
+    "features": {
+        "showHeatmap": false,
+        "showLeaderboard": false
+    },
     "boundaries": {
         "bbox": {
             "south": 12.82,
