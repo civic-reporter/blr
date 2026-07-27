@@ -3,6 +3,7 @@ import { pointInRing, isValidNumber } from './utils.js';
 import { showStatus, updateSubmitButtonState, ensureLocationVisible, showImageConfirm } from './ui.js';
 import { markManualGps } from './gps.js';
 import { validateLocationForCoords } from './validation.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let mapInstance, markerInstance;
 let mapInitialized = false;
@@ -39,26 +40,34 @@ export function initMap() {
         return;
     }
 
-    console.log('📍 Creating Leaflet map instance immediately');
-    window.map = L.map("map").setView([12.9716, 77.5946], 12);
-    mapInstance = window.map;
-
-    // Load Google Maps API in background when config is ready
     getConfig().then(config => {
         CONFIG = config;
+        const defaults = config.MAP_DEFAULTS || { lat: 12.9716, lon: 77.5946, zoom: 12 };
+        window.map = L.map("map").setView([defaults.lat, defaults.lon], defaults.zoom);
+        mapInstance = window.map;
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors"
+        }).addTo(window.map);
+
+        setupSearch();
+        window.map.on("click", handleMapClick);
         loadGoogleMapsAPI(CONFIG.GOOGLE_MAPS_API_KEY);
-    }).catch(err => console.warn('Config load failed:', err));
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors"
-    }).addTo(window.map);
-
-    setupSearch();
-    window.map.on("click", handleMapClick);
-    mapInitialized = true;
-
-    window.placeMarker = placeMarker;
-    console.log("🗺️ Map + search ready - placeMarker GLOBAL ✅");
+        window.placeMarker = placeMarker;
+        mapInitialized = true;
+        console.log("🗺️ Map + search ready - placeMarker GLOBAL ✅");
+    }).catch(err => {
+        console.warn('Config load failed, using Bengaluru defaults:', err);
+        window.map = L.map("map").setView([12.9716, 77.5946], 12);
+        mapInstance = window.map;
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors"
+        }).addTo(window.map);
+        setupSearch();
+        window.map.on("click", handleMapClick);
+        window.placeMarker = placeMarker;
+        mapInitialized = true;
+    });
 }
 
 function setupSearch() {
@@ -72,7 +81,7 @@ function setupSearch() {
     const searchInput = document.createElement('input');
     searchInput.id = 'gbaSearch';
     searchInput.type = 'text';
-    searchInput.placeholder = 'Search for regions under Greater Bengaluru Authority';
+    searchInput.placeholder = t('mapSearchPlaceholder', getCurrentLanguage()) || 'Search within city limits';
     searchInput.style.cssText = 'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;';
 
     wrapper.appendChild(searchInput);

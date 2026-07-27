@@ -16,9 +16,16 @@ function startConfigLoad() {
             const boundaries = cityConfig.getBoundaryFiles();
             const basePath = cityConfig.getBasePath();
 
+            const localization = cityConfig.getLocalization();
+            window.__cityLanguages = localization.availableLanguages || ['en'];
+            window.__cityDefaultLang = localization.defaultLanguage || 'en';
+            window.__cityStrings = localization.strings || {};
+            window.__cityId = cityConfig.getCityId();
+            window.__cityHomePath = config.pages?.home || 'index.html';
+
             CONFIG = {
                 API_GATEWAY_URL: apis.civicApi,
-                TRAFFIC_API_URL: apis.trafficApi,
+                TRAFFIC_API_URL: apis.trafficApi || null,
                 GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
                 HEATMAP_API_URL: apis.heatmapApi || null,
                 HEATMAP_DATA_URL: apis.heatmapApi
@@ -30,9 +37,11 @@ function startConfigLoad() {
                 CONST_KML_URL: basePath + boundaries.constKml,
                 WARD_KML_URL: basePath + boundaries.wardKml,
                 OLD_WARD_KML_URL: boundaries.oldWardKml ? basePath + boundaries.oldWardKml : null,
-                TRAFFIC_KML_URL: basePath + boundaries.trafficKml,
+                TRAFFIC_KML_URL: boundaries.trafficKml ? basePath + boundaries.trafficKml : null,
+                MAP_DEFAULTS: cityConfig.getMapDefaults(),
 
-                GBA_BBOX: cityConfig.getBBox()
+                GBA_BBOX: cityConfig.getBBox(),
+                WHATSAPP: cityConfig.getWhatsApp()
             };
 
             MLA_HANDLES = config.socialMedia.mlaHandles;

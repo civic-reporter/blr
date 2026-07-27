@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nāgarika Dhvani - Civic</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../assets/css/leaflet.css" />
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+
+  <meta name="theme-color" content="#5b9bd5">
+
+  <script src="../../assets/js/piexif.min.js"></script>
+  <script src="../../assets/js/full.umd.min.js"></script>
+  <script src="../../assets/js/leaflet.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.js"></script>
+</head>
+
+<body class="app-page civic-page">
+  <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+  <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+  <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+  <div class="home-grid-pattern" aria-hidden="true"></div>
+
+  <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" title="Toggle light/dark mode">
+    <i class="fas fa-sun"></i>
+    <i class="fas fa-moon is-hidden"></i>
+  </button>
+
+  <header class="app-header civic-header">
+    <a href="../../kochi/index.html" class="home-brand nav-home" data-i18n-title="backToHome">
+      <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+      <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+    </a>
+
+    <span class="hero-pill app-pill civic-pill" data-i18n="civicIssues">Civic Issues</span>
+
+    <nav class="app-header-nav civic-header-nav" aria-label="Page navigation">
+      <a href="heatmap.html" class="app-nav-link civic-nav-link" data-i18n-title="heatmap">
+        <i class="fas fa-chart-area"></i>
+        <span id="switchLabelHeatmap" data-i18n="heatmap">Heatmap</span>
+      </a>
+      <a href="leaderboard.html" class="app-nav-link civic-nav-link" data-i18n-title="leaderboard">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="leaderboard">Leaderboard</span>
+      </a>
+    </nav>
+  </header>
+
+  <main class="app-main civic-main">
+    <div class="container app-shell civic-shell">
+      <section class="app-hero civic-hero">
+        <h1 class="app-hero-title civic-hero-title" data-i18n="civicReporterTitle">Nāgarika Dhvani - Civic</h1>
+        <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Upload a photo, confirm location, and we identify ward, corporation, and constituency before opening WhatsApp to the grievance desk.</p>
+      </section>
+
+      <section class="civic-workflow" aria-label="Report workflow">
+        <nav class="civic-stepper" aria-label="Report progress">
+          <button type="button" class="civic-stepper-item" data-step="photo">
+            <span class="civic-stepper-num">1</span>
+            <span class="civic-stepper-label" data-i18n="stepPhoto">Photo</span>
+          </button>
+          <span class="civic-stepper-line" aria-hidden="true"></span>
+          <button type="button" class="civic-stepper-item" data-step="location">
+            <span class="civic-stepper-num">2</span>
+            <span class="civic-stepper-label" data-i18n="stepLocation">Location</span>
+          </button>
+          <span class="civic-stepper-line" aria-hidden="true"></span>
+          <button type="button" class="civic-stepper-item" data-step="details">
+            <span class="civic-stepper-num">3</span>
+            <span class="civic-stepper-label" data-i18n="stepDetails">Details</span>
+          </button>
+        </nav>
+
+        <section class="civic-step" data-step="photo" aria-label="Step 1: Photo">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepPhotoTitle">Add a photo of the issue</h2>
+            <p class="civic-step-sub" data-i18n="stepPhotoSub">A clear, close photo helps the ward officer act faster.
+            </p>
+          </header>
+
+          <div id="uploadOptions" class="upload-options civic-upload-card">
+            <div class="civic-upload-visual" aria-hidden="true">
+              <span class="civic-upload-icon"><i class="fas fa-camera"></i></span>
+              <span class="civic-upload-icon"><i class="fas fa-map-marker-alt"></i></span>
+              <span class="civic-upload-icon"><i class="fab fa-whatsapp"></i></span>
+            </div>
+            <p class="civic-upload-text" data-i18n="uploadInstructions">Choose a photo from your gallery to keep GPS
+              tags, or use the camera if you are on site. If location is missing, tap the map to set it. Then confirm
+              the photo, pick the issue type, describe it, and send via WhatsApp.</p>
+            <p class="civic-drag-hint" data-i18n="dragDropHint"><i class="fas fa-cloud-arrow-up"></i> Or drag and drop a
+              photo here</p>
+            <div class="button-group civic-button-group">
+              <button id="uploadBtn" type="button" class="upload-btn civic-upload-btn civic-upload-btn-secondary">
+                <i class="fas fa-image"></i>
+                <span data-i18n="choosePhoto">Choose photo</span>
+              </button>
+              <button id="cameraBtn" type="button" class="upload-btn camera-btn civic-upload-btn">
+                <i class="fas fa-camera"></i>
+                <span data-i18n="mobileCamera">Take photo</span>
+              </button>
+            </div>
+            <input type="file" id="imageInput" class="is-hidden" />
+            <input type="file" id="cameraInput" capture="environment" class="is-hidden" />
+          </div>
+
+          <div class="civic-media-panel">
+            <img id="preview" class="civic-preview is-hidden" alt="Issue photo preview" />
+            <div id="blurStatus" class="blur-status is-hidden" aria-live="polite"></div>
+
+            <div id="imageConfirm" class="image-confirm civic-confirm-card is-hidden">
+              <p data-i18n="isPhotoCorrect">Is this photo correct?</p>
+              <button id="changeImageBtn" class="upload-btn civic-change-btn">
+                <i class="fas fa-rotate-left"></i>
+                <span data-i18n="chooseAnotherPhoto">Choose another photo</span>
+              </button>
+              <label class="confirm-check">
+                <input type="checkbox" id="confirmImageCheck" />
+                <span data-i18n="confirmPhotoText">I confirm this photo clearly shows the issue.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-primary" data-step-next disabled>
+              <span data-i18n="stepNextLocation">Next: Location</span>
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </section>
+
+        <section class="civic-step is-hidden" data-step="location" aria-label="Step 2: Location">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepLocationTitle">Confirm where this is</h2>
+            <p class="civic-step-sub" data-i18n="stepLocationSub">We route the complaint using this pin, so it needs to
+              match the spot in the photo.</p>
+          </header>
+
+          <p class="civic-gps-privacy-note" data-i18n="mobileGpsStrippedNote">
+            Mobile operating systems remove GPS data from photos for privacy before your browser
+            receives them. Paste coordinates from your gallery app, use your current location, or
+            drop a pin on the map.
+          </p>
+
+          <div id="locationStatus" class="civic-loc-status" aria-live="polite"></div>
+
+          <div class="civic-media-panel">
+            <div id="dragMarkerHint" class="map-message civic-map-hint is-hidden" data-i18n="dragMarkerInstruction">
+              GPS not detected. Click map or drag marker to set the location (within GBA area only).
+            </div>
+
+            <div id="map" class="civic-map"></div>
+          </div>
+
+          <div id="locationInfo" class="civic-form-panel is-hidden">
+            <div class="info-box civic-info-box" id="infoBox">
+              <div class="civic-location-row">
+                <strong data-i18n="locationLabel">Location:</strong>
+                <span id="gpsCoords"></span>
+              </div>
+              <div id="mapRestrictionMsg" class="map-message civic-warning is-hidden" data-i18n="mapRestrictionMsg">
+                Selected location is outside GBA limits. Please choose a point within GBA.
+              </div>
+
+              <div id="locationConfirm" class="image-confirm civic-confirm-card is-hidden">
+                <label class="confirm-check">
+                  <input type="checkbox" id="confirmLocationCheck" />
+                  <span data-i18n="confirmLocationText">I confirm this map pin matches where the photo was taken.</span>
+                </label>
+              </div>
+
+              <div id="reportPreview" class="civic-report-preview is-hidden" aria-live="polite">
+                <p class="civic-report-preview-title" data-i18n="reportPreviewTitle">Your report will be routed to:</p>
+                <dl class="civic-report-preview-list">
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewWardLabel">GBA ward</dt>
+                    <dd id="previewWard">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewOldWardLabel">BBMP ward (pre-GBA)</dt>
+                    <dd id="previewOldWard">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewCorpLabel">Corporation</dt>
+                    <dd id="previewCorp">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewConstituencyLabel">Constituency</dt>
+                    <dd id="previewConstituency">—</dd>
+                  </div>
+                  <div class="civic-preview-row">
+                    <dt data-i18n="previewMlaLabel">MLA</dt>
+                    <dd id="previewMla">—</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-ghost" data-step-back>
+              <i class="fas fa-arrow-left" aria-hidden="true"></i>
+              <span data-i18n="stepBack">Back</span>
+            </button>
+            <button type="button" class="civic-step-btn civic-step-btn-primary" data-step-next disabled>
+              <span data-i18n="stepNextDetails">Next: Details</span>
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </section>
+
+        <section class="civic-step is-hidden" data-step="details" aria-label="Step 3: Details">
+          <header class="civic-step-head">
+            <h2 class="civic-step-title" data-i18n="stepDetailsTitle">Describe the issue</h2>
+            <p class="civic-step-sub" data-i18n="stepDetailsSub">Then send it to the grievance desk on WhatsApp.</p>
+          </header>
+
+          <div class="info-box civic-info-box">
+            <div class="issue-row civic-issue-row">
+              <label class="civic-field">
+                <span class="civic-field-label" data-i18n="issueCategory">Issue Category</span>
+                <select id="issueType" required
+                  data-i18n-options="selectCivicIssue,pothole,footpath,drainageIssue,streetlight,garbage,manhole,roadRepair,other">
+                  <option value="" data-i18n="selectCivicIssue">Select civic issue...</option>
+                  <option value="Pothole" data-i18n="pothole">Pothole</option>
+                  <option value="Footpath" data-i18n="footpath">Footpath</option>
+                  <option value="Drainage" data-i18n="drainageIssue">Drainage issue</option>
+                  <option value="Streetlight" data-i18n="streetlight">Streetlight</option>
+                  <option value="Garbage" data-i18n="garbage">Garbage</option>
+                  <option value="Manhole" data-i18n="manhole">Manhole</option>
+                  <option value="Road" data-i18n="roadRepair">Road repair</option>
+                  <option value="Other" data-i18n="other">Other</option>
+                </select>
+              </label>
+
+              <label class="civic-field issue-desc-wrap">
+                <span class="civic-field-label">
+                  <span data-i18n="issueDetailsLabel">Describe the issue</span>
+                  <span class="civic-required-mark" aria-hidden="true">*</span>
+                </span>
+                <textarea id="issueDesc" class="civic-issue-desc" required rows="3"
+                  data-i18n-placeholder="issueDetailsPlaceholder" placeholder="Describe the issue"
+                  aria-describedby="issueDescHint issueDescCount issueDescTotalCount"></textarea>
+                <small id="issueDescHint" class="civic-field-hint" data-i18n="issueDetailsHint">
+                  Required. Description length is limited so the full WhatsApp message stays within WhatsApp limits.
+                </small>
+                <small id="issueDescCount" class="char-count">0 / —</small>
+                <small id="issueDescTotalCount" class="char-count char-count-total">WhatsApp message: 0 / 65536</small>
+              </label>
+            </div>
+          </div>
+
+          <div id="emailOption" class="email-option civic-email-card is-hidden" hidden>
+            <label class="email-check">
+              <input type="checkbox" id="emailAuthoritiesCheck" />
+              <span data-i18n="emailAuthorities">Would you like to email the authorities as well?</span>
+            </label>
+
+            <div id="emailDetails" class="email-details is-hidden">
+              <div id="emailRecipients" class="email-recipients">
+                <small data-i18n="emailWillBeSentTo">Notifications will be sent to the following addresses:</small>
+                <ul id="emailList"></ul>
+              </div>
+
+              <div class="user-email-section">
+                <label class="email-check-cc">
+                  <input type="checkbox" id="ccMeCheck" />
+                  <span data-i18n="ccMe">Would you like to receive a copy of this email?</span>
+                </label>
+                <input type="email" id="userEmailInput" class="email-input is-hidden"
+                  placeholder="your.email@example.com" data-i18n-placeholder="yourEmail" maxlength="100" />
+                <small id="emailValidationMsg" class="validation-msg is-hidden"></small>
+              </div>
+            </div>
+          </div>
+
+          <div id="whatsappOption" class="email-option civic-email-card civic-whatsapp-card is-hidden">
+            <p class="whatsapp-target">
+              <small data-i18n="whatsappWillBeSentTo">Report will be sent via WhatsApp to:</small>
+              <strong id="whatsappNumberDisplay">GBA Grievance Desk Report (9480685700)</strong>
+            </p>
+            <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
+              complaint text ready — attach the downloaded photo and tap Send.</p>
+          </div>
+
+          <div class="civic-step-nav">
+            <button type="button" class="civic-step-btn civic-step-btn-ghost" data-step-back>
+              <i class="fas fa-arrow-left" aria-hidden="true"></i>
+              <span data-i18n="stepBack">Back</span>
+            </button>
+            <button id="submitBtn" class="civic-submit-btn" disabled data-i18n="postIssue">
+              Send via WhatsApp
+            </button>
+          </div>
+        </section>
+
+        <div id="status"></div>
+      </section>
+
+      <footer class="app-footer app-footer-inline civic-footer">
+        <small>© Zen Citizen · <a id="howToLink" href="../../how-to.html" data-i18n="howToLink">How to Use</a> · <a
+            id="privacyLink" href="../../privacy.html" data-i18n="privacyLink">Privacy Policy</a></small>
+      </footer>
+    </div>
+  </main>
+
+  <div id="successScreen" class="success-container is-hidden">
+    <div class="success-card civic-success-card">
+      <div class="success-icon-large">🏛️</div>
+      <h2 class="success-title" data-i18n="issuePostedSuccess">WhatsApp opened!</h2>
+      <p class="success-message" id="successMessage">WhatsApp opened with your complaint ready — attach the photo and tap Send.</p>
+
+      <div id="whatsappSuccessBox" class="success-link-box is-hidden"></div>
+      <div id="successLocationInfo" class="success-location-info is-hidden"></div>
+
+      <div class="success-actions">
+        <button id="submitAnotherBtn" class="success-btn primary civic-success-btn">
+          <i class="fas fa-camera"></i>
+          <span data-i18n="submitAnotherIssue">Submit Another Issue</span>
+        </button>
+      </div>
+
+      <div class="success-footer">
+        <i class="fas fa-check-circle"></i>
+        <span data-i18n="successThankYou">Thank you for making Bengaluru better!</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const html = document.documentElement;
+
+    function initTheme() {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = saved || (prefersDark ? "dark" : "light");
+      html.setAttribute("data-theme", initial);
+      updateThemeToggle(initial);
+    }
+
+    function updateThemeToggle(theme) {
+      const sun = document.querySelector('#themeToggle .fa-sun');
+      const moon = document.querySelector('#themeToggle .fa-moon');
+      if (theme === 'dark') {
+        sun.classList.add('is-hidden');
+        moon.classList.remove('is-hidden');
+      } else {
+        sun.classList.remove('is-hidden');
+        moon.classList.add('is-hidden');
+      }
+    }
+
+    initTheme();
+
+    window.addEventListener("DOMContentLoaded", () => {
+      import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
+        initLanguageSwitcher();
+      });
+
+      const btn = document.getElementById("themeToggle");
+      if (!btn) return;
+
+      btn.addEventListener("click", () => {
+        const current = html.getAttribute("data-theme") || "light";
+        const next = current === "light" ? "dark" : "light";
+        html.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+        updateThemeToggle(next);
+      });
+    });
+  </script>
+
+  <script type="module" src="../../assets/web/app.js"></script>
+</body>
+
+</html>

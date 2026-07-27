@@ -4,10 +4,23 @@ class CityConfigManager {
         this.cityId = null;
     }
 
+    _detectCityIdFromPath() {
+        const path = window.location.pathname.toLowerCase();
+        const rootMatch = path.match(/\/(kochi|tvm)(?:\/|$)/);
+        if (rootMatch) return rootMatch[1];
+        const citiesMatch = path.match(/\/cities\/(blr|kochi|tvm)(?:\/|$)/);
+        if (citiesMatch) return citiesMatch[1];
+        return null;
+    }
+
     async loadConfig(cityId = null) {
         try {
             const basePath = this._getBasePath();
             console.log('Base path:', basePath);
+
+            if (!cityId) {
+                cityId = this._detectCityIdFromPath();
+            }
 
             if (!cityId) {
                 const activeUrl = `${basePath}config/active-city.json`;
@@ -45,6 +58,10 @@ class CityConfigManager {
         return this.config;
     }
 
+    getCityId() {
+        return this.cityId;
+    }
+
     getBBox() {
         return this.getConfig().boundaries.bbox;
     }
@@ -77,12 +94,27 @@ class CityConfigManager {
     }
 
     getLocalization() {
-        return this.getConfig().localization;
+        return this.getConfig().localization || { defaultLanguage: 'en', availableLanguages: ['en'] };
     }
 
     getCityName(useLocal = false) {
         const config = this.getConfig();
         return useLocal && config.cityNameLocal ? config.cityNameLocal : config.cityName;
+    }
+
+    getMapDefaults() {
+        const config = this.getConfig();
+        if (config.mapDefaults) return config.mapDefaults;
+        const bbox = this.getBBox();
+        return {
+            lat: (bbox.south + bbox.north) / 2,
+            lon: (bbox.west + bbox.east) / 2,
+            zoom: 12
+        };
+    }
+
+    getWhatsApp() {
+        return this.getConfig().whatsapp || null;
     }
 
     getBasePath() {
@@ -91,21 +123,19 @@ class CityConfigManager {
 
     _getBasePath() {
         const currentPath = window.location.pathname;
-        const currentFile = currentPath.split('/').pop();
         const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
 
-        let relativePath = '';
         if (currentDir.includes('/cities/')) {
             const afterCities = currentDir.substring(currentDir.lastIndexOf('/cities/') + 1);
             const segments = afterCities.split('/').filter(s => s.length > 0);
-            relativePath = '../'.repeat(segments.length);
+            return '../'.repeat(segments.length);
         }
 
-        console.log('Current path:', currentPath);
-        console.log('Current dir:', currentDir);
-        console.log('Calculated base path:', relativePath);
+        if (this._detectCityIdFromPath() && !currentDir.includes('/cities/')) {
+            return '../';
+        }
 
-        return relativePath;
+        return '';
     }
 }
 
