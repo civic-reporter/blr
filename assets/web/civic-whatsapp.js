@@ -78,6 +78,8 @@ function isMobileDevice() {
 export const WHATSAPP_MESSAGE_MAX = 65536;
 
 function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
+    const lang = getCurrentLanguage();
+    const wardLabel = t('previewWardLabel', lang) || 'Ward';
     const lines = [`Issue: ${reportData.issueType || 'Not specified'}`];
 
     if (includeDetailsLine || reportData.description) {
@@ -90,11 +92,11 @@ function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
     }
 
     if (reportData.wardNo || reportData.wardName) {
-        lines.push(`GBA ward: ${[reportData.wardNo, reportData.wardName].filter(Boolean).join(' - ')}`);
+        lines.push(`${wardLabel}: ${[reportData.wardNo, reportData.wardName].filter(Boolean).join(' - ')}`);
     }
 
     if (reportData.oldWardNo || reportData.oldWardName) {
-        lines.push(`BBMP ward: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
+        lines.push(`Legacy ward: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
     }
 
     if (reportData.corpName) {
@@ -103,6 +105,10 @@ function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
 
     if (reportData.constituency) {
         lines.push(`Constituency: ${reportData.constituency}`);
+    }
+
+    if (reportData.mlaName) {
+        lines.push(`MLA: ${reportData.mlaName}`);
     }
 
     return lines.join('\n');
@@ -156,8 +162,10 @@ export async function buildReportDataPreview(description = '') {
         try {
             const { findConstituencyForCurrentGPS } = await import('./civic-submit.js');
             const { findCorpForCurrentGPS, findWardForCurrentGPS } = await import('./validation.js');
+            const { getCityFeatures } = await import('./config.js');
+            const features = await getCityFeatures();
             const [
-                { acName },
+                { acName, mlaName },
                 { corpName },
                 { wardNo, wardName, oldWardNo, oldWardName }
             ] = await Promise.all([
@@ -168,11 +176,14 @@ export async function buildReportDataPreview(description = '') {
             Object.assign(reportData, {
                 wardNo,
                 wardName,
-                oldWardNo,
-                oldWardName,
                 corpName,
-                constituency: acName
+                constituency: acName,
+                mlaName
             });
+            if (features.showOldWard !== false) {
+                reportData.oldWardNo = oldWardNo;
+                reportData.oldWardName = oldWardName;
+            }
         } catch (error) {
             console.warn('Could not resolve ward preview for WhatsApp limit:', error);
         }

@@ -8,7 +8,7 @@ let constPolygons = null;
 let wardPolygons = null;
 let oldWardPolygons = null;
 
-const EMPTY_WARD = { wardNo: "", wardName: "", oldWardNo: "", oldWardName: "" };
+const EMPTY_WARD = { wardNo: "", wardName: "", oldWardNo: "", oldWardName: "", acName: "", mlaName: "" };
 
 function normalizeWardNo(raw) {
     if (!raw) return "";
@@ -28,10 +28,15 @@ function ringFromPlacemark(pm) {
 function findWardInPolygons(polys, lon, lat) {
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            return { wardNo: p.wardNo, wardName: p.wardName };
+            return {
+                wardNo: p.wardNo,
+                wardName: p.wardName,
+                acName: p.acName || "",
+                mlaName: p.mlaName || ""
+            };
         }
     }
-    return { wardNo: "", wardName: "" };
+    return { wardNo: "", wardName: "", acName: "", mlaName: "" };
 }
 
 export function isInGBA(lat, lon) {
@@ -108,15 +113,18 @@ export async function loadWardPolygons() {
         const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
         wardPolygons = placemarks.map(pm => {
             const simpleData = pm.getElementsByTagName("SimpleData");
-            let wardNo = "", wardName = "";
+            let wardNo = "", wardName = "", acName = "", mlaName = "";
             for (const sd of simpleData) {
                 const nameAttr = sd.getAttribute("name");
-                if (nameAttr === "ward_id") wardNo = normalizeWardNo(sd.textContent);
-                else if (nameAttr === "ward_name") wardName = sd.textContent.trim();
+                const value = (sd.textContent || "").trim();
+                if (nameAttr === "ward_id") wardNo = normalizeWardNo(value);
+                else if (nameAttr === "ward_name") wardName = value;
+                else if (nameAttr === "ac" || nameAttr === "AC_NAME") acName = value;
+                else if (nameAttr === "mla_name") mlaName = value;
             }
             const ring = ringFromPlacemark(pm);
             if (!ring) return null;
-            return { wardNo, wardName, ring };
+            return { wardNo, wardName, acName, mlaName, ring };
         }).filter(Boolean);
         return wardPolygons;
     } catch (e) {
@@ -168,6 +176,8 @@ export async function findWardForCurrentGPS() {
         wardNo: newWard.wardNo,
         wardName: newWard.wardName,
         oldWardNo: oldWard.wardNo,
-        oldWardName: oldWard.wardName
+        oldWardName: oldWard.wardName,
+        acName: newWard.acName,
+        mlaName: newWard.mlaName
     };
 }

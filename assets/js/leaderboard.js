@@ -1,4 +1,4 @@
-import { getConfig, getMlaHandles } from '../web/config.js';
+import { getConfig, getMlaHandles, getMlaNames, getCityFeatures } from '../web/config.js';
 import { t, getCurrentLanguage } from './i18n.js';
 import { fetchHeatMapData } from '../web/heatmap.js';
 import { showApiDataLastUpdated, showStaticDataLastUpdated } from '../web/heatmap-aggregate.js';
@@ -87,7 +87,7 @@ function renderConstituencyLeaderboard(data) {
     });
 }
 
-function renderMlaLeaderboard(data, mlaHandles) {
+function renderMlaLeaderboard(data, mlaHandles, mlaNames, features) {
     const tbody = document.querySelector('#mla-table tbody');
     tbody.innerHTML = '';
 
@@ -96,22 +96,33 @@ function renderMlaLeaderboard(data, mlaHandles) {
         return;
     }
 
+    const useNames = features?.mlaDisplay === 'name';
+
     data.forEach((row, idx) => {
         const constituency = row.constituency || tr('unknown');
-        const handle = normalizeHandle(mlaHandles?.[constituency] || '');
-        const handleCell = handle
-            ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt" style="margin-right:4px;font-size:0.85em;"></i>${handle}</a>`
-            : '<span style="color:var(--x-text-secondary)">—</span>';
+        let contactCell = '<span style="color:var(--x-text-secondary)">—</span>';
 
-        const tr = document.createElement('tr');
-        if (idx < 3) tr.classList.add('top-rank');
-        tr.innerHTML = `
+        if (useNames) {
+            const name = mlaNames?.[constituency] || '';
+            contactCell = name
+                ? `<span>${name}</span>`
+                : '<span style="color:var(--x-text-secondary)">—</span>';
+        } else {
+            const handle = normalizeHandle(mlaHandles?.[constituency] || '');
+            contactCell = handle
+                ? `<a href="https://x.com/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt" style="margin-right:4px;font-size:0.85em;"></i>${handle}</a>`
+                : '<span style="color:var(--x-text-secondary)">—</span>';
+        }
+
+        const trEl = document.createElement('tr');
+        if (idx < 3) trEl.classList.add('top-rank');
+        trEl.innerHTML = `
             ${rankCell(idx)}
             <td>${constituency}</td>
-            <td>${handleCell}</td>
+            <td>${contactCell}</td>
             <td class="count-cell">${countBadge(row.count)}</td>
         `;
-        tbody.appendChild(tr);
+        tbody.appendChild(trEl);
     });
 }
 
@@ -119,13 +130,18 @@ async function fetchAndRenderLeaderboards() {
     setLoadingState(true);
 
     try {
-        const [config, mlaHandles] = await Promise.all([getConfig(), getMlaHandles()]);
+        const [config, mlaHandles, mlaNames, features] = await Promise.all([
+            getConfig(),
+            getMlaHandles(),
+            getMlaNames(),
+            getCityFeatures()
+        ]);
 
         if (config.HEATMAP_API_URL) {
             const data = await fetchHeatMapData({ type: 'civic' });
             renderWardLeaderboard(data.ward_leaderboard);
             renderConstituencyLeaderboard(data.constituency_leaderboard);
-            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles, mlaNames, features);
             showApiDataLastUpdated(data, 'dataLastUpdated', getCurrentLanguage());
             return;
         }
@@ -135,7 +151,7 @@ async function fetchAndRenderLeaderboards() {
             const data = await fetchStaticHeatMapData(config, { type: 'civic' });
             renderWardLeaderboard(data.ward_leaderboard);
             renderConstituencyLeaderboard(data.constituency_leaderboard);
-            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles);
+            renderMlaLeaderboard(data.mla_leaderboard, mlaHandles, mlaNames, features);
             if (data.updated_at) {
                 await showStaticDataLastUpdated(config, 'dataLastUpdated', getCurrentLanguage());
             }

@@ -1,8 +1,9 @@
-import { getConfig, getMlaHandles } from './config.js';
+import { getConfig, getMlaHandles, getMlaNames, getCityFeatures } from './config.js';
 import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
 
 let CONFIG = null;
 let MLA_HANDLES = null;
+let MLA_NAMES = null;
 import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
 import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
@@ -26,6 +27,12 @@ function lookupMlaHandle(acName) {
     return handleUser ? "@" + handleUser : "";
 }
 
+function lookupMlaName(acName, fallback = "") {
+    if (fallback) return fallback;
+    if (!acName || !MLA_NAMES) return "";
+    return MLA_NAMES[acName] || MLA_NAMES[AC_NAME_ALIASES[acName]] || "";
+}
+
 async function loadConstituencyPolygons() {
     if (constPolygons !== null) return constPolygons;
     try {
@@ -44,16 +51,28 @@ async function loadConstituencyPolygons() {
 }
 
 export async function findConstituencyForCurrentGPS() {
-    if (!window.currentGPS) return { acName: "", mlaHandle: "" };
+    if (!window.currentGPS) return { acName: "", mlaHandle: "", mlaName: "" };
     if (!MLA_HANDLES) MLA_HANDLES = await getMlaHandles();
+    if (!MLA_NAMES) MLA_NAMES = await getMlaNames();
+    const features = await getCityFeatures();
+
+    const { acName: wardAc, mlaName: wardMla } = await findWardForCurrentGPS();
+    if (wardAc) {
+        const mlaName = wardMla || lookupMlaName(wardAc);
+        const mlaHandle = features.mlaDisplay === "name" ? "" : lookupMlaHandle(wardAc);
+        return { acName: wardAc, mlaHandle, mlaName };
+    }
+
     const polys = await loadConstituencyPolygons();
     const lon = window.currentGPS.lon, lat = window.currentGPS.lat;
     for (const p of polys) {
         if (p.ring && p.ring.length >= 3 && pointInRing(lon, lat, p.ring)) {
-            return { acName: p.acName, mlaHandle: lookupMlaHandle(p.acName) };
+            const mlaName = lookupMlaName(p.acName);
+            const mlaHandle = features.mlaDisplay === "name" ? "" : lookupMlaHandle(p.acName);
+            return { acName: p.acName, mlaHandle, mlaName };
         }
     }
-    return { acName: "", mlaHandle: "" };
+    return { acName: "", mlaHandle: "", mlaName: "" };
 }
 
 export async function shareToGBA() {
@@ -66,7 +85,7 @@ export async function shareToGBA() {
     }
 
     if (!window.currentGPS || !isValidNumber(window.currentGPS.lat) || !isValidNumber(window.currentGPS.lon)) {
-        showStatus("❌ Location must be inside GBA boundary.", "error");
+        showStatus(`❌ ${t('locationOutsideGba', lang)}`, "error");
         return;
     }
     if (!window.currentImageFile) {
@@ -96,7 +115,7 @@ export async function shareToGBA() {
     };
 
     const [
-        { acName },
+        { acName, mlaName },
         { corpName },
         { wardNo, wardName, oldWardNo, oldWardName }
     ] = await Promise.all([
@@ -107,10 +126,14 @@ export async function shareToGBA() {
 
     reportDataPreview.wardNo = wardNo;
     reportDataPreview.wardName = wardName;
-    reportDataPreview.oldWardNo = oldWardNo;
-    reportDataPreview.oldWardName = oldWardName;
+    const features = await getCityFeatures();
+    if (features.showOldWard !== false) {
+        reportDataPreview.oldWardNo = oldWardNo;
+        reportDataPreview.oldWardName = oldWardName;
+    }
     reportDataPreview.corpName = corpName;
     reportDataPreview.constituency = acName;
+    reportDataPreview.mlaName = mlaName;
 
     const { validateWhatsAppMessageLength } = await import('./civic-whatsapp.js');
     const messageCheck = validateWhatsAppMessageLength(reportDataPreview);

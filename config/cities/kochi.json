@@ -4,6 +4,11 @@
     "cityNameLocal": "കൊച്ചി",
     "tagline": "Kochi's civic reporting platform",
     "taglineLocal": "കൊച്ചിയുടെ നാഗരിക വരദി വേദിക",
+    "features": {
+        "showOldWard": false,
+        "mlaDisplay": "name",
+        "showCorpSocialHandle": false
+    },
     "boundaries": {
         "bbox": {
             "south": 9.893,
@@ -28,7 +33,13 @@
     },
     "socialMedia": {
         "defaultHandle": "@KochiCorp",
-        "mlaHandles": {}
+        "mlaHandles": {},
+        "mlaNames": {
+            "Kochi": "Mohammad Shiyas",
+            "Thripunithura": "Deepak Joy",
+            "Ernakulam": "T. J. Vinod",
+            "Thrikkakara": "Uma Thomas"
+        }
     },
     "issueCategories": {
         "civic": [
@@ -50,12 +61,12 @@
         ],
         "strings": {
             "en": {
-                "homeTitle": "Nammude Swaram",
-                "homeSubtitle": "Namma Kochi, Nammude Swaram",
+                "homeTitle": "Nammude Dhvani",
+                "homeSubtitle": "Namma Kochi, Nammude Dhvani",
                 "builtForCitizens": "Built for Kochi citizens 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. Made with ❤️ for Kochi",
-                "civicReporterTitle": "🏛️ Nammude Swaram - Civic",
-                "civicReporterDesc": "Upload a photo, confirm location, and we identify ward and corporation before opening WhatsApp to the Kochi Corporation grievance desk.",
+                "civicReporterTitle": "🏛️ Nammude Dhvani - Civic",
+                "civicReporterDesc": "Upload a photo, confirm location, and we identify ward, Kochi Corporation, and constituency before opening WhatsApp to the grievance desk.",
                 "mapRestrictionMsg": "⚠️ Selected location is outside Kochi Corporation limits. Please choose a point within the city.",
                 "dragMarkerInstruction": "🔧 GPS not detected. Click map or drag marker to set location (within Kochi Corporation only).",
                 "locStatusTitleOutside": "Photo location is outside Kochi",
@@ -66,18 +77,20 @@
                 "successThankYou": "Thank you for making Kochi better!",
                 "whatsappTargetName": "Kochi Corporation Grievance Desk (9446411516)",
                 "previewWardLabel": "Ward",
-                "previewCorpLabel": "Corporation",
+                "previewCorpLabel": "Kochi Corporation",
+                "previewMlaLabel": "MLA",
                 "heatMapSubtitle": "Visualize civic issues across Kochi",
                 "leaderboardTitle": "🏆 Civic Issue Leaderboard - Kochi",
-                "mapSearchPlaceholder": "Search within Kochi Corporation"
+                "mapSearchPlaceholder": "Search within Kochi Corporation",
+                "mlaContact": "MLA"
             },
             "ml": {
-                "homeTitle": "നമ്മുടെ സ്വരം",
-                "homeSubtitle": "നമ്മുടെ കൊച്ചി, നമ്മുടെ സ്വരം",
+                "homeTitle": "നമ്മുടെ ധ്വനി",
+                "homeSubtitle": "നമ്മുടെ കൊച്ചി, നമ്മുടെ ധ്വനി",
                 "builtForCitizens": "കൊച്ചി നാഗരികർക്കായി 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. കൊച്ചിക്കായി ❤️യോടെ",
-                "civicReporterTitle": "🏛️ നമ്മുടെ സ്വരം - നാഗരിക",
-                "civicReporterDesc": "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കോർപ്പറേഷനും കണ്ടെത്തി കൊച്ചി കോർപ്പറേഷൻ WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
+                "civicReporterTitle": "🏛️ നമ്മുടെ ധ്വനി - നാഗരിക",
+                "civicReporterDesc": "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കൊച്ചി കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
                 "mapRestrictionMsg": "⚠️ തിരഞ്ഞെടുത്ത സ്ഥലം കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. നഗരത്തിനുള്ളിൽ ഒരു ബിന്ദു തിരഞ്ഞെടുക്കുക.",
                 "dragMarkerInstruction": "🔧 GPS കണ്ടെത്തിയില്ല. സ്ഥലം സജ്ജമാക്കാൻ മാപ്പിൽ ക്ലിക്ക് ചെയ്യുക (കൊച്ചി കോർപ്പറേഷൻ പരിധിക്കുള്ളിൽ മാത്രം).",
                 "locStatusTitleOutside": "ഫോട്ടോയുടെ സ്ഥലം കൊച്ചിക്ക് പുറത്താണ്",
@@ -88,10 +101,12 @@
                 "successThankYou": "കൊച്ചി മെച്ചപ്പെടുത്തിയതിന് നന്ദി!",
                 "whatsappTargetName": "കൊച്ചി കോർപ്പറേഷൻ ദൂരവിഭാഗം (9446411516)",
                 "previewWardLabel": "വാർഡ്",
-                "previewCorpLabel": "കോർപ്പറേഷൻ",
+                "previewCorpLabel": "കൊച്ചി കോർപ്പറേഷൻ",
+                "previewMlaLabel": "എം.എൽ.എ.",
                 "heatMapSubtitle": "കൊച്ചിയിലെ നാഗരിക പ്രശ്നങ്ങൾ ദർശിക്കുക",
                 "leaderboardTitle": "🏆 നാഗരിക പ്രശ്ന ലീഡർബോർഡ് - കൊച്ചി",
-                "mapSearchPlaceholder": "കൊച്ചി കോർപ്പറേഷനിൽ തിരയുക"
+                "mapSearchPlaceholder": "കൊച്ചി കോർപ്പറേഷനിൽ തിരയുക",
+                "mlaContact": "എം.എൽ.എ."
             }
         }
     },
