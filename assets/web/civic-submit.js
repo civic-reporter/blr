@@ -1,12 +1,12 @@
 import { getConfig, getMlaHandles, getMlaNames, getCityFeatures } from './config.js';
 import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
+import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
+import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let CONFIG = null;
 let MLA_HANDLES = null;
 let MLA_NAMES = null;
-import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
-import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
-import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let constPolygons = null;
 
@@ -213,7 +213,7 @@ export async function shareToGBA() {
             imageFile: savedImageFile,
             hintKey: result.hintKey,
             displayNumber,
-            onConfirmed: async (data) => {
+            onConfirmed: features.disableReportIngest ? null : async (data) => {
                 const { recordCivicReport } = await import('./report-ingest.js');
                 return recordCivicReport(data);
             }

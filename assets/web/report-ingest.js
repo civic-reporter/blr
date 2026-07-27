@@ -2,7 +2,7 @@
  * Optional civic report ingest hook for static heatmap pipeline.
  */
 
-import { getConfig } from './config.js';
+import { getConfig, getCityFeatures } from './config.js';
 import { normalizeSubmission } from './heatmap-aggregate.js';
 
 export function buildCivicSubmission(reportData) {
@@ -21,6 +21,11 @@ export function buildCivicSubmission(reportData) {
 }
 
 export async function recordCivicReport(reportData) {
+    const features = await getCityFeatures();
+    if (features.disableReportIngest) {
+        return { recorded: false, reason: 'disabled' };
+    }
+
     const submission = buildCivicSubmission(reportData);
     const config = await getConfig();
 
