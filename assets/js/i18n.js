@@ -35,7 +35,7 @@ export const translations = {
         cityBlrBrand: "Nāgarika Dhvani",
         cityKochiBrand: "Nammude Shabdam",
         cityTvmBrand: "Nammude Shabdam",
-        cityBlrDesc: "Potholes, drainage, streetlights — routed to BBMP via WhatsApp",
+        cityBlrDesc: "Potholes, drainage, streetlights — routed to GBA via WhatsApp",
         cityKochiDesc: "Civic issues in Kochi Corporation limits",
         cityTvmDesc: "Civic issues in Thiruvananthapuram Corporation limits",
         cityOpenPlatform: "Open platform",
@@ -318,7 +318,7 @@ export const translations = {
         cityBlrBrand: "ನಾಗರಿಕ ಧ್ವನಿ",
         cityKochiBrand: "ನಮ್ಮ ಶಬ್ದ",
         cityTvmBrand: "ನಮ್ಮ ಶಬ್ದ",
-        cityBlrDesc: "ಗುಂಡಿ, drainage, streetlights — BBMP ಗೆ WhatsApp ಮೂಲಕ",
+        cityBlrDesc: "ಗುಂಡಿ, drainage, streetlights — GBA ಗೆ WhatsApp ಮೂಲಕ",
         cityKochiDesc: "ಕೊಚ್ಚಿ ಕಾರ್ಪೊರೇಶನ್ ಪರಿಧಿಯಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳು",
         cityTvmDesc: "ತಿರುವನಂತಪುರ ಕಾರ್ಪೊರೇಶನ್ ಪರಿಧಿಯಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳು",
         cityOpenPlatform: "ವೇದಿಕೆ ತೆರೆಯಿರಿ",
@@ -587,7 +587,7 @@ export const translations = {
         cityBlrBrand: "നാഗരിക ധ്വനി",
         cityKochiBrand: "നമ്മുടെ ശബ്ദം",
         cityTvmBrand: "നമ്മുടെ ശബ്ദം",
-        cityBlrDesc: "കുഴി, drainage, തെരുവ് വിളക്കുകൾ — BBMP-യിലേക്ക് WhatsApp വഴി",
+        cityBlrDesc: "കുഴി, drainage, തെരുവ് വിളക്കുകൾ — GBA-യിലേക്ക് WhatsApp വഴി",
         cityKochiDesc: "കൊച്ചി കോർപ്പറേഷൻ പരിധിയിലെ നാഗരിക പ്രശ്നങ്ങൾ",
         cityTvmDesc: "തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിയിലെ നാഗരിക പ്രശ്നങ്ങൾ",
         cityOpenPlatform: "പ്ലാറ്റ്‌ഫോം തുറക്കുക",
@@ -787,7 +787,7 @@ export function resolveLanguageForCity() {
 }
 
 export function getAvailableLanguages() {
-    if (isHubPage()) return ['en', 'kn', 'ml'];
+    if (isHubPage()) return ['en', 'kn'];
     if (window.__cityLanguages) return window.__cityLanguages;
     const cityId = resolveCityId();
     if (cityId && KERALA_CITIES.has(cityId)) return ['en', 'ml'];

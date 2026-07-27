@@ -21,8 +21,7 @@ function initHubLanguagePicker() {
 
         [
             { code: 'en', label: 'EN' },
-            { code: 'kn', label: 'ಕನ್ನಡ' },
-            { code: 'ml', label: 'മലയാളം' }
+            { code: 'kn', label: 'ಕನ್ನಡ' }
         ].forEach(({ code, label }) => {
             const btn = document.createElement('button');
             btn.type = 'button';
