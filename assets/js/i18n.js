@@ -756,6 +756,11 @@ function readStoredLanguage() {
     if (cityId) {
         const scoped = localStorage.getItem(`language:${cityId}`);
         if (scoped) return scoped;
+        if (KERALA_CITIES.has(cityId)) {
+            const hubLang = localStorage.getItem('language:hub');
+            if (hubLang === 'en' || hubLang === 'ml') return hubLang;
+            if (hubLang === 'kn') return 'en';
+        }
         if (cityId === 'blr') {
             return localStorage.getItem('language');
         }
@@ -770,11 +775,7 @@ export function getCurrentLanguage() {
     let defaultLang = window.__cityDefaultLang;
     if (!defaultLang) {
         if (isHubPage()) defaultLang = 'en';
-        else {
-            const cityId = resolveCityId();
-            if (cityId && KERALA_CITIES.has(cityId)) defaultLang = 'ml';
-            else defaultLang = 'en';
-        }
+        else defaultLang = 'en';
     }
     const stored = readStoredLanguage();
     if (stored && available.includes(stored)) return stored;
@@ -804,9 +805,9 @@ export function getAlternateLanguage(currentLang = null) {
 export function getLanguageToggleLabel(currentLang = null) {
     const lang = currentLang || getCurrentLanguage();
     const next = getAlternateLanguage(lang);
-    if (next === 'kn') return 'ಕನ್ನಡ';
-    if (next === 'ml') return 'മലയാളം';
-    return 'English';
+    if (next === 'kn') return 'KN';
+    if (next === 'ml') return 'ML';
+    return 'EN';
 }
 
 // Set language

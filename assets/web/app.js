@@ -1,5 +1,5 @@
 console.log('📦 app.js loading...');
-import { getConfig } from './config.js';
+import { getConfig, getCityFeatures } from './config.js';
 import { cacheUIElements, showUploadOptions, showStatus, updateSubmitButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
@@ -253,10 +253,27 @@ function initApp() {
     console.log('✅ Civic app initialization complete');
 }
 
+async function applyCityFeatureFlags() {
+    const features = await getCityFeatures();
+    if (features.showHeatmap === false) {
+        document.querySelectorAll('a[href*="heatmap.html"]').forEach(el => {
+            el.classList.add('is-hidden');
+            el.setAttribute('aria-hidden', 'true');
+        });
+    }
+    if (features.showLeaderboard === false) {
+        document.querySelectorAll('a[href*="leaderboard.html"]').forEach(el => {
+            el.classList.add('is-hidden');
+            el.setAttribute('aria-hidden', 'true');
+        });
+    }
+}
+
 async function bootstrap() {
     await getConfig();
     const { initLanguageSwitcher } = await import('../js/language-switcher.js');
     await initLanguageSwitcher();
+    await applyCityFeatureFlags();
     initApp();
 }
 

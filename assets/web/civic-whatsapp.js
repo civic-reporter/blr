@@ -36,6 +36,7 @@ export async function getWhatsAppTargetLabel() {
     const number = await getWhatsAppDisplayNumber();
     const lang = getCurrentLanguage();
     const label = t('whatsappTargetName', lang) || config.displayLabel || 'GBA Grievance Desk Report';
+    if (number && label.includes(number)) return label;
     return number ? `${label} (${number})` : label;
 }
 
@@ -282,6 +283,27 @@ export function setupWhatsAppSuccessBox({ reportData, imageFile, hintKey, displa
     const lang = getCurrentLanguage();
     const box = document.getElementById('whatsappSuccessBox');
     if (!box) return;
+
+    if (!onConfirmed) {
+        box.classList.remove('is-hidden');
+        box.innerHTML = `
+        <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(hintKey, displayNumber)}</p>
+        <div class="civic-whatsapp-actions">
+            <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
+                <i class="fab fa-whatsapp"></i>
+                <span>${t('sendWhatsApp', lang)}</span>
+            </button>
+        </div>
+    `;
+        document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
+            const retry = await shareViaWhatsApp(reportData, imageFile);
+            const hintEl = document.getElementById('whatsappSuccessHint');
+            if (hintEl && retry.hintKey) {
+                hintEl.textContent = formatWhatsAppHint(retry.hintKey, retry.displayNumber || displayNumber);
+            }
+        });
+        return;
+    }
 
     let logged = false;
 

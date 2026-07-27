@@ -7,7 +7,10 @@
     "features": {
         "showOldWard": false,
         "mlaDisplay": "name",
-        "showCorpSocialHandle": false
+        "showCorpSocialHandle": false,
+        "showHeatmap": false,
+        "showLeaderboard": false,
+        "disableReportIngest": true
     },
     "boundaries": {
         "bbox": {
@@ -25,10 +28,10 @@
         "home": "tvm/index.html"
     },
     "apis": {
-        "civicApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
-        "heatmapApi": "https://n54j3iscjk.execute-api.ap-south-1.amazonaws.com/heatmap",
+        "civicApi": "",
+        "heatmapApi": "",
         "submissionsIngestUrl": "",
-        "heatmapData": "data/cities/tvm/submissions.json",
+        "heatmapData": "",
         "googleMapsKey": "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0"
     },
     "socialMedia": {
@@ -54,7 +57,7 @@
         ]
     },
     "localization": {
-        "defaultLanguage": "ml",
+        "defaultLanguage": "en",
         "availableLanguages": [
             "en",
             "ml"
@@ -75,7 +78,7 @@
                 "locationOutsideGba": "Your current location is outside Thiruvananthapuram Corporation limits. Tap the map to set the pin.",
                 "greaterBengaluruAuthority": "Identify ward & send via WhatsApp",
                 "successThankYou": "Thank you for making Thiruvananthapuram better!",
-                "whatsappTargetName": "Thiruvananthapuram Corporation Grievance Desk (9447481498)",
+                "whatsappTargetName": "Thiruvananthapuram Corporation Grievance Desk",
                 "previewWardLabel": "Ward",
                 "previewCorpLabel": "Thiruvananthapuram Corporation",
                 "previewMlaLabel": "MLA",
@@ -104,7 +107,7 @@
                 "locationOutsideGba": "നിങ്ങളുടെ നിലവിലെ സ്ഥലം തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
                 "greaterBengaluruAuthority": "വാർഡ് കണ്ടെത്തി WhatsApp വഴി അയയ്ക്കുക",
                 "successThankYou": "തിരുവനന്തപുരം മെച്ചപ്പെടുത്തിയതിന് നന്ദി!",
-                "whatsappTargetName": "തിരുവനന്തപുരം കോർപ്പറേഷൻ ദൂരവിഭാഗം (9447481498)",
+                "whatsappTargetName": "തിരുവനന്തപുരം കോർപ്പറേഷൻ ദൂരവിഭാഗം",
                 "previewWardLabel": "വാർഡ്",
                 "previewCorpLabel": "തിരുവനന്തപുരം കോർപ്പറേഷൻ",
                 "previewMlaLabel": "എം.എൽ.എ.",

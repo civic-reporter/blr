@@ -26,7 +26,7 @@ function startConfigLoad() {
             window.__cityHomePath = config.pages?.home || 'index.html';
 
             CONFIG = {
-                API_GATEWAY_URL: apis.civicApi,
+                API_GATEWAY_URL: apis.civicApi || null,
                 TRAFFIC_API_URL: apis.trafficApi || null,
                 GOOGLE_MAPS_API_KEY: apis.googleMapsKey,
                 HEATMAP_API_URL: apis.heatmapApi || null,
