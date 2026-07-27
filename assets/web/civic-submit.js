@@ -212,11 +212,7 @@ export async function shareToGBA() {
             reportData,
             imageFile: savedImageFile,
             hintKey: result.hintKey,
-            displayNumber,
-            onConfirmed: features.disableReportIngest ? null : async (data) => {
-                const { recordCivicReport } = await import('./report-ingest.js');
-                return recordCivicReport(data);
-            }
+            displayNumber
         });
     } catch (e) {
         showStatus(`❌ ${e.message}<br>${getTryAgainButtonText()}`, "error");

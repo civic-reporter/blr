@@ -279,102 +279,26 @@ export async function shareViaWhatsApp(reportData, imageFile) {
     };
 }
 
-export function setupWhatsAppSuccessBox({ reportData, imageFile, hintKey, displayNumber, onConfirmed }) {
+export function setupWhatsAppSuccessBox({ reportData, imageFile, hintKey, displayNumber }) {
     const lang = getCurrentLanguage();
     const box = document.getElementById('whatsappSuccessBox');
     if (!box) return;
 
-    if (!onConfirmed) {
-        box.classList.remove('is-hidden');
-        box.innerHTML = `
-        <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(hintKey, displayNumber)}</p>
-        <div class="civic-whatsapp-actions">
-            <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
-                <i class="fab fa-whatsapp"></i>
-                <span>${t('sendWhatsApp', lang)}</span>
-            </button>
-        </div>
-    `;
-        document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
-            const retry = await shareViaWhatsApp(reportData, imageFile);
-            const hintEl = document.getElementById('whatsappSuccessHint');
-            if (hintEl && retry.hintKey) {
-                hintEl.textContent = formatWhatsAppHint(retry.hintKey, retry.displayNumber || displayNumber);
-            }
-        });
-        return;
-    }
-
-    let logged = false;
-
     box.classList.remove('is-hidden');
     box.innerHTML = `
         <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(hintKey, displayNumber)}</p>
-        <p class="civic-whatsapp-confirm-hint">${t('whatsappConfirmSentHint', lang)}</p>
         <div class="civic-whatsapp-actions">
             <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
                 <i class="fab fa-whatsapp"></i>
                 <span>${t('sendWhatsApp', lang)}</span>
             </button>
-            <button type="button" id="whatsappConfirmSentBtn" class="success-btn civic-success-btn civic-whatsapp-confirm-btn">
-                <i class="fas fa-check"></i>
-                <span>${t('whatsappConfirmSent', lang)}</span>
-            </button>
         </div>
-        <p id="whatsappLoggedHint" class="civic-whatsapp-logged is-hidden"></p>
     `;
-
     document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
         const retry = await shareViaWhatsApp(reportData, imageFile);
         const hintEl = document.getElementById('whatsappSuccessHint');
         if (hintEl && retry.hintKey) {
             hintEl.textContent = formatWhatsAppHint(retry.hintKey, retry.displayNumber || displayNumber);
-        }
-    });
-
-    document.getElementById('whatsappConfirmSentBtn')?.addEventListener('click', async () => {
-        if (logged || !onConfirmed) return;
-
-        const confirmBtn = document.getElementById('whatsappConfirmSentBtn');
-        if (confirmBtn) {
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('loading');
-            confirmBtn.querySelector('span').textContent = t('whatsappLogging', lang);
-        }
-
-        try {
-            const result = await onConfirmed(reportData);
-            if (result?.recorded === false) {
-                throw new Error(result.reason || 'not-recorded');
-            }
-
-            logged = true;
-
-            const loggedHint = document.getElementById('whatsappLoggedHint');
-            if (loggedHint) {
-                loggedHint.textContent = t('whatsappLoggedSuccess', lang);
-                loggedHint.classList.remove('is-hidden');
-            }
-
-            if (confirmBtn) {
-                confirmBtn.classList.remove('loading');
-                confirmBtn.classList.add('is-hidden');
-            }
-        } catch (error) {
-            console.warn('WhatsApp confirm logging failed:', error);
-            logged = false;
-
-            const loggedHint = document.getElementById('whatsappLoggedHint');
-            if (loggedHint) {
-                loggedHint.textContent = t('whatsappLogFailed', lang);
-                loggedHint.classList.remove('is-hidden');
-            }
-
-            if (confirmBtn) {
-                confirmBtn.disabled = false;
-                confirmBtn.classList.remove('loading');
-                confirmBtn.querySelector('span').textContent = t('whatsappConfirmSent', lang);
-            }
         }
     });
 }
