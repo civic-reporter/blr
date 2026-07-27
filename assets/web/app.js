@@ -1,4 +1,5 @@
 console.log('📦 app.js loading...');
+import { getConfig } from './config.js';
 import { cacheUIElements, showUploadOptions, showStatus, updateSubmitButtonState } from './ui.js';
 import { initMap } from './map.js';
 import { handleImageUpload, handleCameraCapture } from './image.js';
@@ -252,10 +253,17 @@ function initApp() {
     console.log('✅ Civic app initialization complete');
 }
 
+async function bootstrap() {
+    await getConfig();
+    const { initLanguageSwitcher } = await import('../js/language-switcher.js');
+    await initLanguageSwitcher();
+    initApp();
+}
+
 if (document.readyState === 'loading') {
     console.log('⏳ Waiting for DOMContentLoaded...');
-    document.addEventListener("DOMContentLoaded", initApp);
+    document.addEventListener("DOMContentLoaded", bootstrap);
 } else {
     console.log('✅ DOM already loaded, initializing immediately');
-    initApp();
+    bootstrap();
 }

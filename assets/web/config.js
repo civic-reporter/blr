@@ -97,3 +97,6 @@ export async function getCityFeatures() {
 }
 
 export { CONFIG, MLA_HANDLES, MLA_NAMES, CITY_FEATURES, cityConfig, configPromise };
+
+// Start loading city config as soon as this module is imported.
+startConfigLoad();

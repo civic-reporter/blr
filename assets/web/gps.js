@@ -2,6 +2,7 @@
 import { getConfig } from './config.js';
 import { showStatus, showLocation, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 const EXIF_HEAD_BYTES = 512 * 1024;
 const EXIFR_OPTIONS = { gps: true, reviveValues: true, mergeOutput: false, translateKeys: true };
@@ -307,7 +308,7 @@ async function applyExtractedGps(lat, lon) {
         window.currentGPS = null;
         window.gpsFromPhotoExif = false;
         setGpsSource(GPS_SOURCE.OUTSIDE_BOUNDARY);
-        showStatus(`❌ GPS location outside GBA boundary`, "error");
+        showStatus(`❌ ${t('gpsOutsideBoundary', getCurrentLanguage())}`, "error");
         showLocation();
         updateSubmitButtonState();
         updateLocationConfirmVisibility();

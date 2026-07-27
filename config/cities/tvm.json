@@ -82,7 +82,12 @@
                 "heatMapSubtitle": "Visualize civic issues across Thiruvananthapuram",
                 "leaderboardTitle": "🏆 Civic Issue Leaderboard - Thiruvananthapuram",
                 "mapSearchPlaceholder": "Search within Thiruvananthapuram Corporation",
-                "mlaContact": "MLA"
+                "mlaContact": "MLA",
+                "gpsOutsideBoundary": "GPS location is outside Thiruvananthapuram Corporation limits.",
+                "mapOutsideBoundary": "Outside Thiruvananthapuram Corporation limits.",
+                "mapOutsideBoundaryClick": "Outside Thiruvananthapuram Corporation — click inside the boundary.",
+                "mapOutsideBoundaryJurisdiction": "Outside Thiruvananthapuram Corporation limits.",
+                "locationOutsideBoundaryHint": "Location is outside Thiruvananthapuram Corporation limits. Use the map to set the pin."
             },
             "ml": {
                 "homeTitle": "നമ്മുടെ ധ്വനി",
@@ -106,7 +111,12 @@
                 "heatMapSubtitle": "തിരുവനന്തപുരത്തിലെ നാഗരിക പ്രശ്നങ്ങൾ ദർശിക്കുക",
                 "leaderboardTitle": "🏆 നാഗരിക പ്രശ്ന ലീഡർബോർഡ് - തിരുവനന്തപുരം",
                 "mapSearchPlaceholder": "തിരുവനന്തപുരം കോർപ്പറേഷനിൽ തിരയുക",
-                "mlaContact": "എം.എൽ.എ."
+                "mlaContact": "എം.എൽ.എ.",
+                "gpsOutsideBoundary": "GPS സ്ഥലം തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "mapOutsideBoundary": "തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "mapOutsideBoundaryClick": "കോർപ്പറേഷൻ പരിധിക്ക് പുറത്ത് — അകത്ത് ക്ലിക്ക് ചെയ്യുക.",
+                "mapOutsideBoundaryJurisdiction": "തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "locationOutsideBoundaryHint": "സ്ഥലം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. മാപ്പിൽ പിൻ സജ്ജമാക്കുക."
             }
         }
     },

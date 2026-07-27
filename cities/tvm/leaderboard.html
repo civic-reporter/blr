@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html data-theme="light" lang="en">
+<html data-theme="light" lang="ml">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nāgarika Dhvani - Leaderboard</title>
+    <title>Nammude Dhvani - Leaderboard</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
     <header class="app-header">
         <a href="../../tvm/index.html" class="home-brand nav-home" data-i18n-title="backToHome">
             <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
-            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nammude Dhvani</span>
         </a>
 
         <span class="hero-pill app-pill" data-i18n="leaderboard">Leaderboard</span>
@@ -143,8 +143,8 @@
         initTheme();
 
         document.addEventListener('DOMContentLoaded', () => {
-            import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
-                initLanguageSwitcher();
+            import('./../../assets/js/language-switcher.js').then(async ({ initLanguageSwitcher }) => {
+                await initLanguageSwitcher();
             });
 
             document.getElementById('themeToggle').addEventListener('click', () => {

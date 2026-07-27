@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>🏛️ Nāgarika Dhvani - Bengaluru Civic Platform</title>
+    <title>🏛️ Citizen Voice - Civic Reporting Platform</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
-<body class="home-page">
+<body class="home-page hub-page" data-hub-page="true">
     <div class="home-bg-orb orb-1" aria-hidden="true"></div>
     <div class="home-bg-orb orb-2" aria-hidden="true"></div>
     <div class="home-bg-orb orb-3" aria-hidden="true"></div>
@@ -33,16 +33,18 @@
     <header class="home-header">
         <div class="home-brand">
             <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
-            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+            <span class="home-brand-text" data-i18n="hubTitle">Citizen Voice</span>
         </div>
-        <div class="hero-pill" data-i18n="builtForCitizens">Built for Bengaluru citizens</div>
+        <div class="home-header-actions">
+            <div class="hero-pill" data-i18n="hubPill">Civic reporting across India 🇮🇳</div>
+        </div>
     </header>
 
     <main class="home-main">
         <section class="home-hero">
             <h1 class="home-hero-title">
-                <span class="home-hero-line" data-i18n="homeTitle">Nāgarika Dhvani</span>
-                <span class="home-hero-accent" data-i18n="homeSubtitle">Namma Bengaluru, Namma Dhvani</span>
+                <span class="home-hero-line" data-i18n="hubTitle">Citizen Voice</span>
+                <span class="home-hero-accent" data-i18n="hubSubtitle">Report civic issues in your city</span>
             </h1>
 
             <ul class="hero-stats" aria-label="Platform highlights">
@@ -52,38 +54,41 @@
             </ul>
         </section>
 
-        <section class="home-actions" aria-label="Quick actions">
-            <a href="cities/blr/civic.html" class="home-primary-card animate-in" data-category="civic">
-                <div class="home-primary-card-top">
-                    <span class="home-card-badge" data-i18n="civicIssues">Civic Issues</span>
-                    <span class="home-card-icon" aria-hidden="true">🏗️</span>
-                </div>
-                <div class="home-primary-card-body">
-                    <h2 data-i18n="civicIssues">Civic Issues</h2>
-                    <p data-i18n="civicDesc">Potholes, drainage, streetlights</p>
-                </div>
-                <div class="home-primary-card-footer">
-                    <span data-i18n="greaterBengaluruAuthority">Identify ward & send via WhatsApp</span>
-                    <span class="home-card-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
-                </div>
-            </a>
+        <section class="home-city-section" aria-labelledby="chooseCityHeading">
+            <h2 id="chooseCityHeading" class="home-section-title" data-i18n="chooseCity">Choose your city</h2>
 
-            <div class="home-secondary-grid">
-                <a href="cities/blr/heatmap.html" class="home-secondary-card">
-                    <span class="home-secondary-icon"><i class="fas fa-chart-area"></i></span>
-                    <div>
-                        <strong data-i18n="heatmap">Heatmap</strong>
-                        <span data-i18n="homeHeatmapDesc">See where issues cluster across the city</span>
-                    </div>
-                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+            <div class="home-city-grid">
+                <a href="cities/blr/civic.html" class="home-city-card animate-in" data-city="blr">
+                    <span class="home-city-icon" aria-hidden="true">🏛️</span>
+                    <h3 class="home-city-name" data-i18n="cityBengaluru">Bengaluru</h3>
+                    <p class="home-city-brand" data-i18n="cityBlrBrand">Nāgarika Dhvani</p>
+                    <p class="home-city-desc" data-i18n="cityBlrDesc">Potholes, drainage, streetlights — routed to BBMP via WhatsApp</p>
+                    <span class="home-city-cta">
+                        <span data-i18n="cityOpenPlatform">Open platform</span>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </span>
                 </a>
-                <a href="cities/blr/leaderboard.html" class="home-secondary-card">
-                    <span class="home-secondary-icon"><i class="fas fa-trophy"></i></span>
-                    <div>
-                        <strong data-i18n="leaderboard">Leaderboard</strong>
-                        <span data-i18n="homeLeaderboardDesc">Top constituencies where issues were identified</span>
-                    </div>
-                    <i class="fas fa-chevron-right home-secondary-chevron" aria-hidden="true"></i>
+
+                <a href="kochi/index.html" class="home-city-card animate-in" data-city="kochi">
+                    <span class="home-city-icon" aria-hidden="true">🌴</span>
+                    <h3 class="home-city-name" data-i18n="cityKochi">Kochi</h3>
+                    <p class="home-city-brand" data-i18n="cityKochiBrand">Nammude Dhvani</p>
+                    <p class="home-city-desc" data-i18n="cityKochiDesc">Civic issues in Kochi Corporation limits</p>
+                    <span class="home-city-cta">
+                        <span data-i18n="cityOpenPlatform">Open platform</span>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </span>
+                </a>
+
+                <a href="tvm/index.html" class="home-city-card animate-in" data-city="tvm">
+                    <span class="home-city-icon" aria-hidden="true">🕌</span>
+                    <h3 class="home-city-name" data-i18n="cityThiruvananthapuram">Thiruvananthapuram</h3>
+                    <p class="home-city-brand" data-i18n="cityTvmBrand">Nammude Dhvani</p>
+                    <p class="home-city-desc" data-i18n="cityTvmDesc">Civic issues in Thiruvananthapuram Corporation limits</p>
+                    <span class="home-city-cta">
+                        <span data-i18n="cityOpenPlatform">Open platform</span>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </span>
                 </a>
             </div>
         </section>
@@ -93,7 +98,7 @@
             <ol class="home-steps-list">
                 <li class="home-step">
                     <span class="home-step-num">1</span>
-                    <strong data-i18n="photoToPost">Photo → Post in 10s</strong>
+                    <strong data-i18n="photoToPost">Photo → WhatsApp in 10s</strong>
                 </li>
                 <li class="home-step">
                     <span class="home-step-num">2</span>
@@ -101,26 +106,23 @@
                 </li>
                 <li class="home-step">
                     <span class="home-step-num">3</span>
-                    <strong data-i18n="directToAuthorities">Direct to authorities</strong>
+                    <strong data-i18n="directToAuthorities">WhatsApp grievance desk</strong>
                 </li>
             </ol>
         </section>
 
         <section class="home-trust">
-            <p data-i18n="builtForCitizens">Built for Bengaluru citizens 🇮🇳</p>
+            <p data-i18n="hubBuiltForCitizens">Built for citizens across India 🇮🇳</p>
         </section>
     </main>
 
     <footer class="app-footer home-footer">
         <div class="footer-content">
-            <small data-i18n="footerText">&copy; 2026 Zen Citizen. Made with ❤️ for Bengaluru · <a id="howToLink"
+            <small data-i18n="hubFooterText">&copy; 2026 Zen Citizen. Made with ❤️ for India · <a id="howToLink"
                     href="how-to.html" data-i18n="howToLink">How to Use</a></small>
             <div class="social-links">
                 <a id="privacyLink" href="privacy.html">
                     <i class="fas fa-shield-alt"></i> <span data-i18n="privacyLink">Privacy</span>
-                </a>
-                <a href="https://wa.me/919480685700" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp grievance desk">
-                    <i class="fab fa-whatsapp"></i>
                 </a>
             </div>
         </div>
@@ -151,10 +153,9 @@
 
         initTheme();
 
-        window.addEventListener("DOMContentLoaded", () => {
-            import('./assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
-                initLanguageSwitcher();
-            });
+        window.addEventListener("DOMContentLoaded", async () => {
+            const { initLanguageSwitcher } = await import('./assets/js/language-switcher.js');
+            await initLanguageSwitcher();
 
             const btn = document.getElementById("themeToggle");
             if (btn) {

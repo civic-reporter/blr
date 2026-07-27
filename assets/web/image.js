@@ -2,6 +2,7 @@ import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA, markLiv
 import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
+import { t, getCurrentLanguage } from '../js/i18n.js';
 
 function isSupportedImageFile(file) {
     if (!file) return false;
@@ -27,7 +28,7 @@ async function tryLiveGpsFallback() {
         showStatus(`✅ Using current location: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
     } else {
         window.currentGPS = null;
-        showStatus("❌ Live GPS outside GBA boundary", "error");
+        showStatus(`❌ ${t('locationOutsideGba', getCurrentLanguage())}`, "error");
     }
 }
 
@@ -79,7 +80,7 @@ async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
         const valid = await validateLocationForCoords(window.currentGPS);
         if (!valid) {
             window.currentGPS = null;
-            showStatus("❌ Location is outside GBA boundary. Use map to select location.", "error");
+            showStatus(`❌ ${t('locationOutsideBoundaryHint', getCurrentLanguage())}`, "error");
             updateLocationConfirmVisibility();
         }
     }

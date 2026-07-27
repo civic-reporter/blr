@@ -24,6 +24,24 @@ export const translations = {
         builtForCitizens: "Built for Bengaluru citizens 🇮🇳",
         footerText: "© 2026 Zen Citizen. Made with ❤️ for Bengaluru",
 
+        // Hub page (root index.html)
+        hubTitle: "Citizen Voice",
+        hubSubtitle: "Report civic issues in your city",
+        hubPill: "Civic reporting across India 🇮🇳",
+        chooseCity: "Choose your city",
+        cityBengaluru: "Bengaluru",
+        cityKochi: "Kochi",
+        cityThiruvananthapuram: "Thiruvananthapuram",
+        cityBlrBrand: "Nāgarika Dhvani",
+        cityKochiBrand: "Nammude Dhvani",
+        cityTvmBrand: "Nammude Dhvani",
+        cityBlrDesc: "Potholes, drainage, streetlights — routed to BBMP via WhatsApp",
+        cityKochiDesc: "Civic issues in Kochi Corporation limits",
+        cityTvmDesc: "Civic issues in Thiruvananthapuram Corporation limits",
+        cityOpenPlatform: "Open platform",
+        hubBuiltForCitizens: "Built for citizens across India 🇮🇳",
+        hubFooterText: "© 2026 Zen Citizen. Made with ❤️ for India",
+
         // Civic Page (blr-civic-index.html)
         civicReporterTitle: "🏛️ Nāgarika Dhvani - Civic",
         civicReporterDesc: "Upload a photo, confirm location, and we identify ward, corporation, and constituency before opening WhatsApp to the grievance desk.",
@@ -103,6 +121,11 @@ export const translations = {
         locationDenied: "Location access is blocked. Allow it in your browser settings, or tap the map to set the pin.",
         locationUnavailable: "Could not get your location. Tap the map to set the pin instead.",
         locationOutsideGba: "Your current location is outside the GBA area. Tap the map to set the pin.",
+        gpsOutsideBoundary: "GPS location is outside city limits.",
+        mapOutsideBoundary: "Outside city limits.",
+        mapOutsideBoundaryClick: "Outside limits — click inside the boundary.",
+        mapOutsideBoundaryJurisdiction: "Outside corporation limits.",
+        locationOutsideBoundaryHint: "Location is outside limits. Use the map to set the pin.",
         locationUnsupported: "This browser cannot share your location. Tap the map to set the pin.",
         gpsHelpToggle: "Why is my photo's location missing?",
         gpsHelpAndroid1: "Android's Photos picker removes GPS tags before handing the file to the browser.",
@@ -187,7 +210,6 @@ export const translations = {
         previewMlaLabel: "MLA",
         previewUnavailable: "Not available for this location",
         mlaHandleNotConfigured: "MLA contact not configured",
-        mlaNameNotConfigured: "MLA name not available",
         mlaNameNotConfigured: "MLA name not available",
         offlineError: "You appear to be offline. Check your connection and try again.",
         networkError: "Network error — could not reach the server. Your photo and location are saved; try again when online.",
@@ -285,6 +307,23 @@ export const translations = {
         homeLeaderboardDesc: "ಸಮಸ್ಯೆಗಳು ಗುರುತಿಸಲ್ಪಟ್ಟ ಪ್ರಮುಖ ಕ್ಷೇತ್ರಗಳು",
         builtForCitizens: "ಬೆಂಗಳೂರು ನಾಗರಿಕಗಳಿಗಾಗಿ ನಿರ್ಮಿತ 🇮🇳",
         footerText: "© 2026 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
+
+        hubTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
+        hubSubtitle: "ನಿಮ್ಮ ನಗರದಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳನ್ನು ವರದಿ ಮಾಡಿ",
+        hubPill: "ಭಾರತದಾದ್ಯಂತ ನಾಗರಿಕ ವರದಿ 🇮🇳",
+        chooseCity: "ನಿಮ್ಮ ನಗರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+        cityBengaluru: "ಬೆಂಗಳೂರು",
+        cityKochi: "ಕೊಚ್ಚಿ",
+        cityThiruvananthapuram: "ತಿರುವನಂತಪುರ",
+        cityBlrBrand: "ನಾಗರಿಕ ಧ್ವನಿ",
+        cityKochiBrand: "ನಮ್ಮ ಧ್ವನಿ",
+        cityTvmBrand: "ನಮ್ಮ ಧ್ವನಿ",
+        cityBlrDesc: "ಗುಂಡಿ, drainage, streetlights — BBMP ಗೆ WhatsApp ಮೂಲಕ",
+        cityKochiDesc: "ಕೊಚ್ಚಿ ಕಾರ್ಪೊರೇಶನ್ ಪರಿಧಿಯಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳು",
+        cityTvmDesc: "ತಿರುವನಂತಪುರ ಕಾರ್ಪೊರೇಶನ್ ಪರಿಧಿಯಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳು",
+        cityOpenPlatform: "ವೇದಿಕೆ ತೆರೆಯಿರಿ",
+        hubBuiltForCitizens: "ಭಾರತದ ನಾಗರಿಕರಿಗಾಗಿ ನಿರ್ಮಿತ 🇮🇳",
+        hubFooterText: "© 2026 Zen Citizen. ❤️ ಭಾರತಕ್ಕಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
 
         // Civic Page
         civicReporterTitle: "🏛️ ನಾಗರಿಕ ವರದಿ - ಬೆಂಗಳೂರು",
@@ -537,6 +576,23 @@ export const translations = {
         homeLeaderboardDesc: "പ്രശ്നങ്ങൾ റിപ്പോർട്ട് ചെയ്ത പ്രധാന വാർഡുകൾ",
         builtForCitizens: "നാഗരികർക്കായി 🇮🇳",
         footerText: "© 2026 Zen Citizen.",
+
+        hubTitle: "നമ്മുടെ ധ്വനി",
+        hubSubtitle: "നിങ്ങളുടെ നഗരത്തിലെ നാഗരിക പ്രശ്നങ്ങൾ റിപ്പോർട്ട് ചെയ്യുക",
+        hubPill: "ഇന്ത്യയുടനെ നാഗരിക റിപ്പോർട്ടിംഗ് 🇮🇳",
+        chooseCity: "നിങ്ങളുടെ നഗരം തിരഞ്ഞെടുക്കുക",
+        cityBengaluru: "ബെംഗളുരു",
+        cityKochi: "കൊച്ചി",
+        cityThiruvananthapuram: "തിരുവനന്തപുരം",
+        cityBlrBrand: "നാഗരിക ധ്വനി",
+        cityKochiBrand: "നമ്മുടെ ധ്വനി",
+        cityTvmBrand: "നമ്മുടെ ധ്വനി",
+        cityBlrDesc: "കുഴി, drainage, തെരുവ് വിളക്കുകൾ — BBMP-യിലേക്ക് WhatsApp വഴി",
+        cityKochiDesc: "കൊച്ചി കോർപ്പറേഷൻ പരിധിയിലെ നാഗരിക പ്രശ്നങ്ങൾ",
+        cityTvmDesc: "തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിയിലെ നാഗരിക പ്രശ്നങ്ങൾ",
+        cityOpenPlatform: "പ്ലാറ്റ്‌ഫോം തുറക്കുക",
+        hubBuiltForCitizens: "ഇന്ത്യയിലെ നാഗരികർക്കായി 🇮🇳",
+        hubFooterText: "© 2026 Zen Citizen. ഇന്ത്യക്കായി ❤️യോടെ",
         civicReporterTitle: "🏛️ നമ്മുടെ ധ്വനി - നാഗരിക",
         civicReporterDesc: "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
         uploadInstructions: "GPS ടാഗുകൾ നിലനിർത്താൻ ഗ്യാലറിയിൽ നിന്ന് ഫോട്ടോ തിരഞ്ഞെടുക്കുക. സ്ഥലം ഇല്ലെങ്കിൽ മാപ്പിൽ സജ്ജമാക്കുക.",
@@ -664,6 +720,26 @@ function cityString(key, lang) {
     return window.__cityStrings?.[lang]?.[key] || window.__cityStrings?.en?.[key] || null;
 }
 
+const KERALA_CITIES = new Set(['kochi', 'tvm']);
+
+function detectCityIdFromPath() {
+    if (typeof window === 'undefined') return null;
+    const path = window.location.pathname.toLowerCase();
+    const rootMatch = path.match(/\/(kochi|tvm)(?:\/|$)/);
+    if (rootMatch) return rootMatch[1];
+    const citiesMatch = path.match(/\/cities\/(blr|kochi|tvm)(?:\/|$)/);
+    if (citiesMatch) return citiesMatch[1];
+    return null;
+}
+
+function resolveCityId() {
+    return window.__cityId || detectCityIdFromPath();
+}
+
+export function isHubPage() {
+    return typeof document !== 'undefined' && document.body?.dataset?.hubPage === 'true';
+}
+
 // Get translation text
 export function t(key, lang = null) {
     const resolvedLang = lang || getCurrentLanguage();
@@ -672,15 +748,50 @@ export function t(key, lang = null) {
     return translations[resolvedLang]?.[key] || translations.en[key] || key;
 }
 
+function readStoredLanguage() {
+    if (isHubPage()) {
+        return localStorage.getItem('language:hub');
+    }
+    const cityId = resolveCityId();
+    if (cityId) {
+        const scoped = localStorage.getItem(`language:${cityId}`);
+        if (scoped) return scoped;
+        if (cityId === 'blr') {
+            return localStorage.getItem('language');
+        }
+        return null;
+    }
+    return localStorage.getItem('language');
+}
+
 // Get current language
 export function getCurrentLanguage() {
-    const stored = localStorage.getItem('language');
-    if (stored) return stored;
-    return window.__cityDefaultLang || 'en';
+    const available = getAvailableLanguages();
+    let defaultLang = window.__cityDefaultLang;
+    if (!defaultLang) {
+        if (isHubPage()) defaultLang = 'en';
+        else {
+            const cityId = resolveCityId();
+            if (cityId && KERALA_CITIES.has(cityId)) defaultLang = 'ml';
+            else defaultLang = 'en';
+        }
+    }
+    const stored = readStoredLanguage();
+    if (stored && available.includes(stored)) return stored;
+    return defaultLang;
+}
+
+export function resolveLanguageForCity() {
+    return getCurrentLanguage();
 }
 
 export function getAvailableLanguages() {
-    return window.__cityLanguages || ['en', 'kn'];
+    if (isHubPage()) return ['en', 'kn', 'ml'];
+    if (window.__cityLanguages) return window.__cityLanguages;
+    const cityId = resolveCityId();
+    if (cityId && KERALA_CITIES.has(cityId)) return ['en', 'ml'];
+    if (cityId === 'blr') return ['en', 'kn'];
+    return ['en', 'kn'];
 }
 
 export function getAlternateLanguage(currentLang = null) {
@@ -700,5 +811,17 @@ export function getLanguageToggleLabel(currentLang = null) {
 
 // Set language
 export function setLanguage(lang) {
+    if (isHubPage()) {
+        localStorage.setItem('language:hub', lang);
+        return;
+    }
+    const cityId = resolveCityId();
+    if (cityId) {
+        localStorage.setItem(`language:${cityId}`, lang);
+        if (cityId === 'blr') {
+            localStorage.setItem('language', lang);
+        }
+        return;
+    }
     localStorage.setItem('language', lang);
 }

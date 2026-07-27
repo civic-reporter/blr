@@ -82,7 +82,12 @@
                 "heatMapSubtitle": "Visualize civic issues across Kochi",
                 "leaderboardTitle": "🏆 Civic Issue Leaderboard - Kochi",
                 "mapSearchPlaceholder": "Search within Kochi Corporation",
-                "mlaContact": "MLA"
+                "mlaContact": "MLA",
+                "gpsOutsideBoundary": "GPS location is outside Kochi Corporation limits.",
+                "mapOutsideBoundary": "Outside Kochi Corporation limits.",
+                "mapOutsideBoundaryClick": "Outside Kochi Corporation — click inside the boundary.",
+                "mapOutsideBoundaryJurisdiction": "Outside Kochi Corporation limits.",
+                "locationOutsideBoundaryHint": "Location is outside Kochi Corporation limits. Use the map to set the pin."
             },
             "ml": {
                 "homeTitle": "നമ്മുടെ ധ്വനി",
@@ -106,7 +111,12 @@
                 "heatMapSubtitle": "കൊച്ചിയിലെ നാഗരിക പ്രശ്നങ്ങൾ ദർശിക്കുക",
                 "leaderboardTitle": "🏆 നാഗരിക പ്രശ്ന ലീഡർബോർഡ് - കൊച്ചി",
                 "mapSearchPlaceholder": "കൊച്ചി കോർപ്പറേഷനിൽ തിരയുക",
-                "mlaContact": "എം.എൽ.എ."
+                "mlaContact": "എം.എൽ.എ.",
+                "gpsOutsideBoundary": "GPS സ്ഥലം കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "mapOutsideBoundary": "കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "mapOutsideBoundaryClick": "കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്ത് — അകത്ത് ക്ലിക്ക് ചെയ്യുക.",
+                "mapOutsideBoundaryJurisdiction": "കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
+                "locationOutsideBoundaryHint": "സ്ഥലം കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. മാപ്പിൽ പിൻ സജ്ജമാക്കുക."
             }
         }
     },
