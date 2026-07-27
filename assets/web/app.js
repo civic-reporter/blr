@@ -132,14 +132,27 @@ function initApp() {
     const issueDescCount = document.getElementById("issueDescCount");
     const issueType = document.getElementById("issueType");
 
+    function resizeIssueDescField() {
+        if (!issueDesc || issueDesc.tagName !== 'TEXTAREA') return;
+        issueDesc.style.height = 'auto';
+        const maxHeight = 224;
+        const nextHeight = Math.min(issueDesc.scrollHeight, maxHeight);
+        issueDesc.style.height = `${nextHeight}px`;
+        issueDesc.style.overflowY = issueDesc.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+
+    window.resizeIssueDescField = resizeIssueDescField;
+
     const refreshIssueDescLimit = async () => {
         if (!issueDesc) return;
         const { updateIssueDescriptionLimit } = await import('./civic-whatsapp.js');
         await updateIssueDescriptionLimit();
+        resizeIssueDescField();
     };
 
     if (issueDesc && issueDescCount) {
         issueDesc.addEventListener("input", () => {
+            resizeIssueDescField();
             const statusDiv = document.getElementById("status");
             if (statusDiv && statusDiv.textContent.includes(t('issueDetailsRequired', getCurrentLanguage()))) {
                 showStatus("", "");
