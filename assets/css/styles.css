@@ -1109,6 +1109,9 @@ body.app-page {
 }
 
 .home-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
     max-width: 1120px;
     margin: 0 auto;
     padding: 2rem 1.5rem 3rem;
@@ -1165,16 +1168,26 @@ body.app-page {
 }
 
 .home-actions {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
-    margin-bottom: 2.5rem;
 }
 
 @media (min-width: 1024px) {
     .home-actions {
-        grid-template-columns: 1.15fr 0.85fr;
-        align-items: start;
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .home-primary-card {
+        flex: 1.15;
+        min-width: 0;
+    }
+
+    .home-secondary-grid {
+        flex: 0.85;
+        min-width: 0;
+        justify-content: space-between;
     }
 }
 
@@ -1341,7 +1354,7 @@ body.app-page {
 }
 
 .home-steps {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     padding: 1.5rem;
     border-radius: 24px;
     background: var(--x-bg-card);
@@ -1427,8 +1440,8 @@ body.app-page {
 }
 
 @media (min-width: 1024px) {
-    .home-primary-card {
-        min-height: 100%;
+    .home-secondary-card {
+        flex: 1;
     }
 }
 
@@ -1450,16 +1463,16 @@ body.app-page {
     }
 
     .home-main {
+        gap: 1.75rem;
         padding-top: 1rem;
     }
 
     .home-hero {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
     }
 
     .home-actions {
         gap: 0.85rem;
-        margin-bottom: 1.75rem;
     }
 
     .home-primary-card {
