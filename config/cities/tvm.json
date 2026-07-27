@@ -64,11 +64,11 @@
         ],
         "strings": {
             "en": {
-                "homeTitle": "Nammude Dhvani",
-                "homeSubtitle": "Namma Thiruvananthapuram, Nammude Dhvani",
+                "homeTitle": "Nammude Shabdam",
+                "homeSubtitle": "Namma Thiruvananthapuram, Nammude Shabdam",
                 "builtForCitizens": "Built for Thiruvananthapuram citizens 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. Made with ❤️ for Thiruvananthapuram",
-                "civicReporterTitle": "🏛️ Nammude Dhvani - Civic",
+                "civicReporterTitle": "🏛️ Nammude Shabdam - Civic",
                 "civicReporterDesc": "Upload a photo, confirm location, and we identify ward, Thiruvananthapuram Corporation, and constituency before opening WhatsApp to the grievance desk.",
                 "mapRestrictionMsg": "⚠️ Selected location is outside Thiruvananthapuram Corporation limits. Please choose a point within the city.",
                 "dragMarkerInstruction": "🔧 GPS not detected. Click map or drag marker to set location (within Thiruvananthapuram Corporation only).",
@@ -93,11 +93,11 @@
                 "locationOutsideBoundaryHint": "Location is outside Thiruvananthapuram Corporation limits. Use the map to set the pin."
             },
             "ml": {
-                "homeTitle": "നമ്മുടെ ധ്വനി",
-                "homeSubtitle": "നമ്മുടെ തിരുവനന്തപുരം, നമ്മുടെ ധ്വനി",
+                "homeTitle": "നമ്മുടെ ശബ്ദം",
+                "homeSubtitle": "നമ്മുടെ തിരുവനന്തപുരം, നമ്മുടെ ശബ്ദം",
                 "builtForCitizens": "തിരുവനന്തപുരം നാഗരികർക്കായി 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. തിരുവനന്തപുരത്തിനായി ❤️യോടെ",
-                "civicReporterTitle": "🏛️ നമ്മുടെ ധ്വനി - നാഗരിക",
+                "civicReporterTitle": "🏛️ നമ്മുടെ ശബ്ദം - നാഗരിക",
                 "civicReporterDesc": "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും തിരുവനന്തപുരം കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
                 "mapRestrictionMsg": "⚠️ തിരഞ്ഞെടുത്ത സ്ഥലം തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്.",
                 "dragMarkerInstruction": "🔧 GPS കണ്ടെത്തിയില്ല. സ്ഥലം സജ്ജമാക്കാൻ മാപ്പിൽ ക്ലിക്ക് ചെയ്യുക (കോർപ്പറേഷൻ പരിധിക്കുള്ളിൽ മാത്രം).",
