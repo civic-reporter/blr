@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html data-theme="light" lang="en">
+<html data-theme="light" lang="ml">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nāgarika Dhvani - Civic</title>
+  <title>Nammude Dhvani - Civic</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
   <header class="app-header civic-header">
     <a href="../../tvm/index.html" class="home-brand nav-home" data-i18n-title="backToHome">
       <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
-      <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+      <span class="home-brand-text" data-i18n="homeTitle">Nammude Dhvani</span>
     </a>
 
     <span class="hero-pill app-pill civic-pill" data-i18n="civicIssues">Civic Issues</span>
@@ -55,7 +55,7 @@
   <main class="app-main civic-main">
     <div class="container app-shell civic-shell">
       <section class="app-hero civic-hero">
-        <h1 class="app-hero-title civic-hero-title" data-i18n="civicReporterTitle">Nāgarika Dhvani - Civic</h1>
+        <h1 class="app-hero-title civic-hero-title" data-i18n="civicReporterTitle">🏛️ Nammude Dhvani - Civic</h1>
         <p class="app-hero-desc civic-hero-desc" data-i18n="civicReporterDesc">Upload a photo, confirm location, and we identify ward, corporation, and constituency before opening WhatsApp to the grievance desk.</p>
       </section>
 
@@ -151,7 +151,7 @@
 
           <div class="civic-media-panel">
             <div id="dragMarkerHint" class="map-message civic-map-hint is-hidden" data-i18n="dragMarkerInstruction">
-              GPS not detected. Click map or drag marker to set the location (within GBA area only).
+              GPS not detected. Click map or drag marker to set the location (within Thiruvananthapuram Corporation only).
             </div>
 
             <div id="map" class="civic-map"></div>
@@ -164,7 +164,7 @@
                 <span id="gpsCoords"></span>
               </div>
               <div id="mapRestrictionMsg" class="map-message civic-warning is-hidden" data-i18n="mapRestrictionMsg">
-                Selected location is outside GBA limits. Please choose a point within GBA.
+                Selected location is outside Thiruvananthapuram Corporation limits. Please choose a point within the city.
               </div>
 
               <div id="locationConfirm" class="image-confirm civic-confirm-card is-hidden">
@@ -178,7 +178,7 @@
                 <p class="civic-report-preview-title" data-i18n="reportPreviewTitle">Your report will be routed to:</p>
                 <dl class="civic-report-preview-list">
                   <div class="civic-preview-row">
-                    <dt data-i18n="previewWardLabel">GBA ward</dt>
+                    <dt data-i18n="previewWardLabel">Ward</dt>
                     <dd id="previewWard">—</dd>
                   </div>
                   <div class="civic-preview-row">
@@ -282,7 +282,7 @@
           <div id="whatsappOption" class="email-option civic-email-card civic-whatsapp-card is-hidden">
             <p class="whatsapp-target">
               <small data-i18n="whatsappWillBeSentTo">Report will be sent via WhatsApp to:</small>
-              <strong id="whatsappNumberDisplay">GBA Grievance Desk Report (9480685700)</strong>
+              <strong id="whatsappNumberDisplay">Thiruvananthapuram Corporation Grievance Desk (9447481498)</strong>
             </p>
             <p class="whatsapp-note" data-i18n="whatsappPhotoNote">Opens WhatsApp to the number above with your
               complaint text ready — attach the downloaded photo and tap Send.</p>
@@ -358,10 +358,6 @@
     initTheme();
 
     window.addEventListener("DOMContentLoaded", () => {
-      import('./../../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => {
-        initLanguageSwitcher();
-      });
-
       const btn = document.getElementById("themeToggle");
       if (!btn) return;
 

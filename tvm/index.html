@@ -121,10 +121,9 @@
             else { sun.classList.remove('is-hidden'); moon.classList.add('is-hidden'); }
         }
         initTheme();
-        window.addEventListener("DOMContentLoaded", () => {
-            import('../assets/web/config.js').then(() =>
-                import('../assets/js/language-switcher.js').then(({ initLanguageSwitcher }) => initLanguageSwitcher())
-            );
+        window.addEventListener("DOMContentLoaded", async () => {
+            const { initLanguageSwitcher } = await import('../assets/js/language-switcher.js');
+            await initLanguageSwitcher();
             document.getElementById("themeToggle")?.addEventListener("click", () => {
                 const current = html.getAttribute("data-theme") || "light";
                 const next = current === "light" ? "dark" : "light";

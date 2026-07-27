@@ -1353,6 +1353,163 @@ body.app-page {
     font-size: 0.85rem;
 }
 
+/* Hub page — city picker */
+.home-city-section {
+    margin-bottom: 1.5rem;
+}
+
+.home-city-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 720px) {
+    .home-city-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.home-city-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.35rem;
+    border-radius: 24px;
+    text-decoration: none;
+    color: inherit;
+    background:
+        linear-gradient(145deg, var(--x-blue-soft), transparent 55%),
+        var(--x-bg-card);
+    border: 1px solid var(--x-border);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: homeCardIn 0.55s ease both;
+}
+
+.home-city-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(91, 155, 213, 0.25);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+}
+
+.home-city-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.home-city-name {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+.home-city-brand {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--x-blue);
+    text-align: left;
+}
+
+.home-city-desc {
+    margin: 0;
+    flex: 1;
+    font-size: 0.88rem;
+    color: var(--x-text-secondary);
+    line-height: 1.5;
+    text-align: left;
+}
+
+.home-city-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--x-blue);
+}
+
+.home-city-card:hover .home-city-cta i {
+    transform: translateX(3px);
+}
+
+.home-city-cta i {
+    transition: transform 0.2s ease;
+}
+
+/* Hub page — tri-lingual picker */
+.home-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.65rem;
+}
+
+body.hub-page .home-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.language-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-card);
+    box-shadow: var(--shadow);
+}
+
+.language-picker-btn {
+    padding: 0.4rem 0.65rem;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--x-text-secondary);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+}
+
+.language-picker-btn:hover {
+    color: var(--x-text-primary);
+    background: var(--x-bg-secondary);
+}
+
+.language-picker-btn.active {
+    background: var(--x-blue);
+    color: #fff;
+}
+
+@media (max-width: 480px) {
+    body.hub-page .home-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .home-header-actions {
+        align-items: stretch;
+    }
+
+    .language-picker {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .language-picker-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.45rem 0.35rem;
+    }
+}
+
 .home-steps {
     margin-bottom: 0;
     padding: 1.5rem;

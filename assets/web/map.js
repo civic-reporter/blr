@@ -146,7 +146,7 @@ async function setupGoogleAutocomplete(searchInput) {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.currentGPS = null;
             setMapRestrictionVisibility(true);
-            showStatus('❌ Outside GBA boundary', 'error');
+            showStatus(`❌ ${t('mapOutsideBoundary', getCurrentLanguage())}`, 'error');
             updateSubmitButtonState();
         }
     });
@@ -161,7 +161,7 @@ export async function handleMapClick(e) {
         if (markerInstance) window.map.removeLayer(markerInstance);
         window.currentGPS = null;
         setMapRestrictionVisibility(true);
-        showStatus("❌ Outside GBA - click inside boundary", "error");
+        showStatus(`❌ ${t('mapOutsideBoundaryClick', getCurrentLanguage())}`, "error");
         updateSubmitButtonState();
         return;
     }
@@ -243,7 +243,7 @@ export function placeMarker() {
         } else {
             markerInstance.setLatLng([window.currentGPS.lat, window.currentGPS.lon]);
             setMapRestrictionVisibility(true);
-            showStatus("❌ Outside GBA jurisdiction", "error");
+            showStatus(`❌ ${t('mapOutsideBoundaryJurisdiction', getCurrentLanguage())}`, "error");
         }
     });
 

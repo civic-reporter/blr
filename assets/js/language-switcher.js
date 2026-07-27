@@ -5,33 +5,100 @@ import {
     setLanguage,
     getAlternateLanguage,
     getLanguageToggleLabel,
-    getAvailableLanguages
+    getAvailableLanguages,
+    resolveLanguageForCity,
+    isHubPage
 } from './i18n.js';
 
-export function initLanguageSwitcher() {
-    const available = getAvailableLanguages();
-    if (available.length < 2) return;
+function initHubLanguagePicker() {
+    let picker = document.getElementById('languagePicker');
+    if (!picker) {
+        picker = document.createElement('div');
+        picker.id = 'languagePicker';
+        picker.className = 'language-picker';
+        picker.setAttribute('role', 'group');
+        picker.setAttribute('aria-label', 'Select language');
 
-    const currentLang = getCurrentLanguage();
+        [
+            { code: 'en', label: 'EN' },
+            { code: 'kn', label: 'ಕನ್ನಡ' },
+            { code: 'ml', label: 'മലയാളം' }
+        ].forEach(({ code, label }) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'language-picker-btn';
+            btn.dataset.lang = code;
+            btn.textContent = label;
+            btn.addEventListener('click', () => selectHubLanguage(code));
+            picker.appendChild(btn);
+        });
 
-    const langToggle = document.createElement('button');
-    langToggle.id = 'languageToggle';
-    langToggle.className = 'language-toggle-btn';
-    langToggle.setAttribute('aria-label', 'Toggle language');
-    langToggle.setAttribute('title', 'Switch language');
-    langToggle.textContent = getLanguageToggleLabel(currentLang);
-
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle && themeToggle.parentNode) {
-        themeToggle.parentNode.insertBefore(langToggle, themeToggle.nextSibling);
-    } else {
-        document.body.appendChild(langToggle);
+        const headerActions = document.querySelector('.home-header-actions');
+        if (headerActions) {
+            headerActions.appendChild(picker);
+        } else {
+            const header = document.querySelector('.home-header');
+            if (header) header.appendChild(picker);
+            else document.body.appendChild(picker);
+        }
     }
 
-    langToggle.addEventListener('click', () => {
-        toggleLanguage();
-    });
+    updateHubLanguagePicker(getCurrentLanguage());
+}
 
+function updateHubLanguagePicker(activeLang) {
+    document.querySelectorAll('.language-picker-btn').forEach(btn => {
+        const isActive = btn.dataset.lang === activeLang;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+}
+
+function selectHubLanguage(lang) {
+    setLanguage(lang);
+    setPageLanguage(lang);
+    updateHubLanguagePicker(lang);
+}
+
+export async function initLanguageSwitcher() {
+    if (isHubPage()) {
+        initHubLanguagePicker();
+        setPageLanguage(resolveLanguageForCity());
+        return;
+    }
+
+    const { getConfig } = await import('../web/config.js');
+    await getConfig();
+
+    const available = getAvailableLanguages();
+    if (available.length < 2) {
+        setPageLanguage(resolveLanguageForCity());
+        return;
+    }
+
+    const currentLang = resolveLanguageForCity();
+
+    let langToggle = document.getElementById('languageToggle');
+    if (!langToggle) {
+        langToggle = document.createElement('button');
+        langToggle.id = 'languageToggle';
+        langToggle.className = 'language-toggle-btn';
+        langToggle.setAttribute('aria-label', 'Toggle language');
+        langToggle.setAttribute('title', 'Switch language');
+
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle && themeToggle.parentNode) {
+            themeToggle.parentNode.insertBefore(langToggle, themeToggle.nextSibling);
+        } else {
+            document.body.appendChild(langToggle);
+        }
+
+        langToggle.addEventListener('click', () => {
+            toggleLanguage();
+        });
+    }
+
+    langToggle.textContent = getLanguageToggleLabel(currentLang);
     setPageLanguage(currentLang);
 }
 
