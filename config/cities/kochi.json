@@ -17,7 +17,7 @@
             "south": 9.893,
             "north": 10.051,
             "west": 76.237,
-            "east": 76.340
+            "east": 76.34
         },
         "mapKml": "data/cities/kochi/map.kml",
         "constKml": "data/cities/kochi/const.kml",
@@ -64,11 +64,11 @@
         ],
         "strings": {
             "en": {
-                "homeTitle": "Nammude Dhvani",
-                "homeSubtitle": "Namma Kochi, Nammude Dhvani",
+                "homeTitle": "Nammude Shabdam",
+                "homeSubtitle": "Namma Kochi, Nammude Shabdam",
                 "builtForCitizens": "Built for Kochi citizens 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. Made with ❤️ for Kochi",
-                "civicReporterTitle": "🏛️ Nammude Dhvani - Civic",
+                "civicReporterTitle": "🏛️ Nammude Shabdam - Civic",
                 "civicReporterDesc": "Upload a photo, confirm location, and we identify ward, Kochi Corporation, and constituency before opening WhatsApp to the grievance desk.",
                 "mapRestrictionMsg": "⚠️ Selected location is outside Kochi Corporation limits. Please choose a point within the city.",
                 "dragMarkerInstruction": "🔧 GPS not detected. Click map or drag marker to set location (within Kochi Corporation only).",
@@ -93,11 +93,11 @@
                 "locationOutsideBoundaryHint": "Location is outside Kochi Corporation limits. Use the map to set the pin."
             },
             "ml": {
-                "homeTitle": "നമ്മുടെ ധ്വനി",
-                "homeSubtitle": "നമ്മുടെ കൊച്ചി, നമ്മുടെ ധ്വനി",
+                "homeTitle": "നമ്മുടെ ശബ്ദം",
+                "homeSubtitle": "നമ്മുടെ കൊച്ചി, നമ്മുടെ ശബ്ദം",
                 "builtForCitizens": "കൊച്ചി നാഗരികർക്കായി 🇮🇳",
                 "footerText": "© 2026 Zen Citizen. കൊച്ചിക്കായി ❤️യോടെ",
-                "civicReporterTitle": "🏛️ നമ്മുടെ ധ്വനി - നാഗരിക",
+                "civicReporterTitle": "🏛️ നമ്മുടെ ശബ്ദം - നാഗരിക",
                 "civicReporterDesc": "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കൊച്ചി കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
                 "mapRestrictionMsg": "⚠️ തിരഞ്ഞെടുത്ത സ്ഥലം കൊച്ചി കോർപ്പറേഷൻ പരിധിക്ക് പുറത്താണ്. നഗരത്തിനുള്ളിൽ ഒരു ബിന്ദു തിരഞ്ഞെടുക്കുക.",
                 "dragMarkerInstruction": "🔧 GPS കണ്ടെത്തിയില്ല. സ്ഥലം സജ്ജമാക്കാൻ മാപ്പിൽ ക്ലിക്ക് ചെയ്യുക (കൊച്ചി കോർപ്പറേഷൻ പരിധിക്കുള്ളിൽ മാത്രം).",

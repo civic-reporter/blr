@@ -4,6 +4,11 @@
     "cityNameLocal": "ಬೆಂಗಳೂರು",
     "tagline": "Bengaluru's fastest civic reporting platform",
     "taglineLocal": "ಬೆಂಗಳೂರಿನ ವೇಗದ ನಾಗರಿಕ ವರದಿ ವೇದಿಕೆ",
+    "features": {
+        "showHeatmap": false,
+        "showLeaderboard": false,
+        "disableReportIngest": true
+    },
     "boundaries": {
         "bbox": {
             "south": 12.82,
@@ -22,9 +27,9 @@
         "traffic": "cities/blr/traffic.html"
     },
     "apis": {
-        "civicApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/zenc",
+        "civicApi": "",
         "trafficApi": "https://c543fafez6.execute-api.ap-south-1.amazonaws.com/traffic",
-        "heatmapApi": "https://n54j3iscjk.execute-api.ap-south-1.amazonaws.com/heatmap",
+        "heatmapApi": "",
         "submissionsIngestUrl": "",
         "googleMapsKey": "AIzaSyACm02bNVbJsIZrSZCtWNVBn_1iT5Thtn0"
     },
