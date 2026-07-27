@@ -384,26 +384,113 @@ export async function extractGPSFromExif(dataUrl) {
     return null;
 }
 
-function readCurrentPosition() {
+const GEO_OPTIONS = { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 };
+const TARGET_ACCURACY_M = 35;
+const MAX_AUTO_APPLY_ACCURACY_M = 100;
+const GPS_WATCH_MS = 12000;
+
+function isLowAccuracy(accuracy) {
+    return !Number.isFinite(accuracy) || accuracy > MAX_AUTO_APPLY_ACCURACY_M;
+}
+
+// Mobile browsers often return a coarse Wi‑Fi/cell fix on the first read. Sampling
+// with watchPosition gives GPS time to warm up and picks the best fix we get.
+function acquireDeviceLocation({ waitMs = GPS_WATCH_MS } = {}) {
     return new Promise((resolve) => {
         if (!navigator.geolocation) {
             resolve({ ok: false, reason: 'unsupported' });
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(
-            (pos) => resolve({
-                ok: true,
+        let best = null;
+        let watchId = null;
+        let settled = false;
+
+        const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            if (watchId != null) navigator.geolocation.clearWatch(watchId);
+            resolve(result);
+        };
+
+        const consider = (pos) => {
+            const accuracy = pos.coords.accuracy;
+            const reading = {
                 coords: { lat: pos.coords.latitude, lon: pos.coords.longitude },
-                accuracy: pos.coords.accuracy
-            }),
-            (err) => resolve({
-                ok: false,
-                reason: err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable'
-            }),
-            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+                accuracy
+            };
+
+            if (!best || accuracy < best.accuracy) {
+                best = reading;
+            }
+
+            if (accuracy <= TARGET_ACCURACY_M) {
+                finish({
+                    ok: true,
+                    coords: reading.coords,
+                    accuracy,
+                    lowAccuracy: isLowAccuracy(accuracy)
+                });
+            }
+        };
+
+        const timer = setTimeout(() => {
+            if (!best) {
+                finish({ ok: false, reason: 'unavailable' });
+                return;
+            }
+
+            finish({
+                ok: true,
+                coords: best.coords,
+                accuracy: best.accuracy,
+                lowAccuracy: isLowAccuracy(best.accuracy)
+            });
+        }, waitMs);
+
+        watchId = navigator.geolocation.watchPosition(
+            consider,
+            (err) => {
+                if (best) {
+                    finish({
+                        ok: true,
+                        coords: best.coords,
+                        accuracy: best.accuracy,
+                        lowAccuracy: isLowAccuracy(best.accuracy)
+                    });
+                    return;
+                }
+
+                finish({
+                    ok: false,
+                    reason: err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable'
+                });
+            },
+            GEO_OPTIONS
         );
     });
+}
+
+export async function tryAcquireLiveGps({ allowLowAccuracy = false } = {}) {
+    const result = await acquireDeviceLocation();
+    if (!result.ok) return result;
+
+    const { lat, lon } = result.coords;
+    if (!(await isInGbaBbox(lat, lon))) {
+        return { ok: false, reason: 'outside' };
+    }
+
+    if (!allowLowAccuracy && result.lowAccuracy) {
+        return {
+            ok: false,
+            reason: 'low-accuracy',
+            accuracy: result.accuracy,
+            coords: result.coords
+        };
+    }
+
+    return result;
 }
 
 function isValidCoordinatePair(lat, lon) {
@@ -475,26 +562,27 @@ export async function applyPastedCoordinates(text) {
 
 export async function getLiveGPSIfInGBA() {
     console.log("📍 Live GPS fallback...");
-    const result = await readCurrentPosition();
+    const result = await tryAcquireLiveGps({ allowLowAccuracy: false });
     if (!result.ok) return null;
-    return (await isInGbaBbox(result.coords.lat, result.coords.lon)) ? result.coords : null;
+    return result.coords;
 }
 
 // Triggered only by the user pressing "use my current location", so a denied
 // permission prompt is meaningful feedback rather than a silent failure.
 export async function requestLiveGpsFromUser() {
-    const result = await readCurrentPosition();
+    const result = await tryAcquireLiveGps({ allowLowAccuracy: true });
 
     if (!result.ok) {
-        return { ok: false, reason: result.reason };
+        return {
+            ok: false,
+            reason: result.reason,
+            accuracy: result.accuracy ?? null
+        };
     }
 
     const { lat, lon } = result.coords;
-    if (!(await isInGbaBbox(lat, lon))) {
-        return { ok: false, reason: 'outside' };
-    }
-
     window.currentGPS = { lat, lon };
+    window.currentGPSAccuracy = result.accuracy;
     markLiveGps();
 
     if (window.map) {
@@ -513,5 +601,10 @@ export async function requestLiveGpsFromUser() {
         window.updateCivicEmailRecipients();
     }
 
-    return { ok: true, coords: { lat, lon }, accuracy: result.accuracy };
+    return {
+        ok: true,
+        coords: { lat, lon },
+        accuracy: result.accuracy,
+        lowAccuracy: result.lowAccuracy
+    };
 }

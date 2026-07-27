@@ -1,4 +1,4 @@
-import { extractGPSFromExif, extractGPSFromImageFile, getLiveGPSIfInGBA, markLiveGps, resetGpsSource } from './gps.js';
+import { extractGPSFromExif, extractGPSFromImageFile, markLiveGps, resetGpsSource, tryAcquireLiveGps } from './gps.js';
 import { compressImage, isValidNumber } from './utils.js';
 import { showStatus, hideUploadOptions, showLocation, updateSubmitButtonState, showImageConfirm, updateLocationConfirmVisibility } from './ui.js';
 import { validateLocationForCoords } from './validation.js';
@@ -19,16 +19,39 @@ function needsGps() {
 }
 
 async function tryLiveGpsFallback() {
-    const liveGPS = await getLiveGPSIfInGBA();
-    if (!liveGPS) return;
+    const lang = getCurrentLanguage();
+    showStatus(t('locatingNow', lang), 'info');
 
-    if (await validateLocationForCoords(liveGPS)) {
-        window.currentGPS = liveGPS;
+    // Camera UI closing can block or stale GPS; give the chip a moment to recover.
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const result = await tryAcquireLiveGps({ allowLowAccuracy: false });
+    if (!result.ok) {
+        if (result.reason === 'low-accuracy') {
+            const meters = Math.round(result.accuracy);
+            showStatus(
+                t('locationLowAccuracy', lang).replace('{meters}', String(meters)),
+                'error'
+            );
+        } else {
+            showStatus('', 'info');
+        }
+        return;
+    }
+
+    if (await validateLocationForCoords(result.coords)) {
+        window.currentGPS = result.coords;
+        window.currentGPSAccuracy = result.accuracy;
         markLiveGps();
-        showStatus(`✅ Using current location: ${liveGPS.lat.toFixed(4)}, ${liveGPS.lon.toFixed(4)}`, "success");
+        const meters = Math.round(result.accuracy);
+        showStatus(
+            t('liveGpsApplied', lang).replace('{meters}', String(meters)),
+            'success'
+        );
     } else {
         window.currentGPS = null;
-        showStatus(`❌ ${t('locationOutsideGba', getCurrentLanguage())}`, "error");
+        window.currentGPSAccuracy = null;
+        showStatus(`❌ ${t('locationOutsideGba', lang)}`, 'error');
     }
 }
 
@@ -44,6 +67,7 @@ function readPreviewDataUrl(file) {
 async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
     window.currentImageFile = file;
     window.currentGPS = null;
+    window.currentGPSAccuracy = null;
     window.gpsFromPhotoExif = false;
     window.gpsManuallySet = false;
     resetGpsSource();
