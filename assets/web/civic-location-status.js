@@ -6,7 +6,7 @@
  * explicit way to supply a location instead.
  */
 
-import { GPS_SOURCE, applyPastedCoordinates, getGpsSource, requestLiveGpsFromUser } from './gps.js';
+import { GPS_SOURCE, getGpsSource, requestLiveGpsFromUser } from './gps.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 const PANEL_ID = 'locationStatus';
@@ -68,38 +68,6 @@ function helpTipKeys() {
     return ['gpsHelpGeneric1', 'gpsHelpGeneric2', 'gpsHelpGeneric3'];
 }
 
-function buildPasteSection(lang) {
-    const examples = ['pasteCoordinatesExample1', 'pasteCoordinatesExample2', 'pasteCoordinatesExample3']
-        .map((key) => `<li><code>${escapeHtml(t(key, lang))}</code></li>`)
-        .join('');
-
-    return `
-        <div class="civic-loc-paste">
-            <label class="civic-loc-paste-label" for="pasteCoordinatesInput">
-                ${escapeHtml(t('pasteCoordinatesLabel', lang))}
-            </label>
-            <input
-                type="text"
-                id="pasteCoordinatesInput"
-                class="civic-loc-paste-input"
-                inputmode="decimal"
-                autocomplete="off"
-                spellcheck="false"
-                placeholder="${escapeHtml(t('pasteCoordinatesPlaceholder', lang))}"
-            />
-            <button type="button" id="pasteCoordinatesBtn" class="civic-loc-btn civic-loc-paste-btn">
-                <i class="fas fa-location-dot" aria-hidden="true"></i>
-                <span>${escapeHtml(t('pasteCoordinatesApply', lang))}</span>
-            </button>
-            <p class="civic-loc-paste-hint">${escapeHtml(t('pasteCoordinatesHint', lang))}</p>
-            <div class="civic-loc-paste-examples">
-                <p class="civic-loc-paste-examples-title">${escapeHtml(t('pasteCoordinatesExamplesTitle', lang))}</p>
-                <ul class="civic-loc-paste-examples-list">${examples}</ul>
-            </div>
-        </div>
-    `;
-}
-
 function buildHelpSection(lang) {
     const tips = helpTipKeys()
         .map((key) => `<li>${escapeHtml(t(key, lang))}</li>`)
@@ -146,57 +114,12 @@ export function renderLocationStatus() {
                 <span>${escapeHtml(t('useMyLocation', lang))}</span>
             </button>
             <p class="civic-loc-hint">${escapeHtml(t('orSetPinManually', lang))}</p>
-            ${buildPasteSection(lang)}
         </div>` : ''}
         ${showHelp ? buildHelpSection(lang) : ''}
     `;
 
     const liveBtn = document.getElementById('useLiveLocationBtn');
     if (liveBtn) liveBtn.addEventListener('click', handleUseLiveLocation);
-
-    const pasteBtn = document.getElementById('pasteCoordinatesBtn');
-    const pasteInput = document.getElementById('pasteCoordinatesInput');
-    if (pasteBtn && pasteInput) {
-        pasteBtn.addEventListener('click', handlePasteCoordinates);
-        pasteInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') handlePasteCoordinates(event);
-        });
-    }
-}
-
-async function handlePasteCoordinates(event) {
-    event.preventDefault();
-
-    const input = document.getElementById('pasteCoordinatesInput');
-    const button = document.getElementById('pasteCoordinatesBtn');
-    if (!input || !button) return;
-
-    const lang = getCurrentLanguage();
-    const value = input.value.trim();
-    if (!value) {
-        showInlineError(t('pasteCoordinatesInvalid', lang));
-        return;
-    }
-
-    button.disabled = true;
-
-    try {
-        const result = await applyPastedCoordinates(value);
-        if (result.ok) {
-            showInlineError('');
-            renderLocationStatus();
-            return;
-        }
-
-        const reasonKey = result.reason === 'outside'
-            ? 'pasteCoordinatesOutside'
-            : 'pasteCoordinatesInvalid';
-        showInlineError(t(reasonKey, lang));
-    } finally {
-        if (document.body.contains(button)) {
-            button.disabled = false;
-        }
-    }
 }
 
 async function handleUseLiveLocation(event) {
