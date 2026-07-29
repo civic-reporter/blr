@@ -48,6 +48,7 @@ async function tryLiveGpsFallback() {
             t('liveGpsApplied', lang).replace('{meters}', String(meters)),
             'success'
         );
+        window.dispatchEvent(new CustomEvent('civicLocationUpdated'));
     } else {
         window.currentGPS = null;
         window.currentGPSAccuracy = null;
@@ -95,6 +96,8 @@ async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
 
     if (useLiveGpsFallback && needsGps()) {
         await tryLiveGpsFallback();
+    } else if (!useLiveGpsFallback && needsGps()) {
+        showStatus(t('galleryNoGpsHint', getCurrentLanguage()), 'info');
     }
 
     if (window.currentGPS &&
@@ -122,16 +125,15 @@ async function processSelectedImage(file, { useLiveGpsFallback = false } = {}) {
     if (imageConfirm) imageConfirm.classList.remove("is-hidden");
 }
 
-// Live GPS fallback is on by default: Android and iOS strip location EXIF from
-// photos handed to the browser (picker redaction / camera capture without
-// geotag), so on mobile the device's own location is usually the only source.
+// Gallery picks keep EXIF when the OS allows it; live GPS is only auto-used after
+// in-browser camera capture, where EXIF is almost never present.
 export async function handleImageUpload(file, options = {}) {
     if (!isSupportedImageFile(file)) {
         showStatus("❌ Please upload a photo file.", "error");
         return;
     }
 
-    await processSelectedImage(file, { useLiveGpsFallback: true, ...options });
+    await processSelectedImage(file, { useLiveGpsFallback: false, ...options });
 }
 
 export async function handleCameraCapture(file, options = {}) {

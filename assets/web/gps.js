@@ -316,6 +316,7 @@ async function applyExtractedGps(lat, lon) {
     }
 
     window.currentGPS = { lat, lon };
+    window.currentGPSAccuracy = null;
     window.gpsFromPhotoExif = true;
     window.gpsManuallySet = false;
     setGpsSource(GPS_SOURCE.PHOTO);
