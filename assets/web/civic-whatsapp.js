@@ -133,7 +133,8 @@ function buildWhatsAppMessage(reportData, { includeDetailsLine = true } = {}) {
     }
 
     if (reportData.oldWardNo || reportData.oldWardName) {
-        lines.push(`Legacy ward: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
+        const oldWardLabel = t('previewOldWardLabel', lang) || 'BBMP Ward';
+        lines.push(`${oldWardLabel}: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
     }
 
     if (reportData.corpName) {
