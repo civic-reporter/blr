@@ -3,7 +3,7 @@ export const translations = {
     en: {
         heatmap: "Heatmap",
         leaderboard: "Leaderboard",
-        complaintStatus: "Check Status",
+        complaintStatus: "Registered Complaint Status",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -152,10 +152,10 @@ export const translations = {
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
 
-        complaintStatusTitle: "Check complaint status",
-        complaintStatusDesc: "Look up GBA or BWSSB complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.",
-        complaintStatusHomeDesc: "GBA or BWSSB — by complaint ID or mobile number",
-        complaintStatusHomeFooter: "Look up by complaint ID or phone",
+        complaintStatusTitle: "Registered Complaint Status",
+        complaintStatusDesc: "Track GBA or BWSSB registered complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.",
+        complaintStatusHomeDesc: "GBA or BWSSB registered complaints",
+        complaintStatusLookupPrompt: "Track by complaint ID or registered mobile",
         complaintStatusStep1: "Select Complaints, then choose GBA or BWSSB (GBA may appear as BBMP on the portal).",
         complaintStatusStep2: "Search by Complaint ID or Mobile Number.",
         complaintStatusStep3: "Submit on the portal to view status and grievance details.",
@@ -298,7 +298,7 @@ export const translations = {
     kn: {
         heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
         leaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್",
-        complaintStatus: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+        complaintStatus: "ನೋಂದಾಯಿತ ದೂರು ಸ್ಥಿತಿ",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
@@ -442,10 +442,10 @@ export const translations = {
         submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
 
-        complaintStatusTitle: "ದೂರು ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
-        complaintStatusDesc: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ ಮೂಲಕ GBA ಅಥವಾ BWSSB ದೂರುಗಳನ್ನು Bengaluru Smart City ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನೋಡಿ.",
-        complaintStatusHomeDesc: "GBA ಅಥವಾ BWSSB — ದೂರು ID ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯಿಂದ",
-        complaintStatusHomeFooter: "ದೂರು ID ಅಥವಾ ಫೋನ್‌ನಿಂದ ಹುಡುಕಿ",
+        complaintStatusTitle: "ನೋಂದಾಯಿತ ದೂರು ಸ್ಥಿತಿ",
+        complaintStatusDesc: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ ಮೂಲಕ GBA ಅಥವಾ BWSSB ನೋಂದಾಯಿತ ದೂರುಗಳ ಸ್ಥಿತಿಯನ್ನು Bengaluru Smart City ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನೋಡಿ.",
+        complaintStatusHomeDesc: "GBA ಅಥವಾ BWSSB ನೋಂದಾಯಿತ ದೂರುಗಳು",
+        complaintStatusLookupPrompt: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್‌ನಿಂದ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
         complaintStatusStep1: "Complaints ಆಯ್ಕೆಮಾಡಿ, ನಂತರ GBA ಅಥವಾ BWSSB ಆಯ್ಕೆಮಾಡಿ (ಪೋರ್ಟಲ್‌ನಲ್ಲಿ GBA BBMP ಎಂದು ಕಾಣಬಹುದು).",
         complaintStatusStep2: "Complaint ID ಅಥವಾ Mobile Number ಮೂಲಕ ಹುಡುಕಿ.",
         complaintStatusStep3: "ಸ್ಥಿತಿ ಮತ್ತು ದೂರು ವಿವರಗಳನ್ನು ನೋಡಲು ಪೋರ್ಟಲ್‌ನಲ್ಲಿ Submit ಒತ್ತಿ.",
