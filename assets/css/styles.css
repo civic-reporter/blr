@@ -715,6 +715,56 @@ h2 {
     transition: all 0.3s ease;
 }
 
+.civic-whatsapp-resend-hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--x-text-secondary);
+    text-align: center;
+}
+
+.success-card .success-link-box {
+    margin: 1.25rem 0 0.75rem;
+    padding: 0.75rem 0 0;
+    overflow: hidden;
+}
+
+.success-card .success-link-box .civic-whatsapp-resend-hint {
+    padding: 0 1rem 0.75rem;
+}
+
+.success-card .civic-whatsapp-actions {
+    margin-top: 0;
+    width: 100%;
+}
+
+.success-card .success-actions {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+.success-card .success-btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
+}
+
+.success-card .success-actions .civic-success-btn {
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
+    border: 1px solid var(--x-border);
+    box-shadow: none;
+}
+
+.success-card .success-actions .civic-success-btn:hover {
+    background: var(--x-bg-primary);
+    transform: none;
+    box-shadow: none;
+}
+
 .success-link-box:hover {
     box-shadow: var(--shadow-hover);
 }
@@ -1841,12 +1891,18 @@ body.hub-page .home-header {
     .success-actions {
         flex-direction: column;
         gap: 0.75rem;
+        margin-top: 0.75rem;
     }
 
     .success-btn {
         width: 100%;
-        padding: 0.875rem 1.5rem;
+        padding: 0.875rem 1.25rem;
         font-size: 0.95rem;
+    }
+
+    .success-card .success-link-box {
+        margin: 1rem 0 0.75rem;
+        padding: 0.75rem 0 0;
     }
 
     .success-footer {
@@ -1856,8 +1912,6 @@ body.hub-page .home-header {
     }
 
     .success-link-box {
-        padding: 0.875rem;
-        margin: 1.5rem 0;
         font-size: 0.9rem;
     }
 }
@@ -2865,10 +2919,6 @@ body.heatmap-page:not(:has(.page-header)) .language-toggle-btn {
 
     .civic-form-panel .whatsapp-note {
         margin-bottom: 0;
-    }
-
-    .success-card .success-link-box {
-        margin: 1rem 0;
     }
 
     .civic-upload-btn,
