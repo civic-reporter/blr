@@ -214,7 +214,7 @@ export const translations = {
         privacyProtected: "✅ Privacy protection applied",
         dragDropHint: "Or drag and drop a photo here",
         reportPreviewTitle: "Your report will be routed to:",
-        previewWardLabel: "GBA ward",
+        previewWardLabel: "GBA Ward",
         previewOldWardLabel: "BBMP Ward",
         previewCorpLabel: "Corporation",
         previewConstituencyLabel: "Constituency",
