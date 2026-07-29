@@ -3849,3 +3849,87 @@ body.app-page:not(:has(.page-header)) .app-lang-link {
     top: 16px;
     right: 60px;
 }
+
+.home-secondary-card {
+    background:
+        linear-gradient(145deg, rgba(91, 155, 213, 0.06), transparent 55%),
+        var(--x-bg-card);
+}
+
+.complaint-status-shell {
+    max-width: 960px;
+}
+
+.complaint-status-panel {
+    padding: 1.25rem;
+    border-radius: 20px;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-card);
+    box-shadow: var(--shadow);
+}
+
+.complaint-status-steps {
+    margin: 0 0 1.25rem;
+    padding-left: 1.25rem;
+    color: var(--x-text-secondary);
+    line-height: 1.6;
+}
+
+.complaint-status-steps li + li {
+    margin-top: 0.5rem;
+}
+
+.complaint-status-actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.complaint-status-open-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    width: auto;
+    min-width: min(100%, 20rem);
+    justify-content: center;
+}
+
+.complaint-status-note {
+    margin: 0 0 1rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--x-text-secondary);
+    text-align: center;
+}
+
+.complaint-status-frame-wrap {
+    border: 1px solid var(--x-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    min-height: 70vh;
+}
+
+.complaint-status-frame {
+    display: block;
+    width: 100%;
+    min-height: 70vh;
+    border: 0;
+    background: #fff;
+}
+
+@media (max-width: 768px) {
+    .complaint-status-panel {
+        padding: 1rem;
+    }
+
+    .complaint-status-frame-wrap,
+    .complaint-status-frame {
+        min-height: 62vh;
+    }
+
+    .complaint-status-open-btn {
+        width: 100%;
+    }
+}

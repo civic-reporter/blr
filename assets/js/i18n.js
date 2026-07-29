@@ -3,6 +3,7 @@ export const translations = {
     en: {
         heatmap: "Heatmap",
         leaderboard: "Leaderboard",
+        complaintStatus: "Check Status",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -66,6 +67,7 @@ export const translations = {
         pothole: "Pothole",
         footpath: "Footpath",
         drainageIssue: "Drainage issue",
+        sewageIssue: "Sewage / sewerage",
         streetlight: "Streetlight",
         garbage: "Garbage",
         solidWasteManagement: "Solid Waste Management",
@@ -149,6 +151,15 @@ export const translations = {
         whatsappLogFailed: "Could not record the report. Try confirming again.",
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
+
+        complaintStatusTitle: "Check complaint status",
+        complaintStatusDesc: "Look up BBMP or BWSSB complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.",
+        complaintStatusHomeDesc: "BBMP or BWSSB — by complaint ID or mobile number",
+        complaintStatusStep1: "Select Complaints, then choose BBMP or BWSSB.",
+        complaintStatusStep2: "Search by Complaint ID or Mobile Number.",
+        complaintStatusStep3: "Submit on the portal to view status and grievance details.",
+        complaintStatusOpenExternal: "Open portal in new tab",
+        complaintStatusPortalNote: "Powered by BenSCL (Bengaluru Smart City Limited). If the embedded portal does not load, use the button above.",
 
         // Traffic Page (blr-traffic-index.html)
         trafficReporterTitle: "🚦 Nāgarika Dhvani - Traffic",
@@ -286,6 +297,7 @@ export const translations = {
     kn: {
         heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
         leaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್",
+        complaintStatus: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
@@ -349,6 +361,7 @@ export const translations = {
         pothole: "ಗುಂಡಿ",
         footpath: "ಪದಮಾರ್ಗ",
         drainageIssue: "ಸನಿಕೆ ಸಮಸ್ಯೆ",
+        sewageIssue: "ಚರಂಡಿ / sewerage",
         streetlight: "ರಸ್ತೆ ದೀಪ",
         garbage: "ಗಾಡಿ",
         solidWasteManagement: "ಘನ ಅಪಶಿಷ್ಟ ನಿರ್ವಹಣೆ",
@@ -427,6 +440,15 @@ export const translations = {
         whatsappLogFailed: "ವರದಿಯನ್ನು ದಾಖಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ದೃಢೀಕರಿಸಿ.",
         submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
+
+        complaintStatusTitle: "ದೂರು ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+        complaintStatusDesc: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ ಮೂಲಕ BBMP ಅಥವಾ BWSSB ದೂರುಗಳನ್ನು Bengaluru Smart City ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನೋಡಿ.",
+        complaintStatusHomeDesc: "BBMP ಅಥವಾ BWSSB — ದೂರು ID ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯಿಂದ",
+        complaintStatusStep1: "Complaints ಆಯ್ಕೆಮಾಡಿ, ನಂತರ BBMP ಅಥವಾ BWSSB ಆಯ್ಕೆಮಾಡಿ.",
+        complaintStatusStep2: "Complaint ID ಅಥವಾ Mobile Number ಮೂಲಕ ಹುಡುಕಿ.",
+        complaintStatusStep3: "ಸ್ಥಿತಿ ಮತ್ತು ದೂರು ವಿವರಗಳನ್ನು ನೋಡಲು ಪೋರ್ಟಲ್‌ನಲ್ಲಿ Submit ಒತ್ತಿ.",
+        complaintStatusOpenExternal: "ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಪೋರ್ಟಲ್ ತೆರೆಯಿರಿ",
+        complaintStatusPortalNote: "BenSCL (Bengaluru Smart City Limited) ನಿಂದ. ಎಂಬೆಡ್ ಪೋರ್ಟಲ್ ಲೋಡ್ ಆಗದಿದ್ದರೆ ಮೇಲಿನ ಬಟನ್ ಬಳಸಿ.",
 
         // Traffic Page
         trafficReporterTitle: "🚦 ನಾಗರಿಕ ಧ್ವನಿ - ಟ್ರಾಫಿಕ್",

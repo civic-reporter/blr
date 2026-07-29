@@ -41,6 +41,10 @@
     <span class="hero-pill app-pill civic-pill" data-i18n="civicIssues">Civic Issues</span>
 
     <nav class="app-header-nav civic-header-nav" aria-label="Page navigation">
+      <a href="complaint-status.html" class="app-nav-link civic-nav-link" data-i18n-title="complaintStatus">
+        <i class="fas fa-search"></i>
+        <span data-i18n="complaintStatus">Check Status</span>
+      </a>
       <a href="heatmap.html" class="app-nav-link civic-nav-link" data-i18n-title="heatmap">
         <i class="fas fa-chart-area"></i>
         <span id="switchLabelHeatmap" data-i18n="heatmap">Heatmap</span>
@@ -223,11 +227,12 @@
               <label class="civic-field">
                 <span class="civic-field-label" data-i18n="issueCategory">Issue Category</span>
                 <select id="issueType" required
-                  data-i18n-options="selectCivicIssue,pothole,footpath,drainageIssue,streetlight,garbage,solidWasteManagement,manhole,roadRepair,other">
+                  data-i18n-options="selectCivicIssue,pothole,footpath,drainageIssue,sewageIssue,streetlight,garbage,solidWasteManagement,manhole,roadRepair,other">
                   <option value="" data-i18n="selectCivicIssue">Select civic issue...</option>
                   <option value="Pothole" data-i18n="pothole">Pothole</option>
                   <option value="Footpath" data-i18n="footpath">Footpath</option>
                   <option value="Drainage" data-i18n="drainageIssue">Drainage issue</option>
+                  <option value="Sewage" data-i18n="sewageIssue">Sewage / sewerage</option>
                   <option value="Streetlight" data-i18n="streetlight">Streetlight</option>
                   <option value="Garbage" data-i18n="garbage">Garbage</option>
                   <option value="Solid Waste Management" data-i18n="solidWasteManagement">Solid Waste Management</option>

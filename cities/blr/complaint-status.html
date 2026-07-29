@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nāgarika Dhvani - Check Complaint Status</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <meta name="theme-color" content="#5b9bd5">
+</head>
+
+<body class="app-page complaint-status-page">
+    <div class="home-bg-orb orb-1" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-2" aria-hidden="true"></div>
+    <div class="home-bg-orb orb-3" aria-hidden="true"></div>
+    <div class="home-grid-pattern" aria-hidden="true"></div>
+
+    <button id="themeToggle" class="theme-toggle-btn" data-i18n-aria="toggleTheme" data-i18n-title="toggleTheme">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon is-hidden"></i>
+    </button>
+
+    <header class="app-header">
+        <a href="../../index.html" class="home-brand nav-home" data-i18n-title="backToHome">
+            <span class="home-brand-icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
+            <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
+        </a>
+
+        <span class="hero-pill app-pill" data-i18n="complaintStatus">Check Status</span>
+
+        <nav class="app-header-nav" aria-label="Page navigation">
+            <a href="civic.html" class="app-nav-link" data-i18n-title="switchToCivic">
+                <i class="fas fa-landmark"></i>
+                <span data-i18n="switchToCivic">Report Civic Issue</span>
+            </a>
+            <a href="heatmap.html" class="app-nav-link" data-i18n-title="heatmap">
+                <i class="fas fa-chart-area"></i>
+                <span data-i18n="heatmap">Heatmap</span>
+            </a>
+            <a href="leaderboard.html" class="app-nav-link" data-i18n-title="leaderboard">
+                <i class="fas fa-trophy"></i>
+                <span data-i18n="leaderboard">Leaderboard</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <div class="container app-shell complaint-status-shell">
+            <section class="app-hero">
+                <h1 class="app-hero-title" data-i18n="complaintStatusTitle">Check complaint status</h1>
+                <p class="app-hero-desc" data-i18n="complaintStatusDesc">
+                    Look up BBMP or BWSSB complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.
+                </p>
+            </section>
+
+            <section class="complaint-status-panel" aria-label="Complaint status lookup">
+                <ol class="complaint-status-steps">
+                    <li data-i18n="complaintStatusStep1">Select Complaints, then choose BBMP or BWSSB.</li>
+                    <li data-i18n="complaintStatusStep2">Search by Complaint ID or Mobile Number.</li>
+                    <li data-i18n="complaintStatusStep3">Submit on the portal to view status and grievance details.</li>
+                </ol>
+
+                <div class="complaint-status-actions">
+                    <a href="https://smartoneblr.com/NicApplicationStatus.htm" target="_blank" rel="noopener noreferrer"
+                        class="civic-upload-btn complaint-status-open-btn">
+                        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                        <span data-i18n="complaintStatusOpenExternal">Open portal in new tab</span>
+                    </a>
+                </div>
+
+                <p class="complaint-status-note" data-i18n="complaintStatusPortalNote">
+                    Powered by BenSCL (Bengaluru Smart City Limited). If the embedded portal does not load, use the button above.
+                </p>
+
+                <div class="complaint-status-frame-wrap">
+                    <iframe
+                        class="complaint-status-frame"
+                        title="BenSCL complaint status portal"
+                        src="https://smartoneblr.com/NicApplicationStatus.htm"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <small data-i18n="footerText">&copy; 2026 Zen Citizen. Made with ❤️ for Bengaluru</small>
+        </div>
+    </footer>
+
+    <script type="module">
+        const html = document.documentElement;
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initial = saved || (prefersDark ? 'dark' : 'light');
+            html.setAttribute('data-theme', initial);
+            updateThemeToggle(initial);
+        }
+
+        function updateThemeToggle(theme) {
+            const sun = document.querySelector('#themeToggle .fa-sun');
+            const moon = document.querySelector('#themeToggle .fa-moon');
+            if (!sun || !moon) return;
+            if (theme === 'dark') {
+                sun.classList.add('is-hidden');
+                moon.classList.remove('is-hidden');
+            } else {
+                sun.classList.remove('is-hidden');
+                moon.classList.add('is-hidden');
+            }
+        }
+
+        initTheme();
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { initLanguageSwitcher } = await import('../../assets/js/language-switcher.js');
+            await initLanguageSwitcher();
+
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    const current = html.getAttribute('data-theme') || 'light';
+                    const next = current === 'light' ? 'dark' : 'light';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('theme', next);
+                    updateThemeToggle(next);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
