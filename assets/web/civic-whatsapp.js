@@ -21,28 +21,68 @@ async function loadWhatsAppConfig() {
     return whatsappConfig;
 }
 
+function normalizePhoneNumber(number) {
+    return String(number || '').replace(/\D/g, '');
+}
+
+function normalizeIssueType(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function getSelectedIssueType() {
+    return document.getElementById('issueType')?.value || '';
+}
+
+function resolveWhatsAppTarget(issueType, config) {
+    const routes = config?.routes || [];
+    const normalized = normalizeIssueType(issueType);
+
+    for (const route of routes) {
+        const types = (route.issueTypes || []).map((entry) => normalizeIssueType(entry));
+        if (normalized && types.includes(normalized)) {
+            return {
+                number: route.number,
+                displayNumber: route.displayNumber || route.number?.replace(/^91/, '') || '',
+                displayLabel: route.displayLabel || config.displayLabel || 'GBA Grievance Desk Report'
+            };
+        }
+    }
+
+    return {
+        number: config.number,
+        displayNumber: config.displayNumber || config.number?.replace(/^91/, '') || '',
+        displayLabel: config.displayLabel || 'GBA Grievance Desk Report'
+    };
+}
+
+export async function getWhatsAppTargetForIssue(issueType = getSelectedIssueType()) {
+    const config = await loadWhatsAppConfig();
+    return resolveWhatsAppTarget(issueType, config);
+}
+
 export async function isWhatsAppEnabled() {
     const config = await loadWhatsAppConfig();
     return !!(config.enabled && config.number);
 }
 
-export async function getWhatsAppDisplayNumber() {
-    const config = await loadWhatsAppConfig();
-    return config.displayNumber || config.number?.replace(/^91/, '') || '';
+export async function getWhatsAppDisplayNumber(issueType) {
+    const target = await getWhatsAppTargetForIssue(issueType);
+    return target.displayNumber || target.number?.replace(/^91/, '') || '';
 }
 
-export async function getWhatsAppTargetLabel() {
+export async function getWhatsAppTargetLabel(issueType) {
     const config = await loadWhatsAppConfig();
-    const number = await getWhatsAppDisplayNumber();
+    const target = resolveWhatsAppTarget(issueType ?? getSelectedIssueType(), config);
+    const number = target.displayNumber || target.number?.replace(/^91/, '') || '';
     const lang = getCurrentLanguage();
-    const label = t('whatsappTargetName', lang) || config.displayLabel || 'GBA Grievance Desk Report';
+    const label = target.displayLabel || t('whatsappTargetName', lang) || config.displayLabel || 'GBA Grievance Desk Report';
     if (number && label.includes(number)) return label;
     return number ? `${label} (${number})` : label;
 }
 
-export async function getWhatsAppNumber() {
-    const config = await loadWhatsAppConfig();
-    return config.number || '';
+export async function getWhatsAppNumber(issueType) {
+    const target = await getWhatsAppTargetForIssue(issueType);
+    return target.number || '';
 }
 
 function buildUniqueImageFilename(baseName = 'civic-issue') {
@@ -65,10 +105,6 @@ function toImageFile(imageFile) {
         return new File([imageFile], filename, { type: 'image/jpeg' });
     }
     return null;
-}
-
-function normalizePhoneNumber(number) {
-    return String(number || '').replace(/\D/g, '');
 }
 
 function isMobileDevice() {
@@ -259,9 +295,10 @@ function openWhatsAppChat(number, message) {
 
 export async function shareViaWhatsApp(reportData, imageFile) {
     const config = await loadWhatsAppConfig();
-    if (!config.enabled || !config.number) return { mode: 'disabled' };
+    const target = resolveWhatsAppTarget(reportData?.issueType, config);
+    if (!config.enabled || !target.number) return { mode: 'disabled' };
 
-    const displayNumber = await getWhatsAppDisplayNumber();
+    const displayNumber = target.displayNumber || target.number.replace(/^91/, '');
     const file = toImageFile(imageFile);
     const chatMessage = buildWhatsAppMessage(reportData);
 
@@ -270,12 +307,13 @@ export async function shareViaWhatsApp(reportData, imageFile) {
         await new Promise(resolve => setTimeout(resolve, 450));
     }
 
-    openWhatsAppChat(config.number, chatMessage);
+    openWhatsAppChat(target.number, chatMessage);
 
     return {
         mode: file ? 'direct-with-photo' : 'direct',
         hintKey: file ? 'whatsappDirectWithPhoto' : 'whatsappReviewAndSend',
-        displayNumber
+        displayNumber,
+        targetNumber: target.number
     };
 }
 
@@ -339,6 +377,6 @@ export async function updateCivicWhatsAppOption() {
     whatsappOption.classList.remove('is-hidden');
     whatsappOption.style.display = 'block';
     if (numberDisplay) {
-        numberDisplay.textContent = await getWhatsAppTargetLabel();
+        numberDisplay.textContent = await getWhatsAppTargetLabel(getSelectedIssueType());
     }
 }

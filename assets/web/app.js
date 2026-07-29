@@ -177,6 +177,8 @@ async function initApp() {
             saveCivicDraft();
             updateSubmitButtonState();
             refreshIssueDescLimit();
+            updateCivicWhatsAppOption();
+            if (window.updateReportPreview) window.updateReportPreview();
         });
     }
 
