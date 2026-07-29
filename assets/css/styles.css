@@ -1247,7 +1247,7 @@ body.app-page {
     }
 
     .home-primary-card {
-        flex: 1.15;
+        flex: 1;
         min-width: 0;
     }
 
@@ -1339,6 +1339,16 @@ body.app-page {
     font-size: 0.92rem;
     font-weight: 600;
     color: var(--x-text-primary);
+}
+
+.home-primary-card-footer > span:first-child {
+    min-width: 0;
+    flex: 1;
+    line-height: 1.45;
+}
+
+.home-primary-card-body {
+    min-width: 0;
 }
 
 .home-card-arrow {
@@ -3848,12 +3858,6 @@ body.heatmap-page .app-main-wide {
 body.app-page:not(:has(.page-header)) .app-lang-link {
     top: 16px;
     right: 60px;
-}
-
-.home-secondary-card {
-    background:
-        linear-gradient(145deg, rgba(91, 155, 213, 0.06), transparent 55%),
-        var(--x-bg-card);
 }
 
 .complaint-status-shell {
