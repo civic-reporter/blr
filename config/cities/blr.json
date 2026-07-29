@@ -81,6 +81,7 @@
             "drainage",
             "streetlights",
             "garbage",
+            "solidWasteManagement",
             "water",
             "parks",
             "roads",
@@ -105,6 +106,14 @@
         "enabled": true,
         "number": "919480685700",
         "displayNumber": "9480685700",
-        "displayLabel": "GBA Grievance Desk Report"
+        "displayLabel": "GBA Grievance Desk Report",
+        "routes": [
+            {
+                "issueTypes": ["Garbage", "Solid Waste Management"],
+                "number": "919448197197",
+                "displayNumber": "9448197197",
+                "displayLabel": "Bengaluru Solid Waste Management Limited"
+            }
+        ]
     }
 }
