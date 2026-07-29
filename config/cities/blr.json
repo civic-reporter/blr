@@ -24,7 +24,8 @@
     },
     "pages": {
         "civic": "cities/blr/civic.html",
-        "traffic": "cities/blr/traffic.html"
+        "traffic": "cities/blr/traffic.html",
+        "complaintStatus": "cities/blr/complaint-status.html"
     },
     "apis": {
         "civicApi": "",
@@ -79,9 +80,11 @@
         "civic": [
             "potholes",
             "drainage",
+            "sewage",
             "streetlights",
             "garbage",
             "solidWasteManagement",
+            "manhole",
             "water",
             "parks",
             "roads",
@@ -113,6 +116,12 @@
                 "number": "919448197197",
                 "displayNumber": "9448197197",
                 "displayLabel": "Bengaluru Solid Waste Management Limited"
+            },
+            {
+                "issueTypes": ["Manhole", "Sewage", "Drainage"],
+                "number": "918762228888",
+                "displayNumber": "8762228888",
+                "displayLabel": "BWSSB Grievance Desk"
             }
         ]
     }

@@ -3,6 +3,7 @@ export const translations = {
     en: {
         heatmap: "Heatmap",
         leaderboard: "Leaderboard",
+        complaintStatus: "Check Status",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -66,6 +67,7 @@ export const translations = {
         pothole: "Pothole",
         footpath: "Footpath",
         drainageIssue: "Drainage issue",
+        sewageIssue: "Sewage / sewerage",
         streetlight: "Streetlight",
         garbage: "Garbage",
         solidWasteManagement: "Solid Waste Management",
@@ -150,6 +152,15 @@ export const translations = {
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
 
+        complaintStatusTitle: "Check complaint status",
+        complaintStatusDesc: "Look up GBA or BWSSB complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.",
+        complaintStatusHomeDesc: "GBA or BWSSB — by complaint ID or mobile number",
+        complaintStatusStep1: "Select Complaints, then choose GBA or BWSSB (GBA may appear as BBMP on the portal).",
+        complaintStatusStep2: "Search by Complaint ID or Mobile Number.",
+        complaintStatusStep3: "Submit on the portal to view status and grievance details.",
+        complaintStatusOpenExternal: "Open portal in new tab",
+        complaintStatusPortalNote: "Powered by BenSCL (Bengaluru Smart City Limited). If the embedded portal does not load, use the button above.",
+
         // Traffic Page (blr-traffic-index.html)
         trafficReporterTitle: "🚦 Nāgarika Dhvani - Traffic",
         trafficReporterDesc: "Report traffic signals, jams, parking to Bengaluru Traffic Authorities",
@@ -203,8 +214,8 @@ export const translations = {
         privacyProtected: "✅ Privacy protection applied",
         dragDropHint: "Or drag and drop a photo here",
         reportPreviewTitle: "Your report will be routed to:",
-        previewWardLabel: "GBA ward",
-        previewOldWardLabel: "BBMP ward (pre-GBA)",
+        previewWardLabel: "GBA Ward",
+        previewOldWardLabel: "BBMP Ward",
         previewCorpLabel: "Corporation",
         previewConstituencyLabel: "Constituency",
         previewMlaLabel: "MLA",
@@ -286,6 +297,7 @@ export const translations = {
     kn: {
         heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
         leaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್",
+        complaintStatus: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
@@ -349,6 +361,7 @@ export const translations = {
         pothole: "ಗುಂಡಿ",
         footpath: "ಪದಮಾರ್ಗ",
         drainageIssue: "ಸನಿಕೆ ಸಮಸ್ಯೆ",
+        sewageIssue: "ಚರಂಡಿ / sewerage",
         streetlight: "ರಸ್ತೆ ದೀಪ",
         garbage: "ಗಾಡಿ",
         solidWasteManagement: "ಘನ ಅಪಶಿಷ್ಟ ನಿರ್ವಹಣೆ",
@@ -428,6 +441,15 @@ export const translations = {
         submitAnotherIssue: "ಮತ್ತೊಂದು ಸಮಸ್ಯೆ ಸಲ್ಲಿಸಿ",
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
 
+        complaintStatusTitle: "ದೂರು ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+        complaintStatusDesc: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ ಮೂಲಕ GBA ಅಥವಾ BWSSB ದೂರುಗಳನ್ನು Bengaluru Smart City ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನೋಡಿ.",
+        complaintStatusHomeDesc: "GBA ಅಥವಾ BWSSB — ದೂರು ID ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯಿಂದ",
+        complaintStatusStep1: "Complaints ಆಯ್ಕೆಮಾಡಿ, ನಂತರ GBA ಅಥವಾ BWSSB ಆಯ್ಕೆಮಾಡಿ (ಪೋರ್ಟಲ್‌ನಲ್ಲಿ GBA BBMP ಎಂದು ಕಾಣಬಹುದು).",
+        complaintStatusStep2: "Complaint ID ಅಥವಾ Mobile Number ಮೂಲಕ ಹುಡುಕಿ.",
+        complaintStatusStep3: "ಸ್ಥಿತಿ ಮತ್ತು ದೂರು ವಿವರಗಳನ್ನು ನೋಡಲು ಪೋರ್ಟಲ್‌ನಲ್ಲಿ Submit ಒತ್ತಿ.",
+        complaintStatusOpenExternal: "ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಪೋರ್ಟಲ್ ತೆರೆಯಿರಿ",
+        complaintStatusPortalNote: "BenSCL (Bengaluru Smart City Limited) ನಿಂದ. ಎಂಬೆಡ್ ಪೋರ್ಟಲ್ ಲೋಡ್ ಆಗದಿದ್ದರೆ ಮೇಲಿನ ಬಟನ್ ಬಳಸಿ.",
+
         // Traffic Page
         trafficReporterTitle: "🚦 ನಾಗರಿಕ ಧ್ವನಿ - ಟ್ರಾಫಿಕ್",
         trafficReporterDesc: "ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್, ನಿಜಮ್ಮೆ, ಪಾರ್ಕಿಂಗ್ ಅನ್ನು ಬೆಂಗಳೂರು ಟ್ರಾಫಿಕ್ ಅಧಿಕಾರಿಗಳಿಗೆ ವರದಿ ಮಾಡಿ",
@@ -482,7 +504,7 @@ export const translations = {
         dragDropHint: "ಅಥವಾ ಫೋಟೋವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ",
         reportPreviewTitle: "ನಿಮ್ಮ ವರದಿ ಇವರಿಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ:",
         previewWardLabel: "GBA ವಾರ್ಡ್",
-        previewOldWardLabel: "BBMP ವಾರ್ಡ್ (ಹಳೆಯ)",
+        previewOldWardLabel: "BBMP ವಾರ್ಡ್",
         previewCorpLabel: "ಕಾರ್ಪೊರೇಶನ್",
         previewConstituencyLabel: "ವಿಧಾನಸಭಾ ಕ್ಷೇತ್ರ",
         previewMlaLabel: "ಶಾಸಕ",
