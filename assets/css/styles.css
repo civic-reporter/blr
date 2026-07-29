@@ -689,8 +689,20 @@ h2 {
 .success-message {
     font-size: 1.1rem;
     color: var(--x-text-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     line-height: 1.6;
+}
+
+.success-report-destination {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--x-text-primary);
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    background: rgba(91, 155, 213, 0.1);
+    border: 1px solid rgba(91, 155, 213, 0.22);
 }
 
 .success-link-box {

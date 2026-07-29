@@ -45,6 +45,12 @@ export function resetApp() {
         whatsappSuccessBox.classList.add('is-hidden');
     }
 
+    const successDestination = document.getElementById('successReportDestination');
+    if (successDestination) {
+        successDestination.textContent = '';
+        successDestination.classList.add('is-hidden');
+    }
+
     const searchInput = document.getElementById('gbaSearch');
     const suggBox = document.getElementById('gbaSearchSuggestions');
     const searchWrapper = document.getElementById('gbaSearchWrapper');

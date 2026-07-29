@@ -261,6 +261,25 @@ export function formatWhatsAppHint(key, displayNumber) {
     return t(key, getCurrentLanguage()).replace(/\{number\}/g, displayNumber || '');
 }
 
+export async function formatReportSuccessContent(issueType) {
+    const lang = getCurrentLanguage();
+    const config = await loadWhatsAppConfig();
+    const target = resolveWhatsAppTarget(issueType, config);
+    const displayNumber = target.displayNumber || target.number?.replace(/^91/, '') || '';
+    const deskName = target.displayLabel || t('whatsappTargetName', lang);
+
+    return {
+        deskName,
+        displayNumber,
+        destinationLine: displayNumber
+            ? t('issueReportedDestination', lang)
+                .replace('{desk}', deskName)
+                .replace('{number}', displayNumber)
+            : t('issueReportedSimple', lang),
+        followUpLine: t('issueReportedFollowUp', lang)
+    };
+}
+
 function downloadImageFile(file) {
     const url = URL.createObjectURL(file);
     const link = document.createElement('a');
@@ -317,28 +336,51 @@ export async function shareViaWhatsApp(reportData, imageFile) {
     };
 }
 
-export function setupWhatsAppSuccessBox({ reportData, imageFile, hintKey, displayNumber }) {
+export function setupWhatsAppSuccessBox({ reportData, imageFile, displayNumber }) {
     const lang = getCurrentLanguage();
     const box = document.getElementById('whatsappSuccessBox');
     if (!box) return;
 
     box.classList.remove('is-hidden');
     box.innerHTML = `
-        <p id="whatsappSuccessHint" class="map-message civic-whatsapp-hint">${formatWhatsAppHint(hintKey, displayNumber)}</p>
+        <p class="civic-whatsapp-resend-hint">${escapeHtml(t('issueReportedResendHint', lang))}</p>
         <div class="civic-whatsapp-actions">
             <button type="button" id="whatsappResendBtn" class="success-btn civic-success-btn civic-whatsapp-btn">
                 <i class="fab fa-whatsapp"></i>
-                <span>${t('sendWhatsApp', lang)}</span>
+                <span>${escapeHtml(t('sendWhatsApp', lang))}</span>
             </button>
         </div>
     `;
     document.getElementById('whatsappResendBtn')?.addEventListener('click', async () => {
-        const retry = await shareViaWhatsApp(reportData, imageFile);
-        const hintEl = document.getElementById('whatsappSuccessHint');
-        if (hintEl && retry.hintKey) {
-            hintEl.textContent = formatWhatsAppHint(retry.hintKey, retry.displayNumber || displayNumber);
-        }
+        await shareViaWhatsApp(reportData, imageFile);
     });
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+export async function renderSuccessScreenContent(issueType) {
+    const lang = getCurrentLanguage();
+    const { destinationLine, followUpLine } = await formatReportSuccessContent(issueType);
+
+    const titleEl = document.querySelector('#successScreen .success-title');
+    const messageEl = document.getElementById('successMessage');
+    const destinationEl = document.getElementById('successReportDestination');
+
+    if (titleEl) {
+        titleEl.textContent = t('issuePostedSuccess', lang);
+    }
+    if (messageEl) {
+        messageEl.textContent = followUpLine;
+    }
+    if (destinationEl) {
+        destinationEl.textContent = destinationLine;
+        destinationEl.classList.remove('is-hidden');
+    }
 }
 
 export async function renderWhatsAppSuccess(reportData, imageFile) {
@@ -348,13 +390,13 @@ export async function renderWhatsAppSuccess(reportData, imageFile) {
     const result = await shareViaWhatsApp(reportData, imageFile);
     if (result.mode === 'disabled') return;
 
-    const displayNumber = result.displayNumber || await getWhatsAppDisplayNumber();
+    const displayNumber = result.displayNumber || await getWhatsAppDisplayNumber(reportData?.issueType);
     setupWhatsAppSuccessBox({
         reportData,
         imageFile,
-        hintKey: result.hintKey,
         displayNumber
     });
+    await renderSuccessScreenContent(reportData?.issueType);
 }
 
 export async function updateCivicWhatsAppOption() {

@@ -78,7 +78,7 @@ export async function findConstituencyForCurrentGPS() {
 
 export async function shareToGBA() {
     const lang = getCurrentLanguage();
-    const { isWhatsAppEnabled, shareViaWhatsApp, formatWhatsAppHint, getWhatsAppDisplayNumber, setupWhatsAppSuccessBox } = await import('./civic-whatsapp.js');
+    const { isWhatsAppEnabled, shareViaWhatsApp, setupWhatsAppSuccessBox, renderSuccessScreenContent } = await import('./civic-whatsapp.js');
 
     if (!(await isWhatsAppEnabled())) {
         showStatus(`❌ ${t('whatsappDisabled', lang)}`, "error");
@@ -167,7 +167,7 @@ export async function shareToGBA() {
             return;
         }
 
-        const displayNumber = result.displayNumber || await getWhatsAppDisplayNumber();
+        const displayNumber = result.displayNumber;
         wasSuccess = true;
         clearCivicDraft();
 
@@ -198,10 +198,7 @@ export async function shareToGBA() {
         showStatus("", "");
         showSuccessScreen();
 
-        const successMessage = document.getElementById('successMessage');
-        if (successMessage) {
-            successMessage.textContent = formatWhatsAppHint('issuePostedDesc', displayNumber);
-        }
+        await renderSuccessScreenContent(issueType);
 
         window.currentGPS = savedGPS;
 
@@ -212,7 +209,6 @@ export async function shareToGBA() {
         setupWhatsAppSuccessBox({
             reportData,
             imageFile: savedImageFile,
-            hintKey: result.hintKey,
             displayNumber
         });
     } catch (e) {
