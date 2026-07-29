@@ -78,7 +78,7 @@ async function handleCivicCameraCapture(file) {
     await blurAndUpdatePreview();
 }
 
-function initApp() {
+async function initApp() {
     console.log('🚀 Civic app initializing...');
     cacheUIElements();
 
@@ -225,6 +225,10 @@ function initApp() {
         }
     });
 
+    window.addEventListener('civicLocationUpdated', () => {
+        saveCivicDraft();
+    });
+
     console.log('🗺️ Calling initMap()...');
     initMap();
     console.log('📤 Calling showUploadOptions()...');
@@ -233,7 +237,7 @@ function initApp() {
     initSteps();
     initLocationStatus();
 
-    if (restoreCivicDraft()) {
+    if (await restoreCivicDraft()) {
         const lang = getCurrentLanguage();
         const statusDiv = document.getElementById('status');
         if (statusDiv) {

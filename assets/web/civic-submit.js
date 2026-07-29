@@ -1,7 +1,8 @@
 import { getConfig, getMlaHandles, getMlaNames, getCityFeatures } from './config.js';
-import { findCorpForCurrentGPS, findWardForCurrentGPS } from './validation.js';
-import { showStatus, showSuccessScreen, updateSubmitButtonState } from './ui.js';
+import { findCorpForCurrentGPS, findWardForCurrentGPS, validateLocationForCoords } from './validation.js';
+import { showStatus, showSuccessScreen, updateSubmitButtonState, updateLocationConfirmVisibility } from './ui.js';
 import { isValidNumber, pointInRing, loadGeoLayers } from './utils.js';
+import { GPS_SOURCE, getGpsSource, markLiveGps, markManualGps } from './gps.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 let CONFIG = null;
@@ -248,6 +249,54 @@ function attachRetryHandler() {
 
 const CIVIC_DRAFT_KEY = 'civic_report_draft';
 
+function waitForMapReady(timeoutMs = 10000) {
+    return new Promise((resolve) => {
+        const started = Date.now();
+        const check = () => {
+            if (window.map && typeof window.placeMarker === 'function') {
+                resolve(true);
+                return;
+            }
+            if (Date.now() - started >= timeoutMs) {
+                resolve(false);
+                return;
+            }
+            setTimeout(check, 100);
+        };
+        check();
+    });
+}
+
+async function applyDraftLocation(draft) {
+    const { lat, lon } = draft;
+    if (!isValidNumber(lat) || !isValidNumber(lon)) return false;
+
+    const coords = { lat, lon };
+    if (!(await validateLocationForCoords(coords))) return false;
+
+    window.currentGPS = coords;
+    window.currentGPSAccuracy = Number.isFinite(draft.gpsAccuracy) ? draft.gpsAccuracy : null;
+
+    if (draft.gpsSource === GPS_SOURCE.LIVE) {
+        markLiveGps();
+    } else {
+        markManualGps();
+    }
+
+    const ready = await waitForMapReady();
+    if (!ready) return false;
+
+    window.map.setView([lat, lon], 16);
+    window.placeMarker();
+    updateSubmitButtonState();
+    updateLocationConfirmVisibility();
+    if (window.updateReportPreview) window.updateReportPreview();
+    if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
+    if (window.renderCivicLocationStatus) window.renderCivicLocationStatus();
+
+    return true;
+}
+
 export function saveCivicDraft() {
     try {
         const issueType = document.getElementById('issueType')?.value || '';
@@ -257,6 +306,8 @@ export function saveCivicDraft() {
             issueDesc,
             lat: window.currentGPS?.lat ?? null,
             lon: window.currentGPS?.lon ?? null,
+            gpsSource: getGpsSource(),
+            gpsAccuracy: window.currentGPSAccuracy ?? null,
             savedAt: Date.now()
         };
         localStorage.setItem(CIVIC_DRAFT_KEY, JSON.stringify(draft));
@@ -265,7 +316,7 @@ export function saveCivicDraft() {
     }
 }
 
-export function restoreCivicDraft() {
+export async function restoreCivicDraft() {
     try {
         const raw = localStorage.getItem(CIVIC_DRAFT_KEY);
         if (!raw) return false;
@@ -281,7 +332,13 @@ export function restoreCivicDraft() {
         import('./civic-whatsapp.js').then(({ updateIssueDescriptionLimit }) => updateIssueDescriptionLimit());
         window.resizeIssueDescField?.();
 
-        return !!(draft.issueType || draft.issueDesc);
+        const hasForm = !!(draft.issueType || draft.issueDesc);
+        const hasLocation = isValidNumber(draft.lat) && isValidNumber(draft.lon);
+        if (hasLocation) {
+            await applyDraftLocation(draft);
+        }
+
+        return hasForm || hasLocation;
     } catch (e) {
         console.warn('Could not restore civic draft:', e);
         return false;

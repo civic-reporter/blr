@@ -10,6 +10,32 @@ let mapInitialized = false;
 let CONFIG = null;
 let googleMapsLoaded = false;
 let markerPopupTimeout = null;
+let accuracyCircle = null;
+
+export function clearAccuracyCircle() {
+    if (accuracyCircle && window.map) {
+        window.map.removeLayer(accuracyCircle);
+    }
+    accuracyCircle = null;
+}
+
+export function updateAccuracyCircle(lat, lon, accuracyMeters) {
+    if (!window.map || !Number.isFinite(lat) || !Number.isFinite(lon) ||
+        !Number.isFinite(accuracyMeters) || accuracyMeters <= 0) {
+        clearAccuracyCircle();
+        return;
+    }
+
+    clearAccuracyCircle();
+    accuracyCircle = L.circle([lat, lon], {
+        radius: accuracyMeters,
+        color: '#5b9bd5',
+        fillColor: '#5b9bd5',
+        fillOpacity: 0.12,
+        weight: 1,
+        interactive: false
+    }).addTo(window.map);
+}
 
 function setMapRestrictionVisibility(visible) {
     const msg = document.getElementById("mapRestrictionMsg");
@@ -132,6 +158,7 @@ async function setupGoogleAutocomplete(searchInput) {
         const valid = await validateLocationForCoords(gps);
         if (valid && window.map) {
             window.currentGPS = gps;
+            window.currentGPSAccuracy = null;
             markManualGps();
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.placeMarker();
@@ -142,6 +169,7 @@ async function setupGoogleAutocomplete(searchInput) {
             setTimeout(updateSubmitButtonState, 50);
             if (window.updateReportPreview) window.updateReportPreview();
             if (window.updateCivicWhatsAppOption) window.updateCivicWhatsAppOption();
+            window.dispatchEvent(new CustomEvent('civicLocationUpdated'));
         } else {
             if (markerInstance) window.map.removeLayer(markerInstance);
             window.currentGPS = null;
@@ -167,6 +195,7 @@ export async function handleMapClick(e) {
     }
 
     window.currentGPS = testGPS;
+    window.currentGPSAccuracy = null;
     markManualGps();
     setMapRestrictionVisibility(false);
     window.placeMarker();  // ✅ USE GLOBAL
@@ -174,6 +203,7 @@ export async function handleMapClick(e) {
     showImageConfirm();
     showStatus('', 'success');
     updateSubmitButtonState();
+    window.dispatchEvent(new CustomEvent('civicLocationUpdated'));
 
     if (window.updateReportPreview) window.updateReportPreview();
 
@@ -215,6 +245,12 @@ export function placeMarker() {
 
     updateGpsDisplay();
 
+    if (Number.isFinite(window.currentGPSAccuracy)) {
+        updateAccuracyCircle(window.currentGPS.lat, window.currentGPS.lon, window.currentGPSAccuracy);
+    } else {
+        clearAccuracyCircle();
+    }
+
     markerInstance.on('dragend', async (e) => {
         const newPos = e.target.getLatLng();
         const testGPS = { lat: newPos.lat, lon: newPos.lng };
@@ -223,13 +259,16 @@ export function placeMarker() {
         const valid = await validateLocationForCoords(testGPS);
         if (valid) {
             window.currentGPS = testGPS;
+            window.currentGPSAccuracy = null;
             markManualGps();
             setMapRestrictionVisibility(false);
+            clearAccuracyCircle();
             updateGpsDisplay();
             showImageConfirm();
             showStatus('', 'success');
             updateSubmitButtonState();
             if (window.updateReportPreview) window.updateReportPreview();
+            window.dispatchEvent(new CustomEvent('civicLocationUpdated'));
 
             // Update email recipients when marker is dragged
             if (window.isTrafficFlow && window.updateEmailRecipients) {
