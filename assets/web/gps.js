@@ -539,6 +539,9 @@ export async function requestLiveGpsFromUser() {
         window.updateCivicEmailRecipients();
     }
 
+    // Same final clear as map tap — live GPS must not leave galleryNoGpsHint up.
+    showStatus('', '');
+
     return {
         ok: true,
         coords: { lat, lon },

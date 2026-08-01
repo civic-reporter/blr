@@ -7,6 +7,7 @@
  */
 
 import { GPS_SOURCE, getGpsSource, requestLiveGpsFromUser } from './gps.js';
+import { showStatus } from './ui.js';
 import { t, getCurrentLanguage } from '../js/i18n.js';
 
 const PANEL_ID = 'locationStatus';
@@ -134,6 +135,9 @@ async function handleUseLiveLocation(event) {
     try {
         const result = await requestLiveGpsFromUser();
         if (result.ok) {
+            // Map tap clears #status in its click handler; mirror that here so the
+            // gallery "no location in this photo" hint cannot linger under Next.
+            showStatus('', '');
             renderLocationStatus();
             if (result.lowAccuracy) {
                 const meters = Math.round(result.accuracy);

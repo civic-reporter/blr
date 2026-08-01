@@ -78,6 +78,7 @@ function resolveStatusEl() {
 
 // Info-level guidance about missing location becomes contradictory once
 // currentGPS is set (e.g. galleryNoGpsHint left under "Next: Details").
+// Leave success/error banners alone (photo GPS confirmation, boundary errors).
 function clearStaleNoLocationHint() {
     const el = resolveStatusEl();
     if (!el || !el.classList.contains('status-info')) return;
