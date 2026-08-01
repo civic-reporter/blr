@@ -8,7 +8,7 @@ import {
     getAvailableLanguages,
     resolveLanguageForCity,
     isHubPage
-} from './i18n.js?v=20260801';
+} from './i18n.js';
 
 function initHubLanguagePicker() {
     let picker = document.getElementById('languagePicker');
