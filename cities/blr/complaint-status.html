@@ -31,12 +31,12 @@
             <span class="home-brand-text" data-i18n="homeTitle">Nāgarika Dhvani</span>
         </a>
 
-        <span class="hero-pill app-pill" data-i18n="complaintStatus">Registered Complaint Status</span>
+        <span class="hero-pill app-pill" data-i18n="complaintStatusNav">Track Status</span>
 
         <nav class="app-header-nav" aria-label="Page navigation">
             <a href="civic.html" class="app-nav-link" data-i18n-title="switchToCivic">
-                <i class="fas fa-landmark"></i>
-                <span data-i18n="switchToCivic">Report Civic Issue</span>
+                <i class="fas fa-camera"></i>
+                <span data-i18n="homeReportTitle">Report an issue</span>
             </a>
         </nav>
     </header>
@@ -51,12 +51,6 @@
             </section>
 
             <section class="complaint-status-panel" aria-label="Complaint status lookup">
-                <ol class="complaint-status-steps">
-                    <li data-i18n="complaintStatusStep1">Select Complaints, then choose GBA or BWSSB (GBA may appear as BBMP on the portal).</li>
-                    <li data-i18n="complaintStatusStep2">Search by Complaint ID or Mobile Number.</li>
-                    <li data-i18n="complaintStatusStep3">Submit on the portal to view status and grievance details.</li>
-                </ol>
-
                 <div class="complaint-status-actions">
                     <a href="https://smartoneblr.com/NicApplicationStatus.htm" target="_blank" rel="noopener noreferrer"
                         class="civic-upload-btn complaint-status-open-btn">
@@ -64,6 +58,21 @@
                         <span data-i18n="complaintStatusOpenExternal">Open portal in new tab</span>
                     </a>
                 </div>
+
+                <ol class="complaint-status-steps">
+                    <li>
+                        <span class="complaint-status-step-num" aria-hidden="true">1</span>
+                        <span data-i18n="complaintStatusStep1">Select Complaints, then choose GBA or BWSSB (GBA may appear as BBMP on the portal).</span>
+                    </li>
+                    <li>
+                        <span class="complaint-status-step-num" aria-hidden="true">2</span>
+                        <span data-i18n="complaintStatusStep2">Search by Complaint ID or Mobile Number.</span>
+                    </li>
+                    <li>
+                        <span class="complaint-status-step-num" aria-hidden="true">3</span>
+                        <span data-i18n="complaintStatusStep3">Submit on the portal to view status and grievance details.</span>
+                    </li>
+                </ol>
 
                 <p class="complaint-status-note" data-i18n="complaintStatusPortalNote">
                     Powered by BenSCL (Bengaluru Smart City Limited). If the embedded portal does not load, use the button above.
