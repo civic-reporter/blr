@@ -595,7 +595,14 @@ export const translations = {
 
     ml: {
         heatmap: "ഹീറ്റ്‌മാപ്പ്",
-        leaderboard: "ലീഡർബോർഡ്",
+        leaderboard: "ലീഡര്‌ബോര്ഡ്",
+        complaintStatus: "രജിസ്റ്റര് ചെയ്ത പരാതി നില",
+        complaintStatusNav: "നില ട്രാക്ക്",
+        homeReportTitle: "പ്രശ്നം റിപ്പോര്ട്ട് ചെയ്യുക",
+        homeTrackTitle: "പരാതി ട്രാക്ക് ചെയ്യുക",
+        homeStepPhotoDesc: "പ്രശ്നത്തിന്റെ വ്യക്തമായ ഫോട്ടോ എടുക്കുക അല്ലെങ്കിൽ തിരഞ്ഞെടുക്കുക",
+        homeStepLocationDesc: "ശരിയായ വാർഡ് കണ്ടെത്താൻ പിൻ സ്ഥിരീകരിക്കുക",
+        homeStepSendDesc: "ശരിയായ ദൂരവിഭാഗത്തിലേക്ക് തയ്യാറായ സന്ദേശം അയയ്ക്കുക",
         homeTitle: "നമ്മുടെ ധ്വനി",
         homeSubtitle: "നമ്മുടെ നഗരം, നമ്മുടെ ധ്വനി",
         gpsPhotos: "📸 GPS ഫോട്ടോ",

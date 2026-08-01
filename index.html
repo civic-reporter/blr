@@ -157,7 +157,7 @@
         initTheme();
 
         window.addEventListener("DOMContentLoaded", async () => {
-            const { initLanguageSwitcher } = await import('./assets/js/language-switcher.js');
+            const { initLanguageSwitcher } = await import('./assets/js/language-switcher.js?v=20260801');
             await initLanguageSwitcher();
 
             const btn = document.getElementById("themeToggle");
