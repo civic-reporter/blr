@@ -293,6 +293,88 @@ function downloadImageFile(file) {
     setTimeout(() => URL.revokeObjectURL(url), 15000);
 }
 
+function buildPhotoStampLines(reportData) {
+    const lang = getCurrentLanguage();
+    const lines = [];
+
+    if (reportData?.coordinates?.lat && reportData?.coordinates?.lon) {
+        lines.push(`GPS: ${reportData.coordinates.lat}, ${reportData.coordinates.lon}`);
+    }
+
+    if (reportData?.wardNo || reportData?.wardName) {
+        const wardLabel = t('previewWardLabel', lang) || 'GBA Ward';
+        lines.push(`${wardLabel}: ${[reportData.wardNo, reportData.wardName].filter(Boolean).join(' - ')}`);
+    }
+
+    if (reportData?.oldWardNo || reportData?.oldWardName) {
+        const oldWardLabel = t('previewOldWardLabel', lang) || 'BBMP Ward';
+        lines.push(`${oldWardLabel}: ${[reportData.oldWardNo, reportData.oldWardName].filter(Boolean).join(' - ')}`);
+    }
+
+    if (reportData?.corpName) {
+        const corpLabel = t('previewCorpLabel', lang) || 'Corporation';
+        lines.push(`${corpLabel}: ${reportData.corpName}`);
+    }
+
+    if (reportData?.constituency) {
+        const constLabel = t('previewConstituencyLabel', lang) || 'Constituency';
+        lines.push(`${constLabel}: ${reportData.constituency}`);
+    }
+
+    return lines;
+}
+
+async function stampReportOntoImage(imageFile, reportData) {
+    const source = toImageFile(imageFile);
+    if (!source) return null;
+
+    const lines = buildPhotoStampLines(reportData);
+    if (!lines.length) return source;
+
+    const objectUrl = URL.createObjectURL(source);
+    try {
+        const img = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => reject(new Error('Could not load image for stamp'));
+            image.src = objectUrl;
+        });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return source;
+
+        ctx.drawImage(img, 0, 0);
+
+        const pad = Math.max(10, Math.round(canvas.width * 0.02));
+        const fontSize = Math.max(14, Math.round(canvas.width * 0.028));
+        const lineHeight = Math.round(fontSize * 1.35);
+        const boxHeight = pad * 2 + lineHeight * lines.length;
+
+        ctx.fillStyle = 'rgba(15, 20, 25, 0.72)';
+        ctx.fillRect(0, canvas.height - boxHeight, canvas.width, boxHeight);
+
+        ctx.font = `600 ${fontSize}px Inter, system-ui, sans-serif`;
+        ctx.fillStyle = '#ffffff';
+        ctx.textBaseline = 'top';
+
+        lines.forEach((line, index) => {
+            ctx.fillText(line, pad, canvas.height - boxHeight + pad + index * lineHeight, canvas.width - pad * 2);
+        });
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+        if (!blob) return source;
+        return new File([blob], source.name || buildUniqueImageFilename(), { type: 'image/jpeg' });
+    } catch (error) {
+        console.warn('Could not stamp report details onto photo:', error);
+        return source;
+    } finally {
+        URL.revokeObjectURL(objectUrl);
+    }
+}
+
 function openWhatsAppChat(number, message) {
     const phone = normalizePhoneNumber(number);
     const encoded = encodeURIComponent(message);
@@ -319,10 +401,11 @@ export async function shareViaWhatsApp(reportData, imageFile) {
     if (!config.enabled || !target.number) return { mode: 'disabled' };
 
     const displayNumber = target.displayNumber || target.number.replace(/^91/, '');
-    const file = toImageFile(imageFile);
+    const file = await stampReportOntoImage(imageFile, reportData);
     const chatMessage = buildWhatsAppMessage(reportData);
 
-    if (file && isMobileDevice()) {
+    // wa.me / whatsapp:// cannot attach media — always download so the user can attach manually.
+    if (file) {
         downloadImageFile(file);
         await new Promise(resolve => setTimeout(resolve, 450));
     }
