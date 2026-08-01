@@ -29,7 +29,7 @@ export const translations = {
         homeHeatmapDesc: "See where issues cluster across the city",
         homeLeaderboardDesc: "Top constituencies where issues were identified",
         builtForCitizens: "Built for Bengaluru citizens 🇮🇳",
-        footerText: "© 2026 Zen Citizen. Made with ❤️ for Bengaluru",
+        footerText: "Inspired by Zen Citizen. Made with ❤️ for Bengaluru",
 
         // Hub page (root index.html)
         hubTitle: "Citizen Voice",
@@ -47,7 +47,7 @@ export const translations = {
         cityTvmDesc: "Civic issues in Thiruvananthapuram Corporation limits",
         cityOpenPlatform: "Open platform",
         hubBuiltForCitizens: "Built for citizens across India 🇮🇳",
-        hubFooterText: "© 2026 Zen Citizen. Made with ❤️ for India",
+        hubFooterText: "Inspired by Zen Citizen. Made with ❤️ for India",
 
         // Civic Page (blr-civic-index.html)
         civicReporterTitle: "🏛️ Nāgarika Dhvani - Civic",
@@ -331,7 +331,7 @@ export const translations = {
         homeHeatmapDesc: "ನಗರದಲ್ಲಿ ಸಮಸ್ಯೆಗಳು ಎಲ್ಲಿ ಕೇಂದ್ರೀಕೃತವಾಗಿವೆ ಎಂದು ನೋಡಿ",
         homeLeaderboardDesc: "ಸಮಸ್ಯೆಗಳು ಗುರುತಿಸಲ್ಪಟ್ಟ ಪ್ರಮುಖ ಕ್ಷೇತ್ರಗಳು",
         builtForCitizens: "ಬೆಂಗಳೂರು ನಾಗರಿಕಗಳಿಗಾಗಿ ನಿರ್ಮಿತ 🇮🇳",
-        footerText: "© 2026 Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
+        footerText: "Inspired by Zen Citizen. ❤️ ಬೆಂಗಳೂರಿಗಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
 
         hubTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
         hubSubtitle: "ನಿಮ್ಮ ನಗರದಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳನ್ನು ವರದಿ ಮಾಡಿ",
@@ -348,7 +348,7 @@ export const translations = {
         cityTvmDesc: "ತಿರುವನಂತಪುರ ಕಾರ್ಪೊರೇಶನ್ ಪರಿಧಿಯಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆಗಳು",
         cityOpenPlatform: "ವೇದಿಕೆ ತೆರೆಯಿರಿ",
         hubBuiltForCitizens: "ಭಾರತದ ನಾಗರಿಕರಿಗಾಗಿ ನಿರ್ಮಿತ 🇮🇳",
-        hubFooterText: "© 2026 Zen Citizen. ❤️ ಭಾರತಕ್ಕಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
+        hubFooterText: "Inspired by Zen Citizen. ❤️ ಭಾರತಕ್ಕಾಗಿ ತೈರಿಸಲ್ಪಟ್ಟಿದೆ",
 
         // Civic Page
         civicReporterTitle: "🏛️ ನಾಗರಿಕ ವರದಿ - ಬೆಂಗಳೂರು",
@@ -611,7 +611,7 @@ export const translations = {
         homeHeatmapDesc: "നഗരത്തിൽ പ്രശ്നങ്ങൾ എവിടെ കൂടുന്നുണ്ടെന്ന് കാണുക",
         homeLeaderboardDesc: "പ്രശ്നങ്ങൾ റിപ്പോർട്ട് ചെയ്ത പ്രധാന വാർഡുകൾ",
         builtForCitizens: "നാഗരികർക്കായി 🇮🇳",
-        footerText: "© 2026 Zen Citizen.",
+        footerText: "Inspired by Zen Citizen.",
 
         hubTitle: "നമ്മുടെ ധ്വനി",
         hubSubtitle: "നിങ്ങളുടെ നഗരത്തിലെ നാഗരിക പ്രശ്നങ്ങൾ റിപ്പോർട്ട് ചെയ്യുക",
@@ -628,7 +628,7 @@ export const translations = {
         cityTvmDesc: "തിരുവനന്തപുരം കോർപ്പറേഷൻ പരിധിയിലെ നാഗരിക പ്രശ്നങ്ങൾ",
         cityOpenPlatform: "പ്ലാറ്റ്‌ഫോം തുറക്കുക",
         hubBuiltForCitizens: "ഇന്ത്യയിലെ നാഗരികർക്കായി 🇮🇳",
-        hubFooterText: "© 2026 Zen Citizen. ഇന്ത്യക്കായി ❤️യോടെ",
+        hubFooterText: "Inspired by Zen Citizen. ഇന്ത്യക്കായി ❤️യോടെ",
         civicReporterTitle: "🏛️ നമ്മുടെ ധ്വനി - നാഗരിക",
         civicReporterDesc: "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് സ്ഥലം സ്ഥിരീകരിക്കുക — വാർഡും കോർപ്പറേഷനും കണ്ടെത്തി WhatsApp ദൂരവിഭാഗത്തിലേക്ക് അയയ്ക്കാം.",
         uploadInstructions: "ഗ്യാലറിയിൽ നിന്ന് ഫോട്ടോ തിരഞ്ഞെടുക്കുക (മൊബൈലിൽ GPS നീക്കം ചെയ്യാം) അല്ലെങ്കിൽ സ്ഥലത്ത് ക്യാമറ ഉപയോഗിക്കുക. സ്ഥലം ഇല്ലെങ്കിൽ മാപ്പിൽ തിരയുക.",
