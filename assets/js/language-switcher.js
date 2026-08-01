@@ -113,28 +113,39 @@ export function toggleLanguage() {
     }
 }
 
+function applyTranslation(element, key, lang, attr = null) {
+    const translated = t(key, lang);
+    // Keep existing HTML/fallback copy when a key is missing from the loaded dictionary.
+    if (!translated || translated === key) return;
+    if (attr === 'placeholder') {
+        element.placeholder = translated;
+    } else if (attr === 'title') {
+        element.title = translated;
+    } else if (attr === 'aria-label') {
+        element.setAttribute('aria-label', translated);
+    } else {
+        element.textContent = translated;
+    }
+}
+
 export function setPageLanguage(lang) {
     const html = document.documentElement;
     html.setAttribute('lang', lang === 'kn' ? 'kn' : lang === 'ml' ? 'ml' : 'en');
 
     document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        element.textContent = t(key, lang);
+        applyTranslation(element, element.getAttribute('data-i18n'), lang);
     });
 
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-        const key = element.getAttribute('data-i18n-placeholder');
-        element.placeholder = t(key, lang);
+        applyTranslation(element, element.getAttribute('data-i18n-placeholder'), lang, 'placeholder');
     });
 
     document.querySelectorAll('[data-i18n-title]').forEach(element => {
-        const key = element.getAttribute('data-i18n-title');
-        element.title = t(key, lang);
+        applyTranslation(element, element.getAttribute('data-i18n-title'), lang, 'title');
     });
 
     document.querySelectorAll('[data-i18n-aria]').forEach(element => {
-        const key = element.getAttribute('data-i18n-aria');
-        element.setAttribute('aria-label', t(key, lang));
+        applyTranslation(element, element.getAttribute('data-i18n-aria'), lang, 'aria-label');
     });
 
     document.querySelectorAll('select[data-i18n-options]').forEach(select => {
@@ -143,7 +154,7 @@ export function setPageLanguage(lang) {
             const optionKeys = options.split(',');
             Array.from(select.options).forEach((option, index) => {
                 if (index < optionKeys.length) {
-                    option.textContent = t(optionKeys[index].trim(), lang);
+                    applyTranslation(option, optionKeys[index].trim(), lang);
                 }
             });
         }

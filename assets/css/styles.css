@@ -2639,6 +2639,8 @@ body.heatmap-page {
     margin-bottom: 0.5rem;
 }
 
+/* Use button.civic-stepper-item so global `button` / `button:disabled` cannot wash out steps 2–3. */
+button.civic-stepper-item,
 .civic-stepper-item {
     display: flex;
     align-items: center;
@@ -2646,22 +2648,35 @@ body.heatmap-page {
     width: auto;
     flex: 0 0 auto;
     min-height: 2.5rem;
+    margin-top: 0;
     padding: 0.5rem 0.9rem 0.5rem 0.5rem;
     border-radius: 999px;
     border: 1px solid var(--x-border);
-    background: var(--x-bg-secondary);
+    background: var(--x-bg-tertiary);
     color: var(--x-text-primary);
     font-size: 0.85rem;
     font-weight: 600;
+    box-shadow: none;
+    transform: none;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
+button.civic-stepper-item:hover:not(:disabled),
+.civic-stepper-item:hover:not(:disabled) {
+    background: var(--x-bg-secondary);
+    border-color: rgba(91, 155, 213, 0.35);
+    transform: none;
+    box-shadow: none;
+}
+
+button.civic-stepper-item:disabled,
+button.civic-stepper-item[disabled],
 .civic-stepper-item:disabled {
     cursor: not-allowed;
     opacity: 1;
-    color: var(--x-text-secondary);
-    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
+    background: var(--x-bg-tertiary);
     border-color: var(--x-border);
 }
 
@@ -2671,32 +2686,37 @@ body.heatmap-page {
     width: 1.55rem;
     height: 1.55rem;
     border-radius: 50%;
-    background: var(--x-bg-tertiary);
+    background: rgba(91, 155, 213, 0.22);
     color: var(--x-text-primary);
     font-size: 0.8rem;
     font-weight: 700;
 }
 
+button.civic-stepper-item:disabled .civic-stepper-num,
 .civic-stepper-item:disabled .civic-stepper-num {
-    background: var(--x-bg-tertiary);
-    color: var(--x-text-secondary);
+    background: rgba(91, 155, 213, 0.22);
+    color: var(--x-text-primary);
 }
 
+button.civic-stepper-item.is-active,
 .civic-stepper-item.is-active {
     border-color: var(--x-civic);
     background: var(--x-civic-soft);
     color: var(--x-text-primary);
 }
 
+button.civic-stepper-item.is-active .civic-stepper-num,
 .civic-stepper-item.is-active .civic-stepper-num {
     background: var(--x-civic);
     color: #fff;
 }
 
+button.civic-stepper-item.is-done,
 .civic-stepper-item.is-done {
     color: var(--x-text-primary);
 }
 
+button.civic-stepper-item.is-done .civic-stepper-num,
 .civic-stepper-item.is-done .civic-stepper-num {
     background: var(--x-success);
     color: #fff;
