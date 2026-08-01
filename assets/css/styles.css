@@ -1276,6 +1276,25 @@ body.app-page {
     animation: homeCardIn 0.55s ease both;
 }
 
+.home-card-report {
+    border-color: rgba(91, 155, 213, 0.28);
+    box-shadow: 0 14px 32px rgba(91, 155, 213, 0.12);
+}
+
+.home-card-status {
+    background:
+        linear-gradient(145deg, rgba(148, 163, 184, 0.08), transparent 55%),
+        var(--x-bg-card);
+}
+
+.home-card-status .home-card-arrow {
+    background: var(--x-text-secondary);
+}
+
+.home-card-status:hover .home-card-arrow {
+    background: var(--x-blue);
+}
+
 @keyframes homeCardIn {
     from {
         opacity: 0;
@@ -1310,8 +1329,23 @@ body.app-page {
 }
 
 .home-card-icon {
-    font-size: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 14px;
+    background: var(--x-bg-card);
+    border: 1px solid var(--x-border);
+    color: var(--x-blue);
+    font-size: 1.15rem;
     line-height: 1;
+    flex-shrink: 0;
+}
+
+.home-card-report .home-card-icon {
+    background: rgba(91, 155, 213, 0.12);
+    border-color: rgba(91, 155, 213, 0.22);
 }
 
 .home-primary-card-body h2 {
@@ -1625,18 +1659,32 @@ body.hub-page .home-header {
 .home-step {
     display: flex;
     gap: 0.85rem;
-    align-items: center;
-    padding: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.1rem;
     border-radius: 16px;
     background: var(--x-bg-secondary);
     border: 1px solid var(--x-border);
+}
+
+.home-step-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
 }
 
 .home-step strong {
     display: block;
     font-size: 0.95rem;
     color: var(--x-text-primary);
+    line-height: 1.35;
+}
+
+.home-step-copy span {
+    font-size: 0.82rem;
     line-height: 1.45;
+    color: var(--x-text-secondary);
+    font-weight: 500;
 }
 
 .home-step-num {
@@ -2023,7 +2071,8 @@ body.heatmap-page {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    padding: 0.45rem 0.85rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.9rem;
     border-radius: 999px;
     text-decoration: none;
     font-size: 0.85rem;
@@ -2032,6 +2081,16 @@ body.heatmap-page {
     background: var(--x-bg-card);
     border: 1px solid var(--x-border);
     transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-nav-link:focus-visible,
+.civic-nav-link:focus-visible,
+.home-primary-card:focus-visible,
+.civic-step-btn:focus-visible,
+.civic-upload-btn:focus-visible,
+.theme-toggle-btn:focus-visible {
+    outline: 3px solid rgba(91, 155, 213, 0.45);
+    outline-offset: 2px;
 }
 
 .app-nav-link:hover,
@@ -2135,7 +2194,15 @@ body.heatmap-page {
     margin: 0 0 1.25rem;
     max-width: 620px;
     color: var(--x-text-secondary);
-    line-height: 1.6;
+    line-height: 1.55;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .civic-upload-text {
+        font-size: 0.9rem;
+        text-align: left;
+    }
 }
 
 .civic-drag-hint {
@@ -2578,11 +2645,12 @@ body.heatmap-page {
     gap: 0.5rem;
     width: auto;
     flex: 0 0 auto;
-    padding: 0.45rem 0.85rem 0.45rem 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.9rem 0.5rem 0.5rem;
     border-radius: 999px;
     border: 1px solid var(--x-border);
-    background: var(--x-bg-card);
-    color: var(--x-text-secondary);
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -2591,7 +2659,10 @@ body.heatmap-page {
 
 .civic-stepper-item:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    opacity: 1;
+    color: var(--x-text-secondary);
+    background: var(--x-bg-secondary);
+    border-color: var(--x-border);
 }
 
 .civic-stepper-num {
@@ -2600,10 +2671,15 @@ body.heatmap-page {
     width: 1.55rem;
     height: 1.55rem;
     border-radius: 50%;
-    background: var(--x-bg-secondary);
-    color: var(--x-text-secondary);
+    background: var(--x-bg-tertiary);
+    color: var(--x-text-primary);
     font-size: 0.8rem;
     font-weight: 700;
+}
+
+.civic-stepper-item:disabled .civic-stepper-num {
+    background: var(--x-bg-tertiary);
+    color: var(--x-text-secondary);
 }
 
 .civic-stepper-item.is-active {
@@ -2615,6 +2691,10 @@ body.heatmap-page {
 .civic-stepper-item.is-active .civic-stepper-num {
     background: var(--x-civic);
     color: #fff;
+}
+
+.civic-stepper-item.is-done {
+    color: var(--x-text-primary);
 }
 
 .civic-stepper-item.is-done .civic-stepper-num {
@@ -2667,7 +2747,8 @@ body.heatmap-page {
     justify-content: center;
     gap: 0.5rem;
     width: auto;
-    padding: 0.9rem 1.25rem;
+    min-height: 3rem;
+    padding: 0.95rem 1.25rem;
     border-radius: 16px;
     font-size: 0.95rem;
     font-weight: 700;
@@ -2949,10 +3030,6 @@ body.heatmap-page:not(:has(.page-header)) .language-toggle-btn {
     }
 
     .civic-stepper-label {
-        display: none;
-    }
-
-    .civic-stepper-item.is-active .civic-stepper-label {
         display: inline;
     }
 
@@ -3865,28 +3942,54 @@ body.app-page:not(:has(.page-header)) .app-lang-link {
 }
 
 .complaint-status-panel {
-    padding: 1.25rem;
-    border-radius: 20px;
+    padding: 1.35rem;
+    border-radius: 22px;
     border: 1px solid var(--x-border);
-    background: var(--x-bg-card);
+    background:
+        linear-gradient(180deg, rgba(91, 155, 213, 0.06), transparent 36%),
+        var(--x-bg-card);
     box-shadow: var(--shadow);
 }
 
 .complaint-status-steps {
-    margin: 0 0 1.25rem;
-    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.65rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
     color: var(--x-text-secondary);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
-.complaint-status-steps li + li {
-    margin-top: 0.5rem;
+.complaint-status-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: var(--x-bg-secondary);
+    border: 1px solid var(--x-border);
+    font-size: 0.92rem;
+}
+
+.complaint-status-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: var(--x-blue);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
 }
 
 .complaint-status-actions {
     display: flex;
     justify-content: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .complaint-status-open-btn {
@@ -3895,13 +3998,15 @@ body.app-page:not(:has(.page-header)) .app-lang-link {
     gap: 0.65rem;
     text-decoration: none;
     width: auto;
-    min-width: min(100%, 20rem);
+    min-width: min(100%, 22rem);
+    min-height: 3rem;
     justify-content: center;
+    font-weight: 700;
 }
 
 .complaint-status-note {
     margin: 0 0 1rem;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     line-height: 1.5;
     color: var(--x-text-secondary);
     text-align: center;
@@ -3913,6 +4018,7 @@ body.app-page:not(:has(.page-header)) .app-lang-link {
     overflow: hidden;
     background: #fff;
     min-height: 70vh;
+    box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04);
 }
 
 .complaint-status-frame {
@@ -3935,5 +4041,15 @@ body.app-page:not(:has(.page-header)) .app-lang-link {
 
     .complaint-status-open-btn {
         width: 100%;
+    }
+
+    .home-card-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.05rem;
+    }
+
+    .home-primary-card-body h2 {
+        font-size: 1.35rem;
     }
 }
