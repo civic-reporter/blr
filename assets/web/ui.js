@@ -60,14 +60,33 @@ function updateLocationHints() {
     const dragHint = document.getElementById("dragMarkerHint");
     toggleVisibility(dragHint, !hasValidGps());
 
+    // Gallery "no GPS in photo" is only useful before a pin exists. Once the
+    // user sets a location (map click, search, or live GPS), drop that hint.
+    if (hasValidGps()) {
+        clearStaleNoLocationHint();
+    }
+
     const gpsCoordsEl = document.getElementById("gpsCoords");
     if (gpsCoordsEl && !hasValidGps() && !gpsCoordsEl.textContent.trim()) {
         gpsCoordsEl.textContent = "Not selected yet";
     }
 }
 
+function resolveStatusEl() {
+    return statusDiv || document.getElementById('status') || document.getElementById('statusMessage');
+}
+
+// Info-level guidance about missing location becomes contradictory once
+// currentGPS is set (e.g. galleryNoGpsHint left under "Next: Details").
+function clearStaleNoLocationHint() {
+    const el = resolveStatusEl();
+    if (!el || !el.classList.contains('status-info')) return;
+    if (!el.textContent.trim()) return;
+    showStatus('', '');
+}
+
 export function showStatus(msg, type) {
-    const el = statusDiv || document.getElementById('statusMessage');
+    const el = resolveStatusEl();
     if (!el) return;
 
     if (!msg) {

@@ -292,6 +292,8 @@ export function markManualGps() {
     window.gpsManuallySet = true;
     setGpsSource(GPS_SOURCE.MANUAL);
     updateLocationConfirmVisibility();
+    // Drop gallery "no location in this photo" once the user has set a pin.
+    showStatus('', '');
 }
 
 // Live GPS is the device's location, not the photo's, so it still needs the
@@ -301,6 +303,8 @@ export function markLiveGps() {
     window.gpsManuallySet = true;
     setGpsSource(GPS_SOURCE.LIVE);
     updateLocationConfirmVisibility();
+    // Same as manual pin: a live fix supersedes the no-GPS gallery hint.
+    showStatus('', '');
 }
 
 async function applyExtractedGps(lat, lon) {
