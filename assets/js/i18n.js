@@ -4,6 +4,12 @@ export const translations = {
         heatmap: "Heatmap",
         leaderboard: "Leaderboard",
         complaintStatus: "Registered Complaint Status",
+        complaintStatusNav: "Track Status",
+        homeReportTitle: "Report an issue",
+        homeTrackTitle: "Track a complaint",
+        homeStepPhotoDesc: "Snap or pick a clear photo of the issue",
+        homeStepLocationDesc: "Confirm the pin so we map the right ward",
+        homeStepSendDesc: "Send a ready message to the right desk",
         // Home page (index.html)
         homeTitle: "Nāgarika Dhvani",
         homeSubtitle: "Namma Bengaluru, Namma Dhvani",
@@ -299,6 +305,12 @@ export const translations = {
         heatmap: "ಹೀಟ್‌ಮ್ಯಾಪ್",
         leaderboard: "ಲೀಡರ್‌ಬೋರ್ಡ್",
         complaintStatus: "ನೋಂದಾಯಿತ ದೂರು ಸ್ಥಿತಿ",
+        complaintStatusNav: "ಸ್ಥಿತಿ ಟ್ರ್ಯಾಕ್",
+        homeReportTitle: "ಸಮಸ್ಯೆ ವರದಿ ಮಾಡಿ",
+        homeTrackTitle: "ದೂರು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+        homeStepPhotoDesc: "ಸಮಸ್ಯೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋ ತೆಗೆಯಿರಿ ಅಥವಾ ಆಯ್ಕೆಮಾಡಿ",
+        homeStepLocationDesc: "ಸರಿಯಾದ ವಾರ್ಡ್‌ಗೆ ನಕ್ಷೆ ಹೊಂದಿಸಲು ಪಿನ್ ದೃಢೀಕರಿಸಿ",
+        homeStepSendDesc: "ಸರಿಯಾದ ದೂರು ಕೇಂದ್ರಕ್ಕೆ ಸಿದ್ಧ ಸಂದೇಶ ಕಳುಹಿಸಿ",
         // ಕನ್ನಡ - Kannada translations
         // Home page
         homeTitle: "ನಾಗರಿಕ ಧ್ವನಿ",
