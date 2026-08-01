@@ -6,6 +6,7 @@
  */
 
 import { isValidNumber } from './utils.js';
+import { showStatus } from './ui.js';
 
 const STEPS = ['photo', 'location', 'details'];
 
@@ -67,8 +68,11 @@ export function goToStep(step) {
     refreshSteps();
     resizeMapIfVisible();
 
-    if (step === 'location' && window.renderCivicLocationStatus) {
-        window.renderCivicLocationStatus();
+    if (step === 'location') {
+        // galleryNoGpsHint is photo-step guidance ("on the next step…"). Once the
+        // user is here, #locationStatus owns messaging — drop the stale banner.
+        showStatus('', '');
+        if (window.renderCivicLocationStatus) window.renderCivicLocationStatus();
     }
 
     const shell = document.querySelector('.civic-workflow');
