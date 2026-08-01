@@ -2290,10 +2290,23 @@ body.heatmap-page {
     line-height: 1.35;
 }
 
+.whatsapp-attach-callout {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid rgba(37, 211, 102, 0.35);
+    background: rgba(37, 211, 102, 0.1);
+    color: var(--x-text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
 .whatsapp-note {
-    margin: 0.35rem 0 0;
+    margin: 0.55rem 0 0;
     font-size: 0.82rem;
     color: var(--x-text-secondary);
+    line-height: 1.5;
 }
 
 .civic-whatsapp-btn {
