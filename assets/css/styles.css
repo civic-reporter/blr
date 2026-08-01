@@ -2649,8 +2649,8 @@ body.heatmap-page {
     padding: 0.5rem 0.9rem 0.5rem 0.5rem;
     border-radius: 999px;
     border: 1px solid var(--x-border);
-    background: var(--x-bg-card);
-    color: var(--x-text-secondary);
+    background: var(--x-bg-secondary);
+    color: var(--x-text-primary);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -2659,7 +2659,10 @@ body.heatmap-page {
 
 .civic-stepper-item:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    opacity: 1;
+    color: var(--x-text-secondary);
+    background: var(--x-bg-secondary);
+    border-color: var(--x-border);
 }
 
 .civic-stepper-num {
@@ -2668,10 +2671,15 @@ body.heatmap-page {
     width: 1.55rem;
     height: 1.55rem;
     border-radius: 50%;
-    background: var(--x-bg-secondary);
-    color: var(--x-text-secondary);
+    background: var(--x-bg-tertiary);
+    color: var(--x-text-primary);
     font-size: 0.8rem;
     font-weight: 700;
+}
+
+.civic-stepper-item:disabled .civic-stepper-num {
+    background: var(--x-bg-tertiary);
+    color: var(--x-text-secondary);
 }
 
 .civic-stepper-item.is-active {
@@ -2683,6 +2691,10 @@ body.heatmap-page {
 .civic-stepper-item.is-active .civic-stepper-num {
     background: var(--x-civic);
     color: #fff;
+}
+
+.civic-stepper-item.is-done {
+    color: var(--x-text-primary);
 }
 
 .civic-stepper-item.is-done .civic-stepper-num {
@@ -3018,10 +3030,6 @@ body.heatmap-page:not(:has(.page-header)) .language-toggle-btn {
     }
 
     .civic-stepper-label {
-        display: none;
-    }
-
-    .civic-stepper-item.is-active .civic-stepper-label {
         display: inline;
     }
 
