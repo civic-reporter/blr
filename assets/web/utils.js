@@ -9,7 +9,7 @@ export function isValidNumber(x) {
 export async function isInGBA(lat, lon) {
     if (!CONFIG) CONFIG = await getConfig();
     return CONFIG.GBA_BBOX.south <= lat && lat <= CONFIG.GBA_BBOX.north &&
-        CONFIG.GBA_BBOX.west <= lon && CONFIG.GBA_BBOX.east;
+        CONFIG.GBA_BBOX.west <= lon && lon <= CONFIG.GBA_BBOX.east;
 }
 
 export function pointInRing(lon, lat, ring) {

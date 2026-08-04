@@ -203,7 +203,9 @@ export async function shareToGBA() {
         window.currentGPS = savedGPS;
 
         if (window.displaySuccessLocationInfo) {
-            window.displaySuccessLocationInfo();
+            // Pass reportData so corp/ward (and escalation) still render even if
+            // GPS lookup races after the form reset above.
+            await window.displaySuccessLocationInfo(reportData);
         }
 
         setupWhatsAppSuccessBox({

@@ -25,7 +25,7 @@ class CityConfigManager {
             if (!cityId) {
                 const activeUrl = `${basePath}config/active-city.json`;
                 console.log('Fetching active city from:', activeUrl);
-                const activeResponse = await fetch(activeUrl);
+                const activeResponse = await fetch(activeUrl, { cache: 'no-store' });
                 if (!activeResponse.ok) {
                     throw new Error(`Failed to fetch active city config: ${activeResponse.status}`);
                 }
@@ -35,7 +35,8 @@ class CityConfigManager {
 
             const configUrl = `${basePath}config/cities/${cityId}.json`;
             console.log('Fetching city config from:', configUrl);
-            const configResponse = await fetch(configUrl);
+            // Avoid stale GitHub Pages / browser cache omitting new keys (e.g. escalationContacts).
+            const configResponse = await fetch(configUrl, { cache: 'no-store' });
             if (!configResponse.ok) {
                 throw new Error(`City configuration not found: ${cityId} (${configResponse.status})`);
             }
