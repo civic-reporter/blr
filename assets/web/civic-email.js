@@ -259,6 +259,74 @@ export async function displaySuccessLocationInfo(reportData = null) {
     successInfoDiv.style.display = 'block';
 }
 
+function setViewEscalationButtonLabel(expanded) {
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!btn) return;
+    const label = btn.querySelector('span');
+    const lang = getCurrentLanguage();
+    const text = t(expanded ? 'hideEscalationContacts' : 'viewEscalationContacts', lang);
+    if (label) label.textContent = text;
+    else btn.textContent = text;
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
+// Details-step: show corporation escalation contacts without opening WhatsApp.
+export async function toggleDetailsEscalationContacts() {
+    const panel = document.getElementById('detailsEscalationPanel');
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!panel || !btn) return;
+
+    const lang = getCurrentLanguage();
+    const isOpen = !panel.classList.contains('is-hidden');
+    if (isOpen) {
+        panel.classList.add('is-hidden');
+        setViewEscalationButtonLabel(false);
+        return;
+    }
+
+    btn.disabled = true;
+    panel.classList.remove('is-hidden');
+    panel.innerHTML = `<p class="escalation-loading">${escapeHtml(t('escalationContactsLoading', lang))}</p>`;
+    setViewEscalationButtonLabel(true);
+
+    try {
+        if (!window.currentGPS) {
+            panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsNeedLocation', lang))}</p>`;
+            return;
+        }
+
+        const { corpName } = await findCorpForCurrentGPS();
+        const escalation = await getEscalationForCorp(corpName);
+        if (!escalation) {
+            panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsUnavailable', lang))}</p>`;
+            return;
+        }
+
+        panel.innerHTML = renderEscalationContacts(escalation, lang);
+    } catch (e) {
+        console.warn('Could not show escalation contacts:', e);
+        panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsUnavailable', lang))}</p>`;
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+export function initDetailsEscalationPreview() {
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!btn || btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', 'detailsEscalationPanel');
+    btn.addEventListener('click', () => {
+        toggleDetailsEscalationContacts();
+    });
+    window.addEventListener('languageChanged', () => {
+        const panel = document.getElementById('detailsEscalationPanel');
+        const open = panel && !panel.classList.contains('is-hidden');
+        setViewEscalationButtonLabel(!!open);
+    });
+}
+
 // Prepare civic email data for submission
 export function prepareCivicEmailData(reportData, userEmail) {
     return prepareEmailData(reportData, { userEmail, flowType: 'civic' });

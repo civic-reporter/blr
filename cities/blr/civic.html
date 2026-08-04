@@ -294,7 +294,18 @@
             <p class="whatsapp-note" data-i18n="whatsappPhotoNote">When you tap Send via WhatsApp: (1) your photo downloads to this phone/computer, (2) WhatsApp opens with the complaint text, (3) you must attach the downloaded photo to the chat, then tap Send. WhatsApp cannot attach the photo automatically.</p>
           </div>
 
-          <div class="civic-step-nav">
+          <div class="escalation-preview-card" id="escalationPreviewCard">
+            <p class="escalation-preview-copy" data-i18n="escalationPreviewCopy">
+              Need officer contacts first? View escalation contacts for this location without opening WhatsApp.
+            </p>
+            <button type="button" id="viewEscalationBtn" class="civic-step-btn civic-step-btn-ghost escalation-preview-btn">
+              <i class="fas fa-address-book" aria-hidden="true"></i>
+              <span data-i18n="viewEscalationContacts">View escalation contacts</span>
+            </button>
+            <div id="detailsEscalationPanel" class="details-escalation-panel is-hidden" aria-live="polite"></div>
+          </div>
+
+          <div class="civic-step-nav civic-step-nav-split">
             <button type="button" class="civic-step-btn civic-step-btn-ghost" data-step-back>
               <i class="fas fa-arrow-left" aria-hidden="true"></i>
               <span data-i18n="stepBack">Back</span>
