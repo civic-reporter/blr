@@ -29,43 +29,76 @@ async function getEscalationForCorp(corpName) {
     }
 }
 
+function renderContactItem(contact) {
+    const role = escapeHtml(contact.role || '');
+    const name = escapeHtml(contact.name || '');
+    const phone = String(contact.phone || '').replace(/\D/g, '');
+    const phoneDisplay = escapeHtml(contact.phone || '');
+    const email = escapeHtml(contact.email || '');
+
+    const phoneLink = phone
+        ? `<a href="tel:${phone}" class="escalation-link">${phoneDisplay}</a>`
+        : '';
+    const emailLink = contact.email
+        ? `<a href="mailto:${email}" class="escalation-link">${email}</a>`
+        : '';
+
+    const meta = [phoneLink, emailLink].filter(Boolean).join(' · ');
+
+    return `
+        <li class="escalation-contact">
+            <span class="escalation-role">${role}</span>
+            <span class="escalation-name">${name}</span>
+            ${meta ? `<span class="escalation-meta">${meta}</span>` : ''}
+        </li>
+    `;
+}
+
+function renderZoneSections(zones, lang) {
+    if (!Array.isArray(zones) || !zones.length) return '';
+
+    return zones.map((zone) => {
+        const zoneId = escapeHtml(zone.id || '');
+        const office = escapeHtml(zone.office || '');
+        const contacts = Array.isArray(zone.contacts) ? zone.contacts : [];
+        if (!contacts.length) return '';
+
+        const heading = office
+            ? `${zoneId}: ${office}`
+            : zoneId || t('escalationZoneOfficers', lang);
+
+        return `
+            <div class="escalation-zone">
+                <p class="escalation-zone-title">${heading}</p>
+                <ul class="escalation-list">${contacts.map(renderContactItem).join('')}</ul>
+            </div>
+        `;
+    }).join('');
+}
+
 function renderEscalationContacts(escalation, lang) {
-    if (!escalation?.contacts?.length) return '';
+    const corpContacts = Array.isArray(escalation?.contacts) ? escalation.contacts : [];
+    const zones = Array.isArray(escalation?.zones) ? escalation.zones : [];
+    if (!corpContacts.length && !zones.length) return '';
 
     const title = escapeHtml(t('escalationContactsTitle', lang));
     const hint = escapeHtml(t('escalationContactsHint', lang));
     const corpLabel = escapeHtml(escalation.label || '');
+    const corpSectionTitle = escapeHtml(t('escalationCorpOfficers', lang));
 
-    const rows = escalation.contacts.map((contact) => {
-        const role = escapeHtml(contact.role || '');
-        const name = escapeHtml(contact.name || '');
-        const phone = String(contact.phone || '').replace(/\D/g, '');
-        const phoneDisplay = escapeHtml(contact.phone || '');
-        const email = escapeHtml(contact.email || '');
-
-        const phoneLink = phone
-            ? `<a href="tel:${phone}" class="escalation-link">${phoneDisplay}</a>`
-            : '';
-        const emailLink = contact.email
-            ? `<a href="mailto:${email}" class="escalation-link">${email}</a>`
-            : '';
-
-        const meta = [phoneLink, emailLink].filter(Boolean).join(' · ');
-
-        return `
-            <li class="escalation-contact">
-                <span class="escalation-role">${role}</span>
-                <span class="escalation-name">${name}</span>
-                ${meta ? `<span class="escalation-meta">${meta}</span>` : ''}
-            </li>
-        `;
-    }).join('');
+    const corpRows = corpContacts.map(renderContactItem).join('');
+    const zoneHtml = renderZoneSections(zones, lang);
 
     return `
         <div class="escalation-contacts">
             <p class="escalation-title"><strong>${title}</strong>${corpLabel ? ` · ${corpLabel}` : ''}</p>
             <p class="escalation-hint">${hint}</p>
-            <ul class="escalation-list">${rows}</ul>
+            ${corpRows ? `
+            <div class="escalation-zone">
+                <p class="escalation-zone-title">${corpSectionTitle}</p>
+                <ul class="escalation-list">${corpRows}</ul>
+            </div>` : ''}
+            ${zoneHtml}
         </div>
     `;
 }

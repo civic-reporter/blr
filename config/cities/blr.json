@@ -12,8 +12,8 @@
     "boundaries": {
         "bbox": {
             "south": 12.82,
-            "north": 13.20,
-            "west": 77.40,
+            "north": 13.2,
+            "west": 77.4,
             "east": 77.85
         },
         "mapKml": "data/cities/blr/map.kml",
@@ -112,13 +112,20 @@
         "displayLabel": "GBA Grievance Desk Report",
         "routes": [
             {
-                "issueTypes": ["Garbage", "Solid Waste Management"],
+                "issueTypes": [
+                    "Garbage",
+                    "Solid Waste Management"
+                ],
                 "number": "919448197197",
                 "displayNumber": "9448197197",
                 "displayLabel": "Bengaluru Solid Waste Management Limited"
             },
             {
-                "issueTypes": ["Manhole", "Sewage", "Drainage"],
+                "issueTypes": [
+                    "Manhole",
+                    "Sewage",
+                    "Drainage"
+                ],
                 "number": "918762228888",
                 "displayNumber": "8762228888",
                 "displayLabel": "BWSSB Grievance Desk"
@@ -147,6 +154,53 @@
                     "email": "bcccjccvr@gmail.com",
                     "phone": "9620630581"
                 }
+            ],
+            "zones": [
+                {
+                    "id": "Zone-1",
+                    "office": "East Zone Office (MG Road)",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Sri. Ranganath K, K.A.S.",
+                            "phone": "9480685619"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. Vijayakumar Haridas",
+                            "phone": "9480683059"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Abdul Rub",
+                            "email": "dceastbbmp@gmail.com",
+                            "phone": "9945286379"
+                        }
+                    ]
+                },
+                {
+                    "id": "Zone-2",
+                    "office": "Hudson Circle / NR Square Office (GBA Head Office Annex)",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Sri. Hemanth Sharan, K.M.A.S.",
+                            "email": "bcccjcgd@gmail.com",
+                            "phone": "9845816773"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. Vijayakumar Haridas",
+                            "phone": "9480683059"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Shrinivas",
+                            "email": "dceastbbmp@gmail.com",
+                            "phone": "9480685197"
+                        }
+                    ]
+                }
             ]
         },
         "East": {
@@ -169,6 +223,54 @@
                     "name": "Dr. Prajna Ammembala, K.A.S.",
                     "email": "adcrbecc@gmail.com",
                     "phone": "8050899833"
+                }
+            ],
+            "zones": [
+                {
+                    "id": "Zone-1",
+                    "office": "Mahadevapura Zonal Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Dr. Dakshayini, K.A.S.",
+                            "email": "bbmpjcmahadevapura@gmail.com",
+                            "phone": "9845925372"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. M Lokesh",
+                            "phone": "9480683176"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Shashikumar",
+                            "email": "bbmp.dcmdpura@gmail.com",
+                            "phone": "9740860806"
+                        }
+                    ]
+                },
+                {
+                    "id": "Zone-2",
+                    "office": "K.R. Puram Zonal Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Smt. Sudha, K.A.S.",
+                            "email": "jckpuram@gmail.com",
+                            "phone": "9901575664"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. M Krishnamurthy",
+                            "phone": "9480683822"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Shashikumar",
+                            "email": "dckrpuram.becc@gmail.com",
+                            "phone": "9740860806"
+                        }
+                    ]
                 }
             ]
         },
@@ -193,6 +295,54 @@
                     "email": "addl.commbwcc2025@gmail.com",
                     "phone": "9844120212"
                 }
+            ],
+            "zones": [
+                {
+                    "id": "Zone-1",
+                    "office": "R.R. Nagar Zonal Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Smt. Arathi Anand, K.A.S.",
+                            "email": "jcrrnagar@gmail.com",
+                            "phone": "9480683192"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. Svayamprabha",
+                            "phone": "9480885321"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Shankarappa Vanikyala",
+                            "email": "dcrrnagarzone01@gmail.com",
+                            "phone": "9972589798"
+                        }
+                    ]
+                },
+                {
+                    "id": "Zone-2",
+                    "office": "Malleswaram / Rajajinagar Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Sri. Sangappa, K.A.S.",
+                            "email": "report.jcwest@gmail.com",
+                            "phone": "9902602220"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "I/C Sri. Basavaraj Kabade",
+                            "phone": "9480683040"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Manjunatha Swamy L",
+                            "email": "bbmp.dcwest@gmail.com",
+                            "phone": "9480683487"
+                        }
+                    ]
+                }
             ]
         },
         "North": {
@@ -216,6 +366,54 @@
                     "email": "addl.comm.rev.bncc@gmail.com",
                     "phone": "9591880887"
                 }
+            ],
+            "zones": [
+                {
+                    "id": "Zone-1",
+                    "office": "Yelahanka Zonal Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Sri. Mohammed Naeem Momin, K.A.S.",
+                            "email": "jcyel.bbmp@gmail.com",
+                            "phone": "9620757186"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Dr. B G Raghavendra Prasad",
+                            "phone": "9110289696"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. Amaregowda Patil",
+                            "email": "dcyel.bbmp@gmail.com",
+                            "phone": "8867488804"
+                        }
+                    ]
+                },
+                {
+                    "id": "Zone-2",
+                    "office": "Dasarahalli Zonal Office (Bagalagunte)",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Smt. K R Pallavi, K.M.A.S.",
+                            "email": "jcdasarahalli1@gmail.com",
+                            "phone": "9480685855"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Smt. Yamuna",
+                            "phone": "9480683126"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Smt. Mangala Gowri",
+                            "email": "dcdasarahalli1@gmail.com",
+                            "phone": "8095743299"
+                        }
+                    ]
+                }
             ]
         },
         "South": {
@@ -238,6 +436,53 @@
                     "name": "Sri. Rachappa, K.A.S.",
                     "email": "addl.comm.rev.bscc@gmail.com",
                     "phone": "9187232733"
+                }
+            ],
+            "zones": [
+                {
+                    "id": "Zone-1",
+                    "office": "South Zonal Office (Jayanagar)",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Smt. Madhu N.N, K.A.S.",
+                            "email": "bbmpacs@gmail.com",
+                            "phone": "9480683969"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. Basavaraj Kabade",
+                            "phone": "9480683040"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Smt. Gagana",
+                            "email": "dcsouth.bbmp@gmail.com",
+                            "phone": "9916536036"
+                        }
+                    ]
+                },
+                {
+                    "id": "Zone-2",
+                    "office": "Bommanahalli Zonal Office",
+                    "contacts": [
+                        {
+                            "role": "Joint Commissioner",
+                            "name": "Sri. Satish Babu, K.A.S.",
+                            "email": "report.jcbom@rediffmail.com",
+                            "phone": "8762716711"
+                        },
+                        {
+                            "role": "Chief Engineer",
+                            "name": "Sri. K V Ravi",
+                            "phone": "9480683818"
+                        },
+                        {
+                            "role": "Deputy Commissioner (Revenue)",
+                            "name": "Sri. D K Babu",
+                            "phone": "9480684353"
+                        }
+                    ]
                 }
             ]
         }

@@ -580,6 +580,18 @@ h2 {
     text-decoration: underline;
 }
 
+.escalation-zone {
+    margin-top: 0.85rem;
+}
+
+.escalation-zone-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--x-text-primary);
+    line-height: 1.35;
+}
+
 /* Email authorities styling */
 .email-option {
     margin: 1rem 0;

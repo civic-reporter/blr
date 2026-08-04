@@ -158,7 +158,9 @@ export const translations = {
         submitAnotherIssue: "Submit Another Issue",
         successThankYou: "Thank you for making Bengaluru better!",
         escalationContactsTitle: "Escalation contacts",
-        escalationContactsHint: "If your complaint is not addressed, escalate to these corporation officers:",
+        escalationContactsHint: "If your complaint is not addressed, escalate to these corporation and zone officers:",
+        escalationCorpOfficers: "Corporation officers",
+        escalationZoneOfficers: "Zone officers",
 
         complaintStatusTitle: "Registered Complaint Status",
         complaintStatusDesc: "Track GBA or BWSSB registered complaints by complaint ID or registered mobile number on the Bengaluru Smart City portal.",
@@ -458,6 +460,8 @@ export const translations = {
         successThankYou: "ಬೆಂಗಳೂರು ಅನ್ನು ಉತ್ತಮಗೊಳಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
         escalationContactsTitle: "ಎಸ್ಕಲೇಷನ್ ಸಂಪರ್ಕಗಳು",
         escalationContactsHint: "ನಿಮ್ಮ ದೂರಿಗೆ ಪ್ರತಿಕ್ರಿಯೆ ಬರದಿದ್ದರೆ, ಈ ನಗರ ನಿಗಮ ಅಧಿಕಾರಿಗಳಿಗೆ ಎಸ್ಕಲೇಟ್ ಮಾಡಿ:",
+        escalationCorpOfficers: "ನಗರ ನಿಗಮ ಅಧಿಕಾರಿಗಳು",
+        escalationZoneOfficers: "ವಲಯ ಅಧಿಕಾರಿಗಳು",
 
         complaintStatusTitle: "ನೋಂದಾಯಿತ ದೂರು ಸ್ಥಿತಿ",
         complaintStatusDesc: "ದೂರು ID ಅಥವಾ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ ಮೂಲಕ GBA ಅಥವಾ BWSSB ನೋಂದಾಯಿತ ದೂರುಗಳ ಸ್ಥಿತಿಯನ್ನು Bengaluru Smart City ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನೋಡಿ.",
@@ -730,6 +734,8 @@ export const translations = {
         successThankYou: "നഗരം മെച്ചപ്പെടുത്തിയതിന് നന്ദി!",
         escalationContactsTitle: "എസ്കലേഷൻ കോൺടാക്റ്റുകൾ",
         escalationContactsHint: "പരാതിക്ക് മറുപടി ലഭിച്ചില്ലെങ്കിൽ ഈ കോർപ്പറേഷൻ ഉദ്യോഗസ്ഥരിലേക്ക് എസ്കലേറ്റ് ചെയ്യുക:",
+        escalationCorpOfficers: "കോർപ്പറേഷൻ ഉദ്യോഗസ്ഥർ",
+        escalationZoneOfficers: "സോൺ ഉദ്യോഗസ്ഥർ",
         whatsappTargetName: "കോർപ്പറേഷൻ ദൂരവിഭാഗം",
         whatsappAttachCallout: "പ്രധാനം: ഫോട്ടോ നിങ്ങളുടെ ഉപകരണത്തിലേക്ക് ഡൗൺലോഡ് ചെയ്യും. പരാതിയോടൊപ്പം ആ ഡൗൺലോഡ് ഫോട്ടോ WhatsApp-ൽ അറ്റാച്ച് ചെയ്യുക — അത് സ്വയം അയയ്ക്കില്ല.",
         whatsappPhotoNote: "Send via WhatsApp അമർത്തുമ്പോൾ: (1) ഫോട്ടോ ഈ ഉപകരണത്തിലേക്ക് ഡൗൺലോഡ് ചെയ്യും, (2) പരാതി ടെക്സ്റ്റുമായി WhatsApp തുറക്കും, (3) ഡൗൺലോഡ് ഫോട്ടോ ചാറ്റിൽ അറ്റാച്ച് ചെയ്ത് Send അമർത്തുക. WhatsApp ഫോട്ടോ സ്വയം അറ്റാച്ച് ചെയ്യില്ല.",
