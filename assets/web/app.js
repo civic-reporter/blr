@@ -6,7 +6,12 @@ import { handleImageUpload, handleCameraCapture } from './image.js';
 import { shareToGBA, saveCivicDraft, restoreCivicDraft } from './civic-submit.js';
 import { resetApp } from './reset.js';
 import { initEmailModule, isValidEmail } from './email-authorities.js';
-import { updateCivicEmailRecipients, displaySuccessLocationInfo, prepareCivicEmailData } from './civic-email.js';
+import {
+    updateCivicEmailRecipients,
+    displaySuccessLocationInfo,
+    prepareCivicEmailData,
+    initDetailsEscalationPreview
+} from './civic-email.js';
 import { updateReportPreview } from './civic-preview.js';
 import { updateCivicWhatsAppOption, renderWhatsAppSuccess } from './civic-whatsapp.js';
 import { initSteps } from './civic-steps.js';
@@ -238,6 +243,7 @@ async function initApp() {
 
     initSteps();
     initLocationStatus();
+    initDetailsEscalationPreview();
 
     if (await restoreCivicDraft()) {
         const lang = getCurrentLanguage();

@@ -592,6 +592,57 @@ h2 {
     line-height: 1.35;
 }
 
+.escalation-preview-card {
+    margin: 1rem 0 0.25rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    border: 1px solid var(--x-border);
+    background: var(--x-bg-secondary);
+    text-align: left;
+}
+
+.escalation-preview-copy {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--x-text-secondary);
+}
+
+.escalation-preview-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.details-escalation-panel {
+    margin-top: 0.85rem;
+}
+
+.details-escalation-panel .escalation-contacts {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.escalation-loading,
+.escalation-empty {
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+    border-radius: 12px;
+    background: var(--x-bg-card);
+    border: 1px solid var(--x-border);
+    color: var(--x-text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.civic-step-nav-split {
+    align-items: stretch;
+}
+
+.civic-step-nav-split .civic-submit-btn {
+    flex: 1;
+}
+
 /* Email authorities styling */
 .email-option {
     margin: 1rem 0;

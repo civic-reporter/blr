@@ -3,7 +3,7 @@
  * Handles email functionality for civic submissions
  */
 
-import { isEmailEnabled, getRelevantEmails, isValidEmail, prepareEmailData } from './email-authorities.js';
+import { isEmailEnabled, getRelevantEmails, prepareEmailData } from './email-authorities.js';
 import { isInGBA } from './utils.js';
 import { findWardForCurrentGPS, findCorpForCurrentGPS } from './validation.js';
 import { cityConfig } from './config.js';
@@ -17,12 +17,32 @@ function escapeHtml(value) {
         .replace(/"/g, '&quot;');
 }
 
+function normalizeCorpKey(corpName) {
+    return String(corpName || '').trim();
+}
+
 async function getEscalationForCorp(corpName) {
-    if (!corpName) return null;
+    const key = normalizeCorpKey(corpName);
+    if (!key) return null;
+
     try {
-        await cityConfig.loadConfig();
-        const map = cityConfig.getConfig().escalationContacts || {};
-        return map[corpName] || null;
+        let config = null;
+        try {
+            config = cityConfig.getConfig();
+        } catch {
+            config = null;
+        }
+
+        if (!config?.escalationContacts) {
+            await cityConfig.loadConfig();
+            config = cityConfig.getConfig();
+        }
+
+        const map = config.escalationContacts || {};
+        if (map[key]) return map[key];
+
+        const match = Object.keys(map).find((name) => name.toLowerCase() === key.toLowerCase());
+        return match ? map[match] : null;
     } catch (e) {
         console.warn('Could not load escalation contacts:', e);
         return null;
@@ -131,8 +151,10 @@ export async function updateCivicEmailRecipients() {
         return;
     }
 
+    const inGba = window.currentGPS && await isInGBA(window.currentGPS.lat, window.currentGPS.lon);
+
     // Show email option if we have a valid location
-    if (window.currentGPS && isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
+    if (inGba) {
         emailOption.style.display = 'block';
 
         if (emailCheckbox && emailCheckbox.checked) {
@@ -157,25 +179,50 @@ export async function updateCivicEmailRecipients() {
     }
 }
 
-// Display ward, corporation, and corp escalation contacts on the success screen
-export async function displaySuccessLocationInfo() {
+function coordsFromReport(reportData) {
+    const lat = Number(reportData?.coordinates?.lat);
+    const lon = Number(reportData?.coordinates?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return { lat, lon };
+}
+
+// Display ward, corporation, and corp escalation contacts on the success screen.
+// Prefer reportData from submit time — GPS is cleared during the success transition.
+export async function displaySuccessLocationInfo(reportData = null) {
     const successInfoDiv = document.getElementById('successLocationInfo');
     if (!successInfoDiv) return;
 
-    if (!window.currentGPS || !isInGBA(window.currentGPS.lat, window.currentGPS.lon)) {
-        successInfoDiv.classList.add('is-hidden');
-        successInfoDiv.style.display = 'none';
-        return;
+    const lang = getCurrentLanguage();
+    const gps = window.currentGPS || coordsFromReport(reportData);
+
+    let wardNo = reportData?.wardNo || '';
+    let wardName = reportData?.wardName || '';
+    let oldWardNo = reportData?.oldWardNo || '';
+    let oldWardName = reportData?.oldWardName || '';
+    let corpName = normalizeCorpKey(reportData?.corpName);
+
+    const needsLookup = gps && (!wardNo && !oldWardNo || !corpName);
+    if (needsLookup) {
+        const previousGps = window.currentGPS;
+        window.currentGPS = gps;
+        try {
+            const [wardInfo, corpInfo] = await Promise.all([
+                findWardForCurrentGPS(),
+                findCorpForCurrentGPS()
+            ]);
+            wardNo = wardNo || wardInfo.wardNo || '';
+            wardName = wardName || wardInfo.wardName || '';
+            oldWardNo = oldWardNo || wardInfo.oldWardNo || '';
+            oldWardName = oldWardName || wardInfo.oldWardName || '';
+            corpName = corpName || normalizeCorpKey(corpInfo.corpName);
+        } finally {
+            window.currentGPS = previousGps || gps;
+        }
     }
 
-    const lang = getCurrentLanguage();
-    const [{ wardNo, wardName, oldWardNo, oldWardName }, { corpName }] = await Promise.all([
-        findWardForCurrentGPS(),
-        findCorpForCurrentGPS()
-    ]);
     const escalation = await getEscalationForCorp(corpName);
 
-    if (!wardNo && !oldWardNo && !corpName && !escalation) {
+    if (!wardNo && !oldWardNo && !corpName && !escalation && !gps) {
         successInfoDiv.classList.add('is-hidden');
         successInfoDiv.style.display = 'none';
         return;
@@ -195,10 +242,10 @@ export async function displaySuccessLocationInfo() {
         html += `<div class="success-location-row"><strong>🏛️ Corporation:</strong> ${escapeHtml(corpName)}</div>`;
     }
 
-    const lat = window.currentGPS.lat;
-    const lon = window.currentGPS.lon;
-    const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-    html += `<div class="success-location-maps"><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer"><strong>🗺️ View on Google Maps</strong></a></div>`;
+    if (gps) {
+        const mapsUrl = `https://www.google.com/maps?q=${gps.lat},${gps.lon}`;
+        html += `<div class="success-location-maps"><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer"><strong>🗺️ View on Google Maps</strong></a></div>`;
+    }
 
     html += `<div class="success-helpline"><strong>For urgent civic issues, call:</strong> <a href="tel:1533">☎️ 1533</a></div>`;
     html += '<small class="success-helpline-note">Call to officially register your complaint with authorities</small>';
@@ -210,6 +257,74 @@ export async function displaySuccessLocationInfo() {
     successInfoDiv.innerHTML = html;
     successInfoDiv.classList.remove('is-hidden');
     successInfoDiv.style.display = 'block';
+}
+
+function setViewEscalationButtonLabel(expanded) {
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!btn) return;
+    const label = btn.querySelector('span');
+    const lang = getCurrentLanguage();
+    const text = t(expanded ? 'hideEscalationContacts' : 'viewEscalationContacts', lang);
+    if (label) label.textContent = text;
+    else btn.textContent = text;
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
+// Details-step: show corporation escalation contacts without opening WhatsApp.
+export async function toggleDetailsEscalationContacts() {
+    const panel = document.getElementById('detailsEscalationPanel');
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!panel || !btn) return;
+
+    const lang = getCurrentLanguage();
+    const isOpen = !panel.classList.contains('is-hidden');
+    if (isOpen) {
+        panel.classList.add('is-hidden');
+        setViewEscalationButtonLabel(false);
+        return;
+    }
+
+    btn.disabled = true;
+    panel.classList.remove('is-hidden');
+    panel.innerHTML = `<p class="escalation-loading">${escapeHtml(t('escalationContactsLoading', lang))}</p>`;
+    setViewEscalationButtonLabel(true);
+
+    try {
+        if (!window.currentGPS) {
+            panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsNeedLocation', lang))}</p>`;
+            return;
+        }
+
+        const { corpName } = await findCorpForCurrentGPS();
+        const escalation = await getEscalationForCorp(corpName);
+        if (!escalation) {
+            panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsUnavailable', lang))}</p>`;
+            return;
+        }
+
+        panel.innerHTML = renderEscalationContacts(escalation, lang);
+    } catch (e) {
+        console.warn('Could not show escalation contacts:', e);
+        panel.innerHTML = `<p class="escalation-empty">${escapeHtml(t('escalationContactsUnavailable', lang))}</p>`;
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+export function initDetailsEscalationPreview() {
+    const btn = document.getElementById('viewEscalationBtn');
+    if (!btn || btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', 'detailsEscalationPanel');
+    btn.addEventListener('click', () => {
+        toggleDetailsEscalationContacts();
+    });
+    window.addEventListener('languageChanged', () => {
+        const panel = document.getElementById('detailsEscalationPanel');
+        const open = panel && !panel.classList.contains('is-hidden');
+        setViewEscalationButtonLabel(!!open);
+    });
 }
 
 // Prepare civic email data for submission
