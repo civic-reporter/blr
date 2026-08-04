@@ -124,5 +124,122 @@
                 "displayLabel": "BWSSB Grievance Desk"
             }
         ]
+    },
+    "escalationContacts": {
+        "Central": {
+            "label": "Central City Corporation",
+            "contacts": [
+                {
+                    "role": "Commissioner",
+                    "name": "Sri. Jagadeesha G, I.A.S.",
+                    "email": "commissionerbccc@gmail.com",
+                    "phone": "9480685577"
+                },
+                {
+                    "role": "Additional Commissioner (Development)",
+                    "name": "Sri. Venkatachalapthy R, I.A.S.",
+                    "email": "adcddevelopmentbccc@gmail.com",
+                    "phone": "9513322144"
+                },
+                {
+                    "role": "Additional Commissioner (Revenue)",
+                    "name": "Sri. Ranganath K, K.A.S.",
+                    "email": "bcccjccvr@gmail.com",
+                    "phone": "9620630581"
+                }
+            ]
+        },
+        "East": {
+            "label": "East City Corporation",
+            "contacts": [
+                {
+                    "role": "Commissioner",
+                    "name": "Sri. Ramesh D S, I.A.S.",
+                    "email": "commissioner.becc@gmail.com",
+                    "phone": "9480683901"
+                },
+                {
+                    "role": "Additional Commissioner (Development)",
+                    "name": "Sri. Lokhande Snehal Sudhakar, I.A.S.",
+                    "email": "acdbecc@gmail.com",
+                    "phone": "9480683831"
+                },
+                {
+                    "role": "Additional Commissioner (Revenue)",
+                    "name": "Dr. Prajna Ammembala, K.A.S.",
+                    "email": "adcrbecc@gmail.com",
+                    "phone": "8050899833"
+                }
+            ]
+        },
+        "West": {
+            "label": "West City Corporation",
+            "contacts": [
+                {
+                    "role": "Commissioner",
+                    "name": "Dr. Rajendra K V, I.A.S.",
+                    "email": "commissioner.bwcc@gmail.com",
+                    "phone": "9972248800"
+                },
+                {
+                    "role": "Additional Commissioner (Development)",
+                    "name": "Smt. Kavitha Rajaram, K.A.S.",
+                    "email": "addl.commbwcc2025@gmail.com",
+                    "phone": "9844120212"
+                },
+                {
+                    "role": "Additional Commissioner (Revenue)",
+                    "name": "Smt. Kavitha Rajaram, K.A.S.",
+                    "email": "addl.commbwcc2025@gmail.com",
+                    "phone": "9844120212"
+                }
+            ]
+        },
+        "North": {
+            "label": "North City Corporation",
+            "contacts": [
+                {
+                    "role": "Commissioner",
+                    "name": "Sri. Pommala Sunil Kumar, I.A.S.",
+                    "email": "bengalurunorthcitycorporation@gmail.com",
+                    "phone": "9480684949"
+                },
+                {
+                    "role": "Additional Commissioner (Development)",
+                    "name": "Smt. Latha R, I.A.S.",
+                    "email": "additionalcommissionerbncc@gmail.com",
+                    "phone": "9845200485"
+                },
+                {
+                    "role": "Additional Commissioner (Revenue)",
+                    "name": "I/C Smt. K R Pallavi, K.M.A.S.",
+                    "email": "addl.comm.rev.bncc@gmail.com",
+                    "phone": "9591880887"
+                }
+            ]
+        },
+        "South": {
+            "label": "South City Corporation",
+            "contacts": [
+                {
+                    "role": "Commissioner",
+                    "name": "Sri. K N Ramesh, I.A.S.",
+                    "email": "comm.south.gba@gmail.com",
+                    "phone": "9972769549"
+                },
+                {
+                    "role": "Additional Commissioner (Development)",
+                    "name": "Sri. Naveen Kumar Raju S, I.A.S.",
+                    "email": "gbaadditionalcommissionersouth@gmail.com",
+                    "phone": "9187232732"
+                },
+                {
+                    "role": "Additional Commissioner (Revenue)",
+                    "name": "Sri. Rachappa, K.A.S.",
+                    "email": "addl.comm.rev.bscc@gmail.com",
+                    "phone": "9187232733"
+                }
+            ]
+        }
     }
 }

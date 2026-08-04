@@ -487,6 +487,99 @@ h2 {
     text-decoration: underline;
 }
 
+.success-location-card {
+    margin: 0;
+}
+
+.success-location-row {
+    margin-bottom: 0.35rem;
+}
+
+.success-location-maps {
+    margin-top: 0.75rem;
+}
+
+.success-helpline {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--x-border);
+}
+
+.success-helpline-note {
+    color: var(--x-text-secondary);
+    display: block;
+    margin-top: 0.35rem;
+}
+
+.escalation-contacts {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--x-border);
+}
+
+.escalation-title {
+    margin: 0 0 0.25rem;
+    color: var(--x-text-primary);
+    font-size: 0.95rem;
+}
+
+.escalation-hint {
+    margin: 0 0 0.65rem;
+    color: var(--x-text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.escalation-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.escalation-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 12px;
+    background: var(--x-bg-secondary);
+    border: 1px solid var(--x-border);
+}
+
+.escalation-role {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--x-text-secondary);
+}
+
+.escalation-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--x-text-primary);
+}
+
+.escalation-meta {
+    font-size: 0.84rem;
+    color: var(--x-text-secondary);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.escalation-link {
+    color: var(--x-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.escalation-link:hover {
+    text-decoration: underline;
+}
+
 /* Email authorities styling */
 .email-option {
     margin: 1rem 0;
